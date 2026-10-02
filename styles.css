@@ -21,6 +21,8 @@ header.top{position:sticky;top:0;z-index:50;background:rgba(11,18,32,.92);backdr
 .btn svg{width:20px;height:20px}
 .call-sm{padding:9px 16px;font-size:.92rem}
 @media(max-width:860px){.menu a:not(.btn){display:none}}
+.logo span,.btn{white-space:nowrap}
+@media(max-width:700px){.menu .call-sm{display:none}}
 .hero{position:relative;overflow:hidden;padding:72px 0 64px;background:radial-gradient(1000px 500px at 85% -10%,rgba(255,196,0,.18),transparent 60%),linear-gradient(180deg,#0b1220,#0e1729)}
 .hero .grid{display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center}
 .badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,196,0,.12);color:var(--y2);border:1px solid rgba(255,196,0,.35);padding:6px 14px;border-radius:999px;font-size:.88rem;font-weight:700;margin-bottom:18px}
