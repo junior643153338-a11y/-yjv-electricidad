@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://junior643153338-a11y.github.io/-yjv-electricidad/sitemap.xml
