@@ -206,7 +206,7 @@ CITIES = [
 
 GENERAL_FAQ = [
  ("¿El presupuesto tiene coste?","No. Te damos presupuesto sin compromiso. Para trabajos sencillos, con unas fotos por WhatsApp suele bastar."),
- ("¿En qué zonas trabajáis?","En Madrid capital y el sur de la Comunidad de Madrid: Getafe, Leganés, Alcorcón, Móstoles, Fuenlabrada y alrededores. Si estás en otra zona, pregúntanos."),
+ ("¿En qué zonas trabajáis?","En Madrid capital y alrededores: Getafe, Leganés, Alcorcón, Móstoles, Fuenlabrada y otros municipios cercanos. Si estás en otra zona, pregúntanos."),
  ("¿Atendéis urgencias?","Sí. Si tienes una avería, llámanos o escríbenos por WhatsApp y te diremos cuándo podemos ir lo antes posible."),
  ("¿Los trabajos tienen garantía?","Sí, todos los trabajos y materiales que instalamos tienen garantía. Si algo falla por nuestra instalación, volvemos sin coste."),
  ("¿Cómo puedo pagar?","Te indicamos las formas de pago al darte el presupuesto. Siempre entregamos factura del trabajo."),
@@ -259,7 +259,7 @@ def foot():
 <footer><div class="wrap">
 <div class="fgrid">
 <div><a class="logo" href="/">{LOGO_SVG}<span>YJV <b>Electricidad</b></span></a>
-<p style="margin-top:12px">Electricista en Madrid y zona sur. Averías, instalaciones, cuadros eléctricos, iluminación y puntos de recarga. Presupuesto sin compromiso.</p>
+<p style="margin-top:12px">Electricista en Madrid y alrededores. Averías, instalaciones, cuadros eléctricos, iluminación y puntos de recarga. Presupuesto sin compromiso.</p>
 <p style="margin-top:12px"><a href="tel:{PHONE_TEL}">Tel. {PHONE_DISPLAY}</a> · <a href="https://wa.me/{WA}">WhatsApp</a></p></div>
 <div><h4>Servicios</h4><ul>{sv}</ul></div>
 <div><h4>Zonas</h4><ul>{zs}</ul></div>
@@ -302,7 +302,7 @@ def contact_block(zone=""):
 <div class="cinfo">
 <a href="tel:{PHONE_TEL}"><span style="color:var(--y)">{PH_SVG}</span><div><b>{PHONE_DISPLAY}</b><span>Llamada directa</span></div></a>
 <a href="{wa_link('Hola, necesito un electricista.')}" target="_blank" rel="noopener"><span style="fill:var(--ok)">{WA_SVG}</span><div><b>WhatsApp</b><span>Envía fotos de la avería</span></div></a>
-<div><span style="color:var(--y)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg></span><div><b>Madrid y zona sur</b><span>Getafe, Leganés, Alcorcón, Móstoles, Fuenlabrada</span></div></div>
+<div><span style="color:var(--y)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg></span><div><b>Madrid y alrededores</b><span>Getafe, Leganés, Alcorcón, Móstoles, Fuenlabrada y más</span></div></div>
 </div></div>
 {form(zone)}
 </div></section>"""
@@ -337,7 +337,7 @@ def why(): return f"""<div class="why">
 <div><span class="ic">{icon("shield")}</span><div><b>Seguridad ante todo</b><p>Instalaciones según el Reglamento Electrotécnico de Baja Tensión.</p></div></div>
 <div><span class="ic">{icon("sparkle")}</span><div><b>Limpios y puntuales</b><p>Protegemos tu casa y dejamos todo recogido.</p></div></div>
 <div><span class="ic">{icon("doc")}</span><div><b>Factura y garantía</b><p>Todos los trabajos con factura y garantía.</p></div></div>
-<div><span class="ic">{icon("pin")}</span><div><b>Cerca de ti</b><p>Madrid capital y todo el sur de la Comunidad.</p></div></div>
+<div><span class="ic">{icon("pin")}</span><div><b>Cerca de ti</b><p>Madrid capital y alrededores.</p></div></div>
 </div>"""
 
 def urg():
@@ -361,11 +361,11 @@ def build():
     open(os.path.join(OUT,"styles.css"),"w").write(CSS.strip())
     pages = ["/"]
     # Home
-    title = "Electricista en Madrid y zona sur | Urgencias y presupuesto gratis | YJV Electricidad"
+    title = "Electricista en Madrid y alrededores | Urgencias y presupuesto gratis | YJV Electricidad"
     desc = "Electricista profesional en Madrid, Getafe, Leganés, Alcorcón, Móstoles y Fuenlabrada. Averías urgentes, instalaciones, cuadros eléctricos, LED y cargadores de coche eléctrico. Presupuesto gratis."
     h = head(title, desc, "/", [faq_ld(GENERAL_FAQ)])
     h += f"""<section class="hero"><div class="wrap grid"><div>
-<span class="badge"><span class="dot"></span>Atendemos urgencias en Madrid y zona sur</span>
+<span class="badge"><span class="dot"></span>Atendemos urgencias en Madrid y alrededores</span>
 <h1>Tu <em>electricista</em> de confianza en Madrid</h1>
 <p class="lead">Averías, instalaciones nuevas, cuadros eléctricos, iluminación LED y cargadores para coche eléctrico. Trabajo seguro, precio claro antes de empezar y garantía en todo lo que hacemos.</p>
 <div class="cta"><a class="btn btn-y" href="tel:{PHONE_TEL}">{PH_SVG}Llamar {PHONE_DISPLAY}</a>
@@ -379,7 +379,7 @@ def build():
 <section><div class="wrap center"><h2>Así de <em>fácil</em></h2><p class="sub">Un proceso claro, sin sorpresas.</p>{STEPS}</div></section>
 {urg()}
 <section class="alt"><div class="wrap center"><h2>¿Por qué elegir <em>YJV Electricidad</em>?</h2><p class="sub">Lo que nos piden nuestros clientes: que llegue rápido, que lo deje bien y que el precio sea el que se dijo.</p><div style="text-align:left">{why()}</div></div></section>
-<section id="zonas"><div class="wrap center"><h2>Electricista <em>cerca de ti</em></h2><p class="sub">Trabajamos en Madrid capital y el sur de la Comunidad de Madrid.</p><div class="zones">{zones()}</div></div></section>
+<section id="zonas"><div class="wrap center"><h2>Electricista <em>cerca de ti</em></h2><p class="sub">Trabajamos en Madrid capital y alrededores.</p><div class="zones">{zones()}</div></div></section>
 <section id="preguntas" class="alt"><div class="wrap content" style="margin:0 auto"><h2 class="center" style="margin-top:0">Preguntas <em>frecuentes</em></h2><div style="margin-top:24px">{faq_html(GENERAL_FAQ)}</div></div></section>
 {contact_block()}
 """
@@ -490,7 +490,7 @@ def images():
     fb = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"; fr="/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
     d.text((70,90),"YJV Electricidad",font=ImageFont.truetype(fb,40),fill="#ffc400")
     d.text((70,160),"Electricista",font=ImageFont.truetype(fb,84),fill="#ffffff")
-    d.text((70,260),"en Madrid y zona sur",font=ImageFont.truetype(fb,64),fill="#ffffff")
+    d.text((70,262),"en Madrid y alrededores",font=ImageFont.truetype(fb,58),fill="#ffffff")
     d.text((70,370),"Urgencias · Instalaciones · Cuadros · LED",font=ImageFont.truetype(fr,34),fill="#a9b4c9")
     d.rounded_rectangle([70,450,560,535],radius=44,fill="#ffc400")
     d.text((110,468),"Tel. "+PHONE_DISPLAY,font=ImageFont.truetype(fb,42),fill="#111")
