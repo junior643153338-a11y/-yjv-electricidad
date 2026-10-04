@@ -1,5 +1,5 @@
 // Service worker offline-first: la app abre aunque no haya señal.
-const CACHE = 'sitrack-v1'
+const CACHE = 'sitrack-v2'
 
 self.addEventListener('install', (e) => {
   e.waitUntil((async () => {
