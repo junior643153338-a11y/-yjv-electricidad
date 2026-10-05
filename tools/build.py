@@ -97,10 +97,10 @@ details[open] summary::after{content:"–"}
 details p{color:var(--m);margin-top:10px}
 .content{max-width:820px}
 .content h2{margin-top:34px}.content p,.content li{color:#cdd6e6;margin-bottom:12px}
-.content ul{padding-left:22px}
+.content ul,.content ol{padding-left:22px}
 .crumbs{font-size:.9rem;color:var(--m);margin-bottom:16px}.crumbs a{color:var(--m)}
 footer{background:#070c17;padding:46px 0 90px;color:var(--m);font-size:.93rem;border-top:1px solid #1a2540}
-.fgrid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:28px}
+.fgrid{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:28px}
 @media(max-width:760px){.fgrid{grid-template-columns:1fr}}
 footer h4{color:var(--t);margin-bottom:10px}
 footer ul{list-style:none}footer li{margin-bottom:6px}
@@ -139,57 +139,57 @@ ICONS = {
 def icon(n): return f'<svg viewBox="0 0 24 24">{ICONS[n]}</svg>'
 
 SERVICES = [
- dict(slug="electricista-urgente-madrid", icon="alert", short="Urgencias y averías",
+ dict(slug="electricista-urgente-madrid", guide="por-que-salta-el-diferencial", icon="alert", short="Urgencias y averías",
   title="Electricista urgente en Madrid | Averías y apagones",
   h1="Electricista <em>urgente</em> en Madrid",
-  desc="¿Se ha ido la luz, salta el diferencial o huele a quemado? Electricista urgente en Madrid y sur: localizamos la avería y la reparamos con seguridad. Llama o escribe por WhatsApp.",
+  desc="¿Se ha ido la luz o salta el diferencial? Electricista urgente en Madrid y alrededores: localizamos la avería y la reparamos con seguridad.",
   card="Se va la luz, salta el diferencial o un enchufe no funciona. Localizamos la avería y la reparamos rápido y con seguridad.",
   body=[("Averías eléctricas que solucionamos","ul",["Apagones totales o parciales en la vivienda o el local","El diferencial o el magnetotérmico salta y no se puede subir","Enchufes, interruptores o puntos de luz que no funcionan","Cables recalentados, chispas u olor a quemado","Cortocircuitos tras una tormenta, una fuga de agua o una obra"]),
         ("Qué hacer mientras llegamos","ul",["Si huele a quemado o ves chispas, baja el interruptor general del cuadro","No toques cables ni aparatos mojados","Desenchufa los electrodomésticos de la zona afectada","Escríbenos por WhatsApp con una foto del cuadro eléctrico: nos ayuda a llevar el material correcto"]),
         ("Cómo trabajamos","p","Te respondemos lo antes posible, te damos una idea del coste antes de empezar y, una vez en casa, buscamos el origen del fallo con aparatos de medida. No cambiamos piezas a ciegas: reparamos la causa para que la avería no se repita.")],
   faq=[("¿Cuánto cuesta un electricista urgente?","Depende de la avería, el horario y el material. Antes de ir te damos una estimación por teléfono o WhatsApp para que no haya sorpresas."),
        ("¿Por qué salta el diferencial?","Normalmente por un aparato o un circuito con fuga a tierra (humedad, un electrodoméstico averiado o un cable dañado). Lo localizamos desconectando circuitos y midiendo el aislamiento.")]),
- dict(slug="instalaciones-electricas-madrid", icon="home", short="Instalaciones y reformas",
-  title="Instalaciones eléctricas en Madrid | Reformas y viviendas",
+ dict(slug="instalaciones-electricas-madrid", guide="cuando-renovar-la-instalacion-electrica", icon="home", short="Instalaciones y reformas",
+  title="Instalaciones eléctricas en Madrid | Reformas de pisos",
   h1="Instalaciones eléctricas y <em>reformas</em> en Madrid",
-  desc="Instalaciones eléctricas nuevas y renovación completa de la instalación en pisos, casas y locales de Madrid. Nuevos puntos de luz y enchufes, cableado y reformas. Presupuesto sin compromiso.",
+  desc="Instalación eléctrica nueva o renovación completa en pisos, casas y locales de Madrid: cableado, enchufes, puntos de luz y circuitos. Presupuesto gratis.",
   card="Instalación nueva o renovación completa en pisos, casas y locales: cableado, enchufes, puntos de luz y circuitos.",
   body=[("Qué incluye","ul",["Renovación completa de la instalación eléctrica de pisos antiguos","Instalación eléctrica en reformas de cocina y baño","Nuevos enchufes, puntos de luz, interruptores y conmutados","Circuitos independientes para horno, vitrocerámica, aire acondicionado o termo","Instalaciones para locales comerciales y oficinas"]),
         ("¿Cuándo conviene renovar la instalación?","p","Si tu vivienda tiene más de 30 años, los enchufes no tienen toma de tierra, saltan los automáticos cuando enciendes varios aparatos o sigues teniendo fusibles de rosca, es momento de renovar. Una instalación actualizada es más segura y te permite usar los electrodomésticos actuales sin problemas."),
         ("Trabajo limpio y ordenado","p","Planificamos el trabajo contigo, protegemos suelos y muebles y dejamos todo recogido al terminar. Te explicamos qué hemos hecho y cómo queda el cuadro eléctrico.")],
   faq=[("¿Cuánto tarda renovar la instalación de un piso?","En un piso estándar suele llevar varios días, según el tamaño y si se hace con obra o aprovechando tubos existentes. Te damos el plazo exacto en el presupuesto."),
        ("¿Hay que hacer obra?","No siempre. Muchas veces se puede recablear por los tubos existentes o con canaleta decorativa. Lo valoramos en la visita.")]),
- dict(slug="cuadros-electricos-madrid", icon="panel", short="Cuadros eléctricos",
-  title="Cambio de cuadro eléctrico en Madrid | Diferenciales y automáticos",
+ dict(slug="cuadros-electricos-madrid", guide="senales-cambiar-cuadro-electrico", icon="panel", short="Cuadros eléctricos",
+  title="Cambio de cuadro eléctrico en Madrid | Diferenciales",
   h1="Cambio y reparación de <em>cuadros eléctricos</em> en Madrid",
-  desc="Cambio de cuadro eléctrico, diferenciales y magnetotérmicos en Madrid. Sustituimos fusibles antiguos, añadimos circuitos y protecciones. Seguridad para tu casa o negocio.",
+  desc="Cambio de cuadro eléctrico, diferenciales y magnetotérmicos en Madrid. Sustituimos fusibles antiguos y separamos circuitos. Presupuesto gratis.",
   card="Sustitución de cuadros antiguos, diferenciales y automáticos. Protecciones adecuadas para cada circuito.",
   body=[("Servicios de cuadro eléctrico","ul",["Sustitución de cuadros antiguos con fusibles por cuadros modernos","Instalación o cambio de diferenciales y magnetotérmicos","Separación de circuitos para que no salte todo a la vez","Protección contra sobretensiones","Revisión y reapriete de conexiones para evitar calentamientos"]),
         ("Señales de que tu cuadro necesita un cambio","ul",["Todavía tiene fusibles de porcelana o de rosca","No tiene interruptor diferencial","Salta con frecuencia o notas los mecanismos calientes","Has añadido aparatos potentes (aire acondicionado, placa de inducción, coche eléctrico)"])],
   faq=[("¿Qué es el diferencial y por qué es tan importante?","Es el dispositivo que corta la corriente si detecta una fuga, por ejemplo cuando una persona toca algo con tensión. Es la protección principal contra electrocuciones."),
        ("¿Se queda la casa sin luz mucho tiempo?","El cambio de un cuadro suele hacerse en unas horas. Te avisamos antes para que lo organices.")]),
- dict(slug="iluminacion-led-madrid", icon="bulb", short="Iluminación LED",
-  title="Instalación de iluminación LED en Madrid | Ahorra en la factura",
+ dict(slug="iluminacion-led-madrid", guide="elegir-iluminacion-led-casa", icon="bulb", short="Iluminación LED",
+  title="Instalación de iluminación LED en Madrid",
   h1="Instalación de <em>iluminación LED</em> en Madrid",
-  desc="Instalación de focos empotrados, tiras LED, lámparas y luz exterior en Madrid. Diseñamos una iluminación bonita y eficiente que reduce tu factura de luz.",
+  desc="Focos empotrados, tiras LED, lámparas y luz exterior en Madrid. Una iluminación bonita y eficiente que baja tu factura de luz.",
   card="Focos empotrados, tiras LED, lámparas y luz exterior. Más luz, mejor ambiente y menos gasto.",
   body=[("Qué instalamos","ul",["Focos LED empotrados en falso techo","Tiras LED en cocinas, techos y muebles","Lámparas, apliques y ventiladores de techo","Iluminación exterior, terrazas y jardines","Sensores de movimiento y reguladores de intensidad"]),
         ("Ventajas del LED","p","Las luces LED consumen mucho menos que las bombillas tradicionales y duran años. Además, eligiendo bien la temperatura de color y la posición de cada punto de luz, tu casa o tu negocio ganan mucho en aspecto.")],
   faq=[("¿Se pueden poner focos sin falso techo?","Sí, hay opciones de superficie y carriles. Te proponemos la mejor según tu techo."),
        ("¿Cambiar a LED ahorra de verdad?","Sí, el consumo en iluminación baja de forma notable frente a halógenos o incandescentes.")]),
- dict(slug="punto-de-recarga-coche-electrico-madrid", icon="car", short="Cargador coche eléctrico",
-  title="Instalación de punto de recarga para coche eléctrico en Madrid",
+ dict(slug="punto-de-recarga-coche-electrico-madrid", guide="cargador-coche-electrico-garaje-comunitario", icon="car", short="Cargador coche eléctrico",
+  title="Instalar cargador de coche eléctrico en Madrid",
   h1="Instalación de <em>cargador de coche eléctrico</em> en Madrid",
-  desc="Instalamos puntos de recarga para coche eléctrico en garajes de viviendas unifamiliares y comunidades de Madrid. Te asesoramos sobre potencia, circuito y modelo de cargador.",
+  desc="Instalamos puntos de recarga para coche eléctrico en garajes de chalets y comunidades de Madrid. Te asesoramos sobre potencia y modelo de cargador.",
   card="Puntos de recarga en garajes particulares y comunitarios. Asesoramiento sobre potencia y modelo.",
   body=[("Cómo lo hacemos","ul",["Estudiamos tu instalación y la potencia contratada","Te recomendamos el cargador adecuado para tu coche","Instalamos un circuito exclusivo con sus protecciones","Configuramos el cargador y comprobamos que funciona correctamente"]),
         ("Garajes comunitarios","p","En un garaje de comunidad solo necesitas comunicarlo a la comunidad de propietarios. Te ayudamos a planificar el recorrido del cable desde tu contador hasta tu plaza.")],
   faq=[("¿Necesito subir la potencia contratada?","Depende de tu consumo y del cargador. Muchas veces basta con un cargador con gestión de potencia. Lo revisamos sin compromiso."),
        ("¿Cuánto tarda la instalación?","Normalmente se realiza en una jornada, según la distancia y el tipo de garaje.")]),
- dict(slug="enchufes-y-puntos-de-luz-madrid", icon="plug", short="Enchufes y puntos de luz",
-  title="Instalar enchufes y puntos de luz en Madrid | Pequeños trabajos",
+ dict(slug="enchufes-y-puntos-de-luz-madrid", guide="por-que-salta-el-diferencial", icon="plug", short="Enchufes y puntos de luz",
+  title="Enchufes y puntos de luz en Madrid | Pequeños trabajos",
   h1="Enchufes, interruptores y <em>pequeños trabajos</em> eléctricos en Madrid",
-  desc="¿Necesitas un enchufe nuevo, mover un punto de luz o colgar una lámpara? Electricista en Madrid para pequeños trabajos eléctricos, rápido y a buen precio.",
+  desc="¿Un enchufe nuevo, mover un punto de luz o colgar una lámpara? Electricista en Madrid para pequeños trabajos eléctricos, rápido y con precio claro.",
   card="Añadir o mover enchufes, colgar lámparas, cambiar mecanismos, timbres y portero.",
   body=[("Trabajos habituales","ul",["Añadir o mover enchufes e interruptores","Colgar lámparas, apliques y ventiladores","Cambiar mecanismos antiguos por modernos","Instalar enchufes USB, de exterior o para el televisor","Timbres, porteros y videoporteros"]),
         ("Agrupa trabajos y ahorra","p","Si tienes varias cosas pendientes, envíanos una lista por WhatsApp y las hacemos en la misma visita.")],
@@ -198,27 +198,99 @@ SERVICES = [
 ]
 
 CITIES = [
- ("electricista-madrid-capital","Madrid capital","Carabanchel, Latina, Usera, Arganzuela, Villaverde, Puente de Vallecas, Centro y resto de distritos"),
- ("electricista-getafe","Getafe","Getafe centro, Sector III, Juan de la Cierva, Las Margaritas, El Bercial, Perales del Río y Los Molinos"),
- ("electricista-leganes","Leganés","Leganés centro, Zarzaquemada, San Nicasio, El Carrascal, La Fortuna, Arroyo Culebro y Valdepelayo"),
- ("electricista-alcorcon","Alcorcón","Alcorcón centro, Parque Lisboa, Parque Oeste, Ensanche Sur, San José de Valderas y Campodón"),
- ("electricista-mostoles","Móstoles","Móstoles centro, Parque Coimbra, Estoril, El Soto, Villafontana y PAU 4"),
- ("electricista-fuenlabrada","Fuenlabrada","Fuenlabrada centro, Loranca, El Naranjo, La Avanzada, Parque Miraflores y Hospital"),
+ ("electricista-madrid-capital","Madrid capital","Carabanchel, Latina, Usera, Arganzuela, Villaverde, Puente de Vallecas, Centro y resto de distritos",
+  "En Madrid capital trabajamos mucho en pisos de edificios con años, donde todavía es habitual encontrar enchufes sin toma de tierra, cuadros con muy pocos circuitos o un cableado que no está pensado para la placa de inducción, el aire acondicionado o el termo eléctrico de hoy. También atendemos locales comerciales, oficinas y comunidades de vecinos (portales, escaleras y garajes)."),
+ ("electricista-getafe","Getafe","Getafe centro, Sector III, Juan de la Cierva, Las Margaritas, El Bercial, Perales del Río y Los Molinos",
+  "En Getafe conviven pisos de los barrios de toda la vida, como Las Margaritas o Juan de la Cierva, con viviendas más nuevas en El Bercial o Los Molinos y con locales y naves de sus polígonos. En los pisos antiguos lo más habitual es renovar la instalación o el cuadro; en las viviendas nuevas, iluminación LED, enchufes extra y cargadores en el garaje."),
+ ("electricista-leganes","Leganés","Leganés centro, Zarzaquemada, San Nicasio, El Carrascal, La Fortuna, Arroyo Culebro y Valdepelayo",
+  "Buena parte de los pisos de Zarzaquemada, San Nicasio o La Fortuna se construyeron hace décadas, así que muchas llamadas en Leganés son para cambiar el cuadro, añadir circuitos o resolver un diferencial que salta. En zonas más recientes como Arroyo Culebro o Valdepelayo son más frecuentes la iluminación LED y los puntos de recarga en garaje comunitario."),
+ ("electricista-alcorcon","Alcorcón","Alcorcón centro, Parque Lisboa, Parque Oeste, Ensanche Sur, San José de Valderas y Campodón",
+  "En Alcorcón hay dos realidades: los bloques de San José de Valderas, Parque Lisboa o el centro, donde muchas instalaciones piden una actualización, y las viviendas del Ensanche Sur o los chalets de Campodón, donde nos piden más iluminación, enchufes para terraza y jardín o cargador para el coche."),
+ ("electricista-mostoles","Móstoles","Móstoles centro, Parque Coimbra, Estoril, El Soto, Villafontana y PAU 4",
+  "En Móstoles atendemos desde pisos del centro, Estoril o El Soto, con instalaciones de hace años que necesitan más circuitos y protecciones, hasta viviendas nuevas del PAU 4 y chalets de Parque Coimbra, donde son habituales la iluminación exterior, la domótica sencilla y los puntos de recarga."),
+ ("electricista-fuenlabrada","Fuenlabrada","Fuenlabrada centro, Loranca, El Naranjo, La Avanzada, Parque Miraflores y Hospital",
+  "Fuenlabrada combina barrios residenciales consolidados como El Naranjo o La Avanzada, zonas más nuevas como Loranca y una gran actividad comercial e industrial. Por eso trabajamos tanto en viviendas (averías, cuadros, enchufes) como en locales y naves que necesitan ampliar circuitos o mejorar la iluminación."),
+ ("electricista-parla","Parla","Parla centro, Parla Este y alrededores",
+  "En Parla trabajamos en los pisos del centro, donde suele tocar revisar el cuadro y añadir circuitos para los electrodomésticos actuales, y en las promociones más nuevas de Parla Este, con muchos garajes comunitarios en los que cada vez se piden más cargadores para coche eléctrico."),
+ ("electricista-pinto","Pinto","Pinto centro, La Tenería y urbanizaciones cercanas",
+  "En Pinto atendemos pisos del casco urbano y también adosados y chalets, donde los trabajos más frecuentes son la iluminación de jardín y fachada, los enchufes exteriores estancos, los circuitos para piscina o trastero y la instalación de cargadores en el garaje."),
+ ("electricista-valdemoro","Valdemoro","Valdemoro centro, El Restón y urbanizaciones cercanas",
+  "En Valdemoro conviven el casco antiguo con barrios y urbanizaciones más recientes como El Restón. Nos llaman para averías y diferenciales que saltan, para ampliar la instalación al reformar cocina o baño y, cada vez más, para poner un punto de recarga en casa."),
+]
+
+
+GUIDE_DATE = "2026-10-05"
+GUIDES = [
+ dict(slug="por-que-salta-el-diferencial", service="electricista-urgente-madrid",
+  title="¿Por qué salta el diferencial? Causas y qué hacer",
+  desc="El diferencial salta y no sube: causas comunes (humedad, un aparato, un cable dañado), cómo encontrar el circuito culpable y cuándo llamar.",
+  intro="Que salte el diferencial es una de las averías más comunes en casa. No es un fallo del diferencial: es su trabajo. Corta la corriente cuando detecta que parte de ella se escapa a tierra, algo que puede acabar en una descarga para una persona.",
+  sections=[
+   ("Causas más habituales","ul",["Un electrodoméstico con una fuga: lavadora, lavavajillas, horno, termo o frigorífico son los sospechosos más frecuentes","Humedad o agua en una caja de enchufe, en una luz de exterior o tras una fuga del vecino de arriba","Un cable pelado o pinzado, a veces tras colgar un cuadro o hacer una pequeña obra","Tormentas o subidas de tensión","Un diferencial viejo o muy sensible que necesita sustitución"]),
+   ("Cómo encontrar al culpable paso a paso","ol",["Baja todos los automáticos (los interruptores pequeños) del cuadro","Sube el diferencial. Si no aguanta ni con todo bajado, la avería está en la instalación general: llama a un electricista","Si aguanta, ve subiendo los automáticos de uno en uno. El que hace saltar el diferencial es el circuito con el problema","Deja ese circuito bajado, desenchufa todos los aparatos de esa zona y vuelve a probar. Si ahora aguanta, enchúfalos de uno en uno hasta dar con el aparato"]),
+   ("Cuándo no debes seguir probando","p","Si huele a quemado, ves chispas, hay agua cerca del cuadro o de un enchufe, o el diferencial salta nada más subirlo con todo desconectado, no insistas. Deja el general bajado y llama a un electricista: ahí hace falta medir el aislamiento de la instalación con el aparato adecuado."),
+   ("Cómo lo resolvemos","p","Localizamos el circuito y el punto exacto de la fuga con medidas de aislamiento, reparamos la causa (caja con humedad, cable dañado o aparato averiado) y, si el cuadro es antiguo, te explicamos si conviene separar circuitos para que una avería no deje toda la casa sin luz.")]),
+ dict(slug="senales-cambiar-cuadro-electrico", service="cuadros-electricos-madrid",
+  title="Cuándo cambiar el cuadro eléctrico: 7 señales claras",
+  desc="Fusibles de rosca, sin diferencial, saltos frecuentes o aparatos nuevos potentes: las señales de que tu cuadro eléctrico se ha quedado pequeño o inseguro.",
+  intro="El cuadro eléctrico es el centro de seguridad de tu casa. Si se ha quedado antiguo, no solo es incómodo (salta a menudo), sino que puede no protegerte bien ante una fuga o un cortocircuito.",
+  sections=[
+   ("7 señales de que toca cambiarlo","ol",["Todavía tiene fusibles de porcelana o de rosca en lugar de automáticos","No tiene interruptor diferencial","Salta con frecuencia cuando enciendes el horno, la placa o el aire a la vez","Todo está en uno o dos circuitos: si falla algo, se queda toda la casa sin luz","Notas los mecanismos calientes, oyes zumbidos o ves marcas oscuras","Has añadido aparatos potentes: inducción, aire acondicionado, termo eléctrico o coche eléctrico","Vas a reformar la cocina, el baño o toda la vivienda"]),
+   ("Qué incluye un cambio de cuadro","ul",["Caja nueva con espacio para crecer","Interruptor general y diferencial (o varios, según los circuitos)","Un automático para cada circuito: alumbrado, enchufes, cocina, horno, lavadora, baño, aire acondicionado…","Etiquetado de cada circuito para que sepas qué corta cada interruptor","Comprobación del funcionamiento del diferencial"]),
+   ("¿Cuánto se tarda?","p","En una vivienda normal, el cambio del cuadro suele hacerse en unas horas. Si además hay que crear circuitos nuevos o pasar cables, te damos el plazo en el presupuesto. Con unas fotos del cuadro actual por WhatsApp podemos darte una primera estimación.")]),
+ dict(slug="cuando-renovar-la-instalacion-electrica", service="instalaciones-electricas-madrid",
+  title="¿Cuándo renovar la instalación eléctrica de un piso antiguo?",
+  desc="Enchufes sin toma de tierra, cables de tela, automáticos que saltan: cuándo renovar la instalación eléctrica de un piso y cómo hacerlo sin obra.",
+  intro="Muchos pisos de Madrid y alrededores tienen instalaciones pensadas para una nevera, una lavadora y poco más. Hoy usamos inducción, horno, aire acondicionado, secadora y muchos cargadores a la vez, y la instalación antigua se queda corta.",
+  sections=[
+   ("Señales de que tu instalación está anticuada","ul",["Enchufes de dos agujeros, sin toma de tierra","Cables de tela o rígidos y oscurecidos en cajas y mecanismos","Regletas por toda la casa porque faltan enchufes","Automáticos que saltan al usar varios aparatos","Luces que parpadean o bajan al encender un electrodoméstico"]),
+   ("¿Hace falta obra?","p","No siempre. Muchas veces se puede recablear aprovechando los tubos existentes, y donde no hay tubo se puede usar canaleta decorativa. Si vas a reformar, es el mejor momento para dejar la instalación nueva por dentro de las paredes."),
+   ("Qué ganas al renovarla","ul",["Seguridad: toma de tierra en todos los enchufes y protecciones adecuadas","Comodidad: enchufes donde los necesitas y circuitos que no saltan","Preparación para el futuro: aire acondicionado, inducción o cargador del coche","Más valor si vendes o alquilas la vivienda"]),
+   ("Cómo trabajamos","p","Visitamos la vivienda, revisamos el cuadro y los circuitos y te proponemos qué renovar ya y qué puede esperar. El presupuesto es cerrado y por escrito, para que sepas qué vas a pagar antes de empezar.")]),
+ dict(slug="cargador-coche-electrico-garaje-comunitario", service="punto-de-recarga-coche-electrico-madrid",
+  title="Cargador de coche eléctrico en garaje comunitario: pasos",
+  desc="Cómo instalar un punto de recarga en la plaza de un garaje comunitario: comunicación a la comunidad, recorrido del cable, potencia y tipo de cargador.",
+  intro="Cada vez más vecinos quieren cargar el coche en su plaza de garaje. La buena noticia: en un garaje comunitario no necesitas el voto de la comunidad para instalar tu propio punto de recarga.",
+  sections=[
+   ("1. Comunícalo a la comunidad","p","La Ley de Propiedad Horizontal permite instalar un punto de recarga para uso privado en tu plaza con solo comunicarlo previamente a la comunidad (al presidente o al administrador). El coste de la instalación y de la luz que consumas corre de tu cuenta."),
+   ("2. Estudiamos el recorrido","p","Lo más habitual es llevar un circuito nuevo desde tu contador, en el cuarto de contadores, hasta tu plaza. Revisamos la distancia, por dónde pasar el cable (bandeja o tubo) y cómo dejarlo protegido y ordenado."),
+   ("3. Potencia y tipo de cargador","ul",["Revisamos tu potencia contratada y tu consumo habitual","Un cargador con gestión de potencia evita, muchas veces, tener que subir la potencia","Te recomendamos un modelo compatible con tu coche y con la potencia que puedes usar","Si cargas de noche, puede compensarte una tarifa con discriminación horaria"]),
+   ("4. Instalación y prueba","p","Instalamos el circuito exclusivo con sus protecciones según la ITC-BT-52 del Reglamento Electrotécnico de Baja Tensión, montamos y configuramos el cargador y hacemos una carga de prueba contigo. Normalmente se hace en una jornada.")]),
+ dict(slug="elegir-iluminacion-led-casa", service="iluminacion-led-madrid",
+  title="Cómo elegir la iluminación LED de casa: guía sencilla",
+  desc="Luz cálida o fría, cuántos lúmenes, focos empotrados o tiras LED: claves para elegir la iluminación LED de cada estancia y ahorrar en la factura.",
+  intro="Cambiar a LED baja el consumo de la iluminación y, bien elegido, mejora mucho el aspecto de la casa. La clave está en elegir el tono de luz y la cantidad adecuada para cada estancia.",
+  sections=[
+   ("Temperatura de color: cálida, neutra o fría","ul",["Luz cálida (en torno a 2700-3000 K): salón y dormitorios, ambiente acogedor","Luz neutra (en torno a 4000 K): cocina, baño y zonas de trabajo","Luz fría (5000 K o más): garajes, trasteros y talleres"]),
+   ("Fíjate en los lúmenes, no en los vatios","p","Los vatios indican lo que consume la bombilla; los lúmenes, cuánta luz da. Para comparar bombillas LED mira siempre los lúmenes y elige el mismo tono en toda una estancia para que no quede una luz de cada color."),
+   ("Qué tipo de luminaria poner","ul",["Focos empotrados: ideales en falso techo de cocinas, pasillos y baños","Tiras LED: bajo muebles de cocina, techos indirectos o cabeceros","Carriles y focos de superficie: si no tienes falso techo","Luz exterior con sensor: terrazas, jardines y entradas"]),
+   ("Te lo dejamos hecho","p","Te ayudamos a decidir dónde colocar cada punto de luz, instalamos reguladores o sensores si quieres y dejamos todo conectado y probado.")]),
 ]
 
 GENERAL_FAQ = [
  ("¿El presupuesto tiene coste?","No. Te damos presupuesto sin compromiso. Para trabajos sencillos, con unas fotos por WhatsApp suele bastar."),
- ("¿En qué zonas trabajáis?","En Madrid capital y alrededores: Getafe, Leganés, Alcorcón, Móstoles, Fuenlabrada y otros municipios cercanos. Si estás en otra zona, pregúntanos."),
+ ("¿En qué zonas trabajáis?","En Madrid capital y alrededores: Getafe, Leganés, Alcorcón, Móstoles, Fuenlabrada, Parla, Pinto, Valdemoro y otros municipios cercanos. Si estás en otra zona, pregúntanos."),
  ("¿Atendéis urgencias?","Sí. Si tienes una avería, llámanos o escríbenos por WhatsApp y te diremos cuándo podemos ir lo antes posible."),
  ("¿Los trabajos tienen garantía?","Sí, todos los trabajos y materiales que instalamos tienen garantía. Si algo falla por nuestra instalación, volvemos sin coste."),
  ("¿Cómo puedo pagar?","Te indicamos las formas de pago al darte el presupuesto. Siempre entregamos factura del trabajo."),
 ]
+
+def fit_title(t, limit=60):
+    full = f"{t} | {BRAND}"
+    return full if len(full) <= limit else t
+
+def check_meta(title, desc, path):
+    if len(title) > 62 or len(desc) > 158: print("AVISO meta larga:", path, len(title), len(desc))
+
+def guide_cards():
+    return "".join(f'<article class="card"><div class="ic">{icon("doc")}</div><h3>{html.escape(g["title"])}</h3><p>{html.escape(g["desc"])}</p><a class="more" href="/consejos/{g["slug"]}/">Leer →</a></article>' for g in GUIDES)
 
 def wa_link(text): 
     from urllib.parse import quote
     return f"https://wa.me/{WA}?text={quote(text)}"
 
 def head(title, desc, path, extra_ld=None):
+    check_meta(title, desc, path)
     url = DOMAIN + path
     ld = {"@context":"https://schema.org","@type":"Electrician","@id":DOMAIN+"/#negocio","name":BRAND,"url":DOMAIN+"/",
           "telephone":PHONE_TEL,"image":DOMAIN+"/og-image.jpg","logo":DOMAIN+"/icon-512.png","priceRange":"€€",
@@ -236,10 +308,11 @@ def head(title, desc, path, extra_ld=None):
 <meta name="description" content="{html.escape(desc)}">
 <link rel="canonical" href="{url}">
 <meta name="theme-color" content="#0b1220">
-<meta property="og:type" content="website"><meta property="og:locale" content="es_ES">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta property="og:type" content="website"><meta property="og:locale" content="es_ES"><meta property="og:site_name" content="YJV Electricidad">
 <meta property="og:title" content="{html.escape(title)}"><meta property="og:description" content="{html.escape(desc)}">
-<meta property="og:url" content="{url}"><meta property="og:image" content="{DOMAIN}/og-image.jpg">
-<meta name="twitter:card" content="summary_large_image">
+<meta property="og:url" content="{url}"><meta property="og:image" content="{DOMAIN}/og-image.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="YJV Electricidad, electricista en Madrid y alrededores">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{html.escape(title)}"><meta name="twitter:description" content="{html.escape(desc)}"><meta name="twitter:image" content="{DOMAIN}/og-image.jpg">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="icon" href="/favicon-48.png" sizes="48x48">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest">
 <link rel="stylesheet" href="/styles.css">
@@ -248,7 +321,7 @@ def head(title, desc, path, extra_ld=None):
 <body>
 <header class="top"><div class="wrap nav">
 <a class="logo" href="/" aria-label="{BRAND} inicio">{LOGO_SVG}<span>YJV <b>Electricidad</b></span></a>
-<nav class="menu"><a href="/#servicios">Servicios</a><a href="/#zonas">Zonas</a><a href="/#preguntas">Preguntas</a><a href="/#contacto">Contacto</a>
+<nav class="menu"><a href="/#servicios">Servicios</a><a href="/#zonas">Zonas</a><a href="/consejos/">Consejos</a><a href="/#preguntas">Preguntas</a><a href="/#contacto">Contacto</a>
 <a class="btn btn-y call-sm" href="tel:{PHONE_TEL}">{PH_SVG}{PHONE_DISPLAY}</a></nav>
 </div></header>
 <main>
@@ -257,6 +330,7 @@ def head(title, desc, path, extra_ld=None):
 def foot():
     sv = "".join(f'<li><a href="/{s["slug"]}/">{s["short"]}</a></li>' for s in SERVICES)
     zs = "".join(f'<li><a href="/{c[0]}/">Electricista en {c[1]}</a></li>' for c in CITIES)
+    gs = "".join(f'<li><a href="/consejos/{g["slug"]}/">{g["title"].split(":")[0].split("?")[0].strip("¿")}</a></li>' for g in GUIDES)
     return f"""</main>
 <footer><div class="wrap">
 <div class="fgrid">
@@ -265,6 +339,7 @@ def foot():
 <p style="margin-top:12px"><a href="tel:{PHONE_TEL}">Tel. {PHONE_DISPLAY}</a> · <a href="https://wa.me/{WA}">WhatsApp</a></p></div>
 <div><h4>Servicios</h4><ul>{sv}</ul></div>
 <div><h4>Zonas</h4><ul>{zs}</ul></div>
+<div><h4><a href="/consejos/">Consejos</a></h4><ul>{gs}</ul></div>
 </div>
 <div class="copy">© {date.today().year} {BRAND} · <a href="/privacidad/">Privacidad y aviso legal</a></div>
 </div></footer>
@@ -304,7 +379,7 @@ def contact_block(zone=""):
 <div class="cinfo">
 <a href="tel:{PHONE_TEL}"><span style="color:var(--y)">{PH_SVG}</span><div><b>{PHONE_DISPLAY}</b><span>Llamada directa</span></div></a>
 <a href="{wa_link('Hola, necesito un electricista.')}" target="_blank" rel="noopener"><span style="fill:var(--ok)">{WA_SVG}</span><div><b>WhatsApp</b><span>Envía fotos de la avería</span></div></a>
-<div><span style="color:var(--y)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg></span><div><b>Madrid y alrededores</b><span>Getafe, Leganés, Alcorcón, Móstoles, Fuenlabrada y más</span></div></div>
+<div><span style="color:var(--y)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg></span><div><b>Madrid y alrededores</b><span>Getafe, Leganés, Alcorcón, Móstoles, Fuenlabrada, Parla, Pinto, Valdemoro…</span></div></div>
 </div></div>
 {form(zone)}
 </div></section>"""
@@ -363,9 +438,9 @@ def build():
     open(os.path.join(OUT,"styles.css"),"w").write(CSS.strip())
     pages = ["/"]
     # Home
-    title = "Electricista en Madrid y alrededores | Urgencias y presupuesto gratis | YJV Electricidad"
-    desc = "Electricista profesional en Madrid, Getafe, Leganés, Alcorcón, Móstoles y Fuenlabrada. Averías urgentes, instalaciones, cuadros eléctricos, LED y cargadores de coche eléctrico. Presupuesto gratis."
-    h = head(title, desc, "/", [faq_ld(GENERAL_FAQ)])
+    title = "Electricista en Madrid y alrededores | YJV Electricidad"
+    desc = "Electricista en Madrid, Getafe, Leganés, Alcorcón, Móstoles y alrededores: averías urgentes, instalaciones, cuadros, LED y cargadores. Presupuesto gratis."
+    h = head(title, desc, "/", [faq_ld(GENERAL_FAQ), {"@context":"https://schema.org","@type":"WebSite","name":BRAND,"url":DOMAIN+"/","inLanguage":"es-ES","publisher":{"@id":DOMAIN+"/#negocio"}}])
     h += f"""<section class="hero"><div class="wrap grid"><div>
 <span class="badge"><span class="dot"></span>Atendemos urgencias en Madrid y alrededores</span>
 <h1>Tu <em>electricista</em> de confianza en Madrid</h1>
@@ -382,6 +457,7 @@ def build():
 {urg()}
 <section class="alt"><div class="wrap center"><h2>¿Por qué elegir <em>YJV Electricidad</em>?</h2><p class="sub">Lo que nos piden nuestros clientes: que llegue rápido, que lo deje bien y que el precio sea el que se dijo.</p><div style="text-align:left">{why()}</div></div></section>
 <section id="zonas"><div class="wrap center"><h2>Electricista <em>cerca de ti</em></h2><p class="sub">Trabajamos en Madrid capital y alrededores.</p><div class="zones">{zones()}</div></div></section>
+<section><div class="wrap center"><h2>Consejos de <em>electricista</em></h2><p class="sub">Guías claras para entender tu instalación y saber cuándo llamar a un profesional.</p><div class="cards" style="text-align:left">{guide_cards()}</div><p style="margin-top:22px"><a class="btn btn-o" href="/consejos/">Ver todos los consejos</a></p></div></section>
 <section id="preguntas" class="alt"><div class="wrap content" style="margin:0 auto"><h2 class="center" style="margin-top:0">Preguntas <em>frecuentes</em></h2><div style="margin-top:24px">{faq_html(GENERAL_FAQ)}</div></div></section>
 {contact_block()}
 """
@@ -390,7 +466,7 @@ def build():
     for s in SERVICES:
         path = f"/{s['slug']}/"; pages.append(path)
         faqs = s["faq"] + GENERAL_FAQ[:2]
-        h = head(s["title"]+" | "+BRAND, s["desc"], path, [faq_ld(faqs), crumbs_ld(s["short"], path),
+        h = head(fit_title(s["title"]), s["desc"], path, [faq_ld(faqs), crumbs_ld(s["short"], path),
              {"@context":"https://schema.org","@type":"Service","name":s["short"],"serviceType":s["short"],"provider":{"@id":DOMAIN+"/#negocio"},"areaServed":"Madrid"}])
         body = ""
         for t, kind, c in s["body"]:
@@ -403,17 +479,18 @@ def build():
 <section><div class="wrap content">{body}
 <h2>Preguntas frecuentes</h2>{faq_html(faqs)}
 <h2>Zonas donde trabajamos</h2><div class="zones" style="justify-content:flex-start">{zones()}</div>
+<h2>Te puede interesar</h2><p><a href="/consejos/{s['guide']}/">{html.escape(next(g["title"] for g in GUIDES if g["slug"]==s["guide"]))} →</a></p>
 <h2>Otros servicios</h2><div class="zones" style="justify-content:flex-start">{others}</div>
 </div></section>
 {urg()}
 {contact_block()}"""
         write(path, h + foot())
     # Cities
-    for slug, name, barrios in CITIES:
+    for slug, name, barrios, local in CITIES:
         path = f"/{slug}/"; pages.append(path)
         nm = name.replace(" capital","")
-        title = f"Electricista en {name} | Urgencias, averías e instalaciones | {BRAND}"
-        desc = f"Electricista en {name}: averías urgentes, instalaciones, cambio de cuadro eléctrico, LED y cargadores de coche eléctrico. Presupuesto gratis. Llama al {PHONE_DISPLAY}."
+        title = fit_title(f"Electricista en {name} | Averías e instalaciones")
+        desc = f"Electricista en {nm}: averías urgentes, instalaciones, cambio de cuadro, LED y cargadores de coche eléctrico. Presupuesto gratis. Tel. {PHONE_DISPLAY}."
         faqs = [(f"¿Tenéis electricista disponible en {nm}?", f"Sí, trabajamos de forma habitual en {nm}. Llámanos o escríbenos y te decimos cuándo podemos ir."),
                 (f"¿Cuánto cuesta un electricista en {nm}?", "Depende del trabajo. Te damos el precio antes de empezar; para trabajos sencillos, con unas fotos por WhatsApp suele bastar.")] + GENERAL_FAQ[2:4]
         h = head(title, desc, path, [faq_ld(faqs), crumbs_ld(f"Electricista en {name}", path)])
@@ -424,12 +501,48 @@ def build():
 <div class="cta"><a class="btn btn-y" href="tel:{PHONE_TEL}">{PH_SVG}Llamar {PHONE_DISPLAY}</a>
 <a class="btn btn-wa" href="{wa_link('Hola, necesito un electricista en '+nm+'.')}" target="_blank" rel="noopener">{WA_SVG}WhatsApp</a></div></div></section>
 <section class="alt"><div class="wrap"><h2>Servicios de electricista en <em>{nm}</em></h2><p class="sub">Todo lo que necesitas para la instalación eléctrica de tu casa, comunidad o negocio en {nm}.</p><div class="cards">{service_cards()}</div></div></section>
-<section><div class="wrap content"><h2>Barrios y zonas de {nm}</h2><p>Damos servicio en {barrios}.</p>
+<section><div class="wrap content"><h2>Trabajos de electricidad en {nm}</h2><p>{local}</p>
+<h2>Barrios y zonas de {nm}</h2><p>Damos servicio en {barrios}.</p>
 <h2>¿Por qué un electricista cercano?</h2><p>Al trabajar a diario en {nm} y alrededores podemos llegar antes, conocemos el tipo de instalaciones de la zona y, si surge cualquier cosa después, volvemos sin complicaciones.</p>
 <h2>Preguntas frecuentes</h2>{faq_html(faqs)}
+<h2>Consejos útiles</h2><ul>{"".join(f'<li><a href="/consejos/{g["slug"]}/">{html.escape(g["title"])}</a></li>' for g in GUIDES[:3])}</ul>
 <h2>Otras zonas</h2><div class="zones" style="justify-content:flex-start">{"".join(f'<a href="/{c[0]}/">{c[1]}</a>' for c in CITIES if c[0]!=slug)}</div></div></section>
 {urg()}
 {contact_block(name)}"""
+        write(path, h + foot())
+    # Guides
+    path = "/consejos/"; pages.append(path)
+    h = head(fit_title("Consejos de electricista en Madrid"), "Guías sencillas sobre tu instalación eléctrica: diferencial que salta, cuadro eléctrico, renovar la instalación, cargador de coche e iluminación LED.", path,
+             [crumbs_ld("Consejos", path)])
+    h += f"""<section class="hero" style="padding:54px 0 44px"><div class="wrap"><div class="crumbs"><a href="/">Inicio</a> › Consejos</div>
+<h1>Consejos de <em>electricista</em></h1><p class="lead">Guías claras para entender tu instalación, resolver lo sencillo con seguridad y saber cuándo llamar a un profesional.</p></div></section>
+<section class="alt"><div class="wrap"><div class="cards">{guide_cards()}</div></div></section>
+{urg()}
+{contact_block()}"""
+    write(path, h + foot())
+    for g in GUIDES:
+        path = f"/consejos/{g['slug']}/"; pages.append(path)
+        svc = next(x for x in SERVICES if x["slug"]==g["service"])
+        art = {"@context":"https://schema.org","@type":"Article","headline":g["title"],"description":g["desc"],"inLanguage":"es-ES",
+               "datePublished":GUIDE_DATE,"dateModified":GUIDE_DATE,"mainEntityOfPage":DOMAIN+path,"image":DOMAIN+"/og-image.jpg",
+               "author":{"@id":DOMAIN+"/#negocio"},"publisher":{"@id":DOMAIN+"/#negocio"}}
+        bc = {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+              {"@type":"ListItem","position":1,"name":"Inicio","item":DOMAIN+"/"},
+              {"@type":"ListItem","position":2,"name":"Consejos","item":DOMAIN+"/consejos/"},
+              {"@type":"ListItem","position":3,"name":g["title"],"item":DOMAIN+path}]}
+        h = head(fit_title(g["title"]), g["desc"], path, [art, bc]).replace('<meta property="og:type" content="website">','<meta property="og:type" content="article">')
+        body = ""
+        for t, kind, c in g["sections"]:
+            body += f"<h2>{t}</h2>" + (f"<{kind}>"+"".join(f"<li>{x}</li>" for x in c)+f"</{kind}>" if kind in ("ul","ol") else f"<p>{c}</p>")
+        others = "".join(f'<li><a href="/consejos/{o["slug"]}/">{html.escape(o["title"])}</a></li>' for o in GUIDES if o is not g)
+        h += f"""<section class="hero" style="padding:54px 0 44px"><div class="wrap content"><div class="crumbs"><a href="/">Inicio</a> › <a href="/consejos/">Consejos</a> › {html.escape(g['title'])}</div>
+<h1>{html.escape(g['title'])}</h1><p class="lead">{g['intro']}</p></div></section>
+<section><div class="wrap content">{body}
+<h2>¿Necesitas ayuda?</h2><p>Si prefieres que lo revise un profesional, mira nuestro servicio de <a href="/{svc['slug']}/">{svc['short'].lower()}</a> o llámanos al <a href="tel:{PHONE_TEL}">{PHONE_DISPLAY}</a>. Trabajamos en Madrid y alrededores.</p>
+<h2>Más consejos</h2><ul>{others}</ul>
+</div></section>
+{urg()}
+{contact_block()}"""
         write(path, h + foot())
     # Privacy
     path="/privacidad/"
@@ -458,7 +571,7 @@ def build():
     open(os.path.join(OUT,"manifest.webmanifest"),"w").write(json.dumps({"name":BRAND+" · Electricista Madrid","short_name":"YJV Electricidad","start_url":BASE+"/","display":"standalone","background_color":"#0b1220","theme_color":"#0b1220","lang":"es",
         "icons":[{"src":BASE+"/icon-192.png","sizes":"192x192","type":"image/png"},{"src":BASE+"/icon-512.png","sizes":"512x512","type":"image/png"},{"src":BASE+"/icon-512.png","sizes":"512x512","type":"image/png","purpose":"maskable"}]},ensure_ascii=False))
     open(os.path.join(OUT,".nojekyll"),"w").write("")
-    open(os.path.join(OUT,"sw.js"),"w").write(f"const B='{BASE}';" + """const C='yjv-elec-v1';
+    open(os.path.join(OUT,"sw.js"),"w").write(f"const B='{BASE}';" + """const C='yjv-elec-v2';
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(C).then(c=>c.addAll([B+'/',B+'/styles.css',B+'/favicon.svg'])))});
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C).map(x=>caches.delete(x))))));
 self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(fetch(e.request).then(r=>{const cp=r.clone();caches.open(C).then(c=>c.put(e.request,cp));return r}).catch(()=>caches.match(e.request)))});
