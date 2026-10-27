@@ -158,7 +158,10 @@ let TR=JSON.parse(localStorage.getItem('rite_tr')||'{"pts":0,"best":0}'),trq=nul
 function trainer(){const lvl=TR.pts<100?1:TR.pts<300?2:TR.pts<600?3:TR.pts<1000?4:5;
 app.innerHTML=`<div class="card center"><div class="big" style="color:#0f4c81">Nivel ${lvl}</div><div class="small">${TR.pts} puntos · racha actual ${trst} · mejor racha ${TR.best}</div><div class="bar"><i style="width:${Math.min(100,(TR.pts%300)/3)}%"></i></div></div>
 <div class="card"><b>Entrenar ejercicios</b><div class="small">Te pongo ejercicios de los tipos que más se preguntan, con números nuevos cada vez. 4 opciones; acierto +10 (+5 por racha). Si fallas, te enseño los pasos.</div>
-<button class="btn" onclick="trNext(3)">Solo imprescindibles ★★★</button><button class="btn2" onclick="trNext(2)">Imprescindibles + importantes</button><button class="btn2" onclick="trNext(1)">Todos los tipos</button>
+<p><b>Modo guiado</b> (aprende con las fórmulas): eliges la fórmula y completas cada paso.</p>
+<button class="btn" onclick="gNext(3)">Guiado · imprescindibles ★★★</button><button class="btn2" onclick="gNext(2)">Guiado · imprescindibles + importantes</button><button class="btn2" onclick="gNext(1)">Guiado · todos los tipos</button>
+<p style="margin-top:14px"><b>Modo rápido</b> (solo el resultado):</p>
+<button class="btn2" onclick="trNext(3)">Rápido · imprescindibles ★★★</button><button class="btn2" onclick="trNext(2)">Rápido · imprescindibles + importantes</button><button class="btn2" onclick="trNext(1)">Rápido · todos los tipos</button>
 <button class="btn2" onclick="if(confirm('¿Borrar tu progreso?')){TR={pts:0,best:0};localStorage.setItem('rite_tr',JSON.stringify(TR));trainer()}">Reiniciar progreso</button></div>`}
 function trNext(min){const g=rnd(GEN.filter(x=>x[1]>=min));const d=g[2]();d.name=g[0];d.min=min;d.dec=d.d!=null?d.d:(Math.abs(d.r)<10?2:Math.abs(d.r)<100?1:0);
  const fmt=d.fmt||(x=>f(x,d.dec)+(d.u?' '+d.u:''));let opts;
@@ -169,6 +172,27 @@ ${q.all.map((o,i)=>`<button class="opt ${a!==null?(o===q.r?'ok':o===a?'bad':''):
 ${a!==null?`<div class="ex">${a===q.r?'<b style="color:#16a34a">¡Correcto!</b>':'<b style="color:#dc2626">Incorrecto.</b>'} Solución: <b>${esc(q.fmt(q.r))}</b><ol>${q.s.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></div><button class="btn" onclick="trNext(${q.min})">Otro ejercicio ▶</button>`:''}
 <button class="btn2" onclick="trainer()">Volver</button></div>`;window.scrollTo(0,0)}
 function trPick(i){if(trq.ans!==null)return;const o=trq.all[i];trq.ans=o;if(o===trq.r){trst++;TR.pts+=10+(trst>1?5:0);TR.best=Math.max(TR.best,trst);if(voz)habla('Correcto')}else{trst=0;if(voz)habla('Incorrecto. La solución es '+trq.fmt(trq.r))}localStorage.setItem('rite_tr',JSON.stringify(TR));trShow()}
+// ===== Modo guiado: fórmula + pasos =====
+const FORM={'Conversiones':'Factor de conversión (1 kW = 860 kcal/h · 1 bar = 10 mca · K = ºC + 273,15 · ºC = (ºF−32)·5/9 · 1 l/s = 3,6 m³/h)','Calor sensible':'Q = m · ce · ΔT','Potencia útil de un calentador':'Q = m · ce · ΔT (caudal en kg/h) y kW = kcal/h / 860','Salto térmico':'ΔT = Q / (m · ce)','Pérdidas por cerramiento':'Q = U · A · ΔT','Pérdidas por ventilación':'Q = V · ρ · ce · ΔT','Rendimiento de caldera':'η = P útil / P nominal × 100','EER / COP':'EER o COP = potencia térmica / potencia eléctrica','Almacenamiento de pellets':'kg = Pn × horas/día × días / PCI','Vaso de expansión':'Vu = Vi · Ce · Cp','Conductos: sección':'S = Q / v','Conductos: velocidad':'v = Q / S','Conductos: caudal':'Q = S · v','SFP del ventilador':'Wesp = W / (m³/s) → tabla SFP','Sala de máquinas: orificios':'Área = 5 cm² × kW','Sala de máquinas: orificio superior (gas)':'Área = 10 · A (m²)','Sala de máquinas: conductos':'Vertical 7,5 cm²/kW · horizontal 10 cm²/kW','Sala de máquinas: ventilación forzada':'Q = 1,8 · PN + 10 · A','Superficie de baja resistencia (gas)':'Volumen / 100 (mínimo 1 m²; fragmentada +10 %)','Caudal mínimo de aire exterior (IDA)':'Caudal = personas × l/s por persona (IDA 1 = 20 · IDA 2 = 12,5 · IDA 3 = 8 · IDA 4 = 5)','Aislamiento de tuberías (tablas)':'Tabla del RITE: fila por diámetro, columna por temperatura','Recuperador de calor (tabla)':'Tabla 2.4.5.1: fila horas/año, columna caudal','Ley de Ohm y potencia':'R = V / I · P = V · I','Potencia de un motor':'P = V · I · cos φ','Vaciado / alimentación (DN)':'Tablas 3.4.2.2 y 3.4.2.3 del RITE según potencia'};
+const NUMRE=/-?\d{1,3}(?:\.\d{3})*(?:,\d+)?(?!.*-?\d)/;
+function lastNum(str){const m=str.match(/(-?\d{1,3}(?:\.\d{3})*(?:,\d+)?)(?!.*\d)/);if(!m)return null;return {txt:m[1],val:parseFloat(m[1].replace(/\./g,'').replace(',','.')),idx:m.index}}
+let gq=null;
+function gNext(min){const g=rnd(GEN.filter(x=>x[1]>=min));const d=g[2]();d.name=g[0];d.min=min;
+ const steps=d.s.map(s=>({s,n:lastNum(s)})).filter(x=>x.n&&!isNaN(x.n.val)&&Math.abs(x.n.val)>0);
+ const fo=FORM[d.name]||d.s[0];const fopts=shuffle(Object.entries(FORM).filter(([k])=>k!==d.name).map(x=>x[1])).slice(0,3);
+ gq={...d,fo,fall:shuffle([fo,...fopts]),steps,k:-1,ans:null,fails:0};gShow();if(voz)habla(d.e)}
+function numOpts(v){const o=[];const cand=[v*2,v/2,v*1.1,v*0.9,v*10,v/10,v+1,v-1,v*3.6,v/3.6].filter(x=>x>0&&Math.abs(x-v)>Math.abs(v)*0.02);for(const c of shuffle(cand)){if(o.length<3&&!o.some(y=>Math.abs(y-c)<Math.abs(v)*0.02))o.push(c)}return o}
+function gFmt(v,ref){const dec=(ref.includes(',')?ref.split(',')[1].length:0);return v.toLocaleString('es-ES',{minimumFractionDigits:dec,maximumFractionDigits:Math.max(dec,2)})}
+function gShow(){const q=gq;let body='';const done=q.k>=q.steps.length;
+ const pasos=q.steps.map((st,i)=>i<q.k?`<li style="color:#166534">${esc(st.s)}</li>`:i===q.k?`<li><b>${esc(st.s.slice(0,st.n.idx))}<span style="background:#fef9c3;padding:0 6px">¿?</span></b></li>`:'').join('');
+ if(q.k===-1){body=`<p><b>Paso 1 · ¿Qué fórmula usas?</b></p>${q.fall.map((o,i)=>`<button class="opt ${q.ans!==null?(o===q.fo?'ok':o===q.ans?'bad':''):''}" ${q.ans!==null?'disabled':''} onclick="gPick(${i})"><b>${'ABCD'[i]})</b>${esc(o)}</button>`).join('')}`}
+ else if(!done){const st=q.steps[q.k];if(!q.opts){q.opts=shuffle([st.n.val,...numOpts(st.n.val)])}body=`<p><b>Paso ${q.k+2} · completa el número</b></p><ol>${pasos}</ol>${q.opts.map((o,i)=>`<button class="opt ${q.ans!==null?(o===st.n.val?'ok':o===q.ans?'bad':''):''}" ${q.ans!==null?'disabled':''} onclick="gPick(${i})"><b>${'ABCD'[i]})</b>${gFmt(o,st.n.txt)}</button>`).join('')}`}
+ else body=`<div class="ex"><b style="color:#16a34a">¡Ejercicio resuelto!</b> Resultado: <b>${esc(f(q.r,q.d!=null?q.d:2))} ${esc(q.u||'')}</b><ol>${q.s.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>${q.fails?`Fallos en este ejercicio: ${q.fails}`:'Sin fallos: +20 puntos extra'}</div><button class="btn" onclick="gNext(${q.min})">Otro ejercicio ▶</button>`;
+ app.innerHTML=`<div class="card"><div class="meta"><span>Guiado · ${esc(q.name)}</span><span>${TR.pts} pts</span></div><div class="q">${esc(q.e)}</div><div class="f ej" style="background:#fef9c3;padding:6px 8px;border-radius:6px;font-size:.9rem">${q.k>=0?'<b>Fórmula:</b> '+esc(q.fo):'Primero elige la fórmula'}</div>${body}
+ ${q.ans!==null&&!done?`<div class="ex">${q.ok?'<b style="color:#16a34a">¡Bien!</b>':'<b style="color:#dc2626">No.</b> La correcta está en verde.'}</div><button class="btn" onclick="gAdv()">Siguiente paso ▶</button>`:''}
+ <button class="btn2" onclick="trainer()">Volver</button></div>`;window.scrollTo(0,0)}
+function gPick(i){const q=gq;if(q.ans!==null)return;let o,ok;if(q.k===-1){o=q.fall[i];ok=o===q.fo}else{o=q.opts[i];ok=o===q.steps[q.k].n.val}q.ans=o;q.ok=ok;if(ok){TR.pts+=5;if(voz)habla('Bien')}else{q.fails++;if(voz)habla('No')}localStorage.setItem('rite_tr',JSON.stringify(TR));gShow()}
+function gAdv(){const q=gq;q.k++;q.ans=null;q.opts=null;if(q.k>=q.steps.length){if(!q.fails)TR.pts+=20;localStorage.setItem('rite_tr',JSON.stringify(TR))}gShow()}
 
 home();
 </script></body></html>
