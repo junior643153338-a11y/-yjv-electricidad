@@ -23,3 +23,13 @@
   });});
   
 })();
+
+(function(){
+  var t=document.querySelector('.top');function sc(){t&&t.classList.toggle('scrolled',scrollY>10);}sc();addEventListener('scroll',sc,{passive:true});
+  var m=document.getElementById('menu'),b=document.querySelector('.burger');
+  if(m)m.addEventListener('click',function(e){if(e.target.closest('a')&&m.classList.contains('open')){m.classList.remove('open');b&&b.setAttribute('aria-expanded','false');}});
+  if(!('IntersectionObserver' in window)||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  var els=document.querySelectorAll('.sec .h2,.sec .sub,.why,.scard,.pcard,.svc,.split>*,.tile,.faq details,.tldr,.cbox,.qform');
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{rootMargin:'0px 0px -8% 0px'});
+  els.forEach(function(el,i){if(el.closest('.hero'))return;el.classList.add('rv');el.style.transitionDelay=(i%4)*70+'ms';io.observe(el);});
+})();
