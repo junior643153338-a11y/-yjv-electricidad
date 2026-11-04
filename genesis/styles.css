@@ -128,3 +128,15 @@ h1,h2,h3{line-height:1.2;margin:0 0 .5em}
 @media (max-width:560px){.wa-float span{display:none}}
 @keyframes pop{from{transform:scale(.6);opacity:0}}
 .foot .brand{display:flex}.foot .copy{margin:32px auto 0}
+
+/* seo pages */
+.crumbs{font-size:.88rem;opacity:.85;margin:0 0 10px}.crumbs a{color:#fff}
+.prose{max-width:820px}.prose h2{color:var(--g);font-size:1.45rem;margin-top:1.6em}
+.tldr{background:var(--g3);border-left:4px solid var(--wa);padding:16px 18px;border-radius:10px;font-size:1.05rem;margin-top:0}
+.steps{padding-left:1.2em}.steps li{margin:10px 0}
+.zones{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:12px 0}.prose .zones{justify-content:flex-start}
+.zones a{padding:8px 14px;border-radius:999px;border:1.5px solid #c8d4c5;color:var(--g);text-decoration:none;font-weight:600;background:#fff}
+.zones a:hover{background:var(--g);color:#fff;border-color:var(--g)}
+.faq details{border:1px solid #dfe7dc;border-radius:12px;padding:14px 18px;margin:10px 0;background:#fff}
+.faq summary{font-weight:700;color:var(--g);cursor:pointer}.faq details p{margin:10px 0 0;color:var(--ink)}
+.svc .btn-ghost-dark{margin-left:8px}@media (max-width:560px){.svc .btn-ghost-dark{margin:10px 0 0}}
