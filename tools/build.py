@@ -9,6 +9,7 @@ PHONE_DISPLAY = "643 153 338"
 PHONE_TEL = "+34643153338"
 WA = "34643153338"
 TODAY = date.today().isoformat()
+INDEXNOW_KEY = "c4f1a7e2b9d84e6fa3b05d7c1e9f2a68"
 
 CSS = r"""
 :root{--bg:#0b1220;--bg2:#111a2e;--card:#16213a;--y:#ffc400;--y2:#ffdb4d;--t:#e8edf7;--m:#a9b4c9;--ok:#25d366;--r:14px}
@@ -296,7 +297,10 @@ def head(title, desc, path, extra_ld=None):
           "telephone":PHONE_TEL,"image":DOMAIN+"/og-image.jpg","logo":DOMAIN+"/icon-512.png","priceRange":"€€",
           "areaServed":[{"@type":"City","name":c[1].replace(" capital","")} for c in CITIES],
           "address":{"@type":"PostalAddress","addressLocality":"Madrid","addressRegion":"Comunidad de Madrid","addressCountry":"ES"},
-          "makesOffer":[{"@type":"Offer","itemOffered":{"@type":"Service","name":s["short"]}} for s in SERVICES]}
+          "makesOffer":[{"@type":"Offer","itemOffered":{"@type":"Service","name":s["short"]}} for s in SERVICES],
+          "description":"Electricista en Madrid y alrededores: averías urgentes, instalaciones eléctricas, cuadros, enchufes, iluminación LED y puntos de recarga para coche eléctrico.",
+          "knowsAbout":[s["short"] for s in SERVICES]+["Reglamento Electrotécnico para Baja Tensión (REBT)"],
+          "contactPoint":{"@type":"ContactPoint","telephone":PHONE_TEL,"contactType":"customer service","availableLanguage":"es","areaServed":"ES"}}
     lds = [ld] + (extra_ld or [])
     ldtxt = "\n".join(f'<script type="application/ld+json">{json.dumps(x,ensure_ascii=False)}</script>' for x in lds)
     return f"""<!doctype html>
@@ -467,7 +471,7 @@ def build():
         path = f"/{s['slug']}/"; pages.append(path)
         faqs = s["faq"] + GENERAL_FAQ[:2]
         h = head(fit_title(s["title"]), s["desc"], path, [faq_ld(faqs), crumbs_ld(s["short"], path),
-             {"@context":"https://schema.org","@type":"Service","name":s["short"],"serviceType":s["short"],"provider":{"@id":DOMAIN+"/#negocio"},"areaServed":"Madrid"}])
+             {"@context":"https://schema.org","@type":"Service","name":s["short"],"serviceType":s["short"],"provider":{"@id":DOMAIN+"/#negocio"},"description":s["desc"],"url":DOMAIN+path,"areaServed":[{"@type":"City","name":c[1].replace(" capital","")} for c in CITIES]}])
         body = ""
         for t, kind, c in s["body"]:
             body += f"<h2>{t}</h2>" + ("<ul>"+"".join(f"<li>{x}</li>" for x in c)+"</ul>" if kind=="ul" else f"<p>{c}</p>")
@@ -493,7 +497,8 @@ def build():
         desc = f"Electricista en {nm}: averías urgentes, instalaciones, cambio de cuadro, LED y cargadores de coche eléctrico. Presupuesto gratis. Tel. {PHONE_DISPLAY}."
         faqs = [(f"¿Tenéis electricista disponible en {nm}?", f"Sí, trabajamos de forma habitual en {nm}. Llámanos o escríbenos y te decimos cuándo podemos ir."),
                 (f"¿Cuánto cuesta un electricista en {nm}?", "Depende del trabajo. Te damos el precio antes de empezar; para trabajos sencillos, con unas fotos por WhatsApp suele bastar.")] + GENERAL_FAQ[2:4]
-        h = head(title, desc, path, [faq_ld(faqs), crumbs_ld(f"Electricista en {name}", path)])
+        h = head(title, desc, path, [faq_ld(faqs), crumbs_ld(f"Electricista en {name}", path),
+             {"@context":"https://schema.org","@type":"Service","name":f"Electricista en {nm}","serviceType":"Electricista","provider":{"@id":DOMAIN+"/#negocio"},"url":DOMAIN+path,"areaServed":{"@type":"City","name":nm}}])
         h += f"""<section class="hero" style="padding:54px 0 44px"><div class="wrap"><div class="crumbs"><a href="/">Inicio</a> › Electricista en {name}</div>
 <span class="badge"><span class="dot"></span>Servicio en {nm}</span>
 <h1>Electricista en <em>{name}</em></h1>
@@ -563,7 +568,15 @@ def build():
     open(os.path.join(OUT,"404.html"),"w").write(rebase(h+foot()))
     pages.append("/privacidad/")
     # SEO files
-    open(os.path.join(OUT,"robots.txt"),"w").write(f"User-agent: *\nAllow: /\n\nSitemap: {DOMAIN}/sitemap.xml\n")
+    bots = ["Googlebot","Bingbot","GPTBot","OAI-SearchBot","ChatGPT-User","PerplexityBot","Perplexity-User","ClaudeBot","Claude-SearchBot","Claude-User","Google-Extended","Applebot","Applebot-Extended","DuckDuckBot"]
+    open(os.path.join(OUT,"robots.txt"),"w").write("".join(f"User-agent: {b}\nAllow: /\n\n" for b in bots) + f"User-agent: *\nAllow: /\n\nSitemap: {DOMAIN}/sitemap.xml\n")
+    llms = [f"# {BRAND}", "", "> Electricista en Madrid y alrededores (Getafe, Leganés, Alcorcón, Móstoles, Fuenlabrada, Parla, Pinto, Valdemoro). Averías urgentes, instalaciones eléctricas, cuadros, enchufes, iluminación LED y puntos de recarga para coche eléctrico. Presupuesto gratis.", "",
+            f"- Teléfono y WhatsApp: {PHONE_DISPLAY} ({PHONE_TEL}), https://wa.me/{WA}", "- Zona: Madrid y alrededores", "- Trabajos según el Reglamento Electrotécnico para Baja Tensión (REBT), con factura y garantía", "",
+            "## Servicios", ""] + [f"- [{s['short']}]({DOMAIN}/{s['slug']}/): {s['desc']}" for s in SERVICES] + ["", "## Zonas", ""] + \
+           [f"- [Electricista en {c[1]}]({DOMAIN}/{c[0]}/): barrios {c[2]}" for c in CITIES] + ["", "## Consejos", ""] + \
+           [f"- [{g['title']}]({DOMAIN}/consejos/{g['slug']}/): {g['desc']}" for g in GUIDES] + ["", "## Otras páginas", "", f"- [Inicio]({DOMAIN}/)", f"- [Privacidad]({DOMAIN}/privacidad/)", ""]
+    open(os.path.join(OUT,"llms.txt"),"w").write("\n".join(llms))
+    open(os.path.join(OUT,INDEXNOW_KEY+".txt"),"w").write(INDEXNOW_KEY)
     sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(
         f"  <url><loc>{DOMAIN}{p}</loc><lastmod>{TODAY}</lastmod><priority>{'1.0' if p=='/' else '0.8'}</priority></url>\n" for p in pages) + "</urlset>\n"
     open(os.path.join(OUT,"sitemap.xml"),"w").write(sm)
