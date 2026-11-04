@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Vibra · Demo</title>
+<meta name="description" content="Demo de Vibra: lo mejor de Facebook, Instagram y TikTok en una sola app.">
+<meta property="og:title" content="Vibra · Lo mejor de tus redes en una sola app">
+<meta property="og:description" content="Demo: muro y grupos, historias, videos deslizables, marketplace y chat.">
+<meta property="og:image" content="https://junior643153338-a11y.github.io/-yjv-electricidad/vibra/og.jpg">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#ffffff">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="app.css?v=1">
+</head>
+<body>
+<div id="app">
+  <header id="top">
+    <div class="logo">vibra</div>
+    <div class="top-actions">
+      <button class="ib" data-act="search" aria-label="Buscar"></button>
+      <button class="ib" data-act="notifs" aria-label="Notificaciones"><span class="dot" id="notifDot"></span></button>
+      <button class="ib" data-act="chats" aria-label="Mensajes"><span class="badge" id="chatBadge">3</span></button>
+    </div>
+  </header>
+  <main id="view"></main>
+  <nav id="nav">
+    <button data-tab="inicio" class="on"><i data-ic="home"></i><span>Inicio</span></button>
+    <button data-tab="videos"><i data-ic="play"></i><span>Videos</span></button>
+    <button data-tab="crear" class="create"><i data-ic="plus"></i></button>
+    <button data-tab="comunidad"><i data-ic="users"></i><span>Comunidad</span></button>
+    <button data-tab="perfil"><i data-ic="user"></i><span>Perfil</span></button>
+  </nav>
+</div>
+<div id="overlay"></div>
+<div id="sheetBg"></div>
+<div id="sheet"><div class="grab"></div><div id="sheetBody"></div></div>
+<div id="toast"></div>
+<script src="app.js?v=1"></script>
+</body>
+</html>
