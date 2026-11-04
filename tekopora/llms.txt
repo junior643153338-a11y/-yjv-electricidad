@@ -1,0 +1,17 @@
+# Tekopora Servicios
+
+> Intermediario de técnicos por WhatsApp en Gran Asunción (Paraguay): aire acondicionado y climatización, electricidad, plomería, reformas y jardinería. El cliente escribe por WhatsApp, Tekopora pasa el pedido a un técnico de la zona y el precio se acuerda con el técnico. Pedir es gratis.
+
+- WhatsApp: +595 987 642351, https://wa.me/595987642351
+- Zona: Gran Asunción (Asunción, San Lorenzo, Luque, Capiatá, Lambaré, Fernando de la Mora, Limpio, Ñemby, Mariano Roque Alonso, Villa Elisa, Itauguá, San Antonio)
+- Técnicos que quieran sumarse: sección "Sumate" de cada página
+
+## Páginas
+
+- [Inicio](https://junior643153338-a11y.github.io/-yjv-electricidad/tekopora/)
+- [Técnicos en Fernando de la Mora](https://junior643153338-a11y.github.io/-yjv-electricidad/tekopora/tecnicos-fernando-de-la-mora.html)
+- [Técnicos en Limpio](https://junior643153338-a11y.github.io/-yjv-electricidad/tekopora/tecnicos-limpio.html)
+- [Técnicos en Ñemby](https://junior643153338-a11y.github.io/-yjv-electricidad/tekopora/tecnicos-nemby.html)
+- [Técnicos en Mariano Roque Alonso](https://junior643153338-a11y.github.io/-yjv-electricidad/tekopora/tecnicos-mariano-roque-alonso.html)
+- [Técnicos en Villa Elisa](https://junior643153338-a11y.github.io/-yjv-electricidad/tekopora/tecnicos-villa-elisa.html)
+- [Privacidad](https://junior643153338-a11y.github.io/-yjv-electricidad/tekopora/privacidad.html)
