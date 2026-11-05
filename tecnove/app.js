@@ -52,7 +52,7 @@ const CAT={
 };
 const ALLDOC={};Object.entries(CAT).forEach(([g,l])=>l.forEach(d=>{d.g=g;ALLDOC[d.k]=d}));
 const docName=k=>ALLDOC[k]?.n||k;
-const PLAT=['Email','Ctaima','Dokify','Nalanda','e-coordina','Portal propio'];
+const PLAT=['e-gestiona','Email','Ctaima','Dokify','Nalanda','e-coordina','Portal propio'];
 const TIPOS={operador:'📡 Operador / emplazamientos',evento:'🎪 Eventos',hospital:'🏥 Sanidad',datacenter:'🖥️ Data center',emergencias:'🚨 Emergencias',industria:'🏭 Industria'};
 const EST={preparando:['IA preparando','ai'],faltan:['Faltan documentos','warn'],revisar:['Revisar documento','ai'],listo:['Listo para enviar','ai'],enviado:['Enviado al cliente','info'],concedido:['Acceso concedido','ok'],denegado:['Denegado','bad'],finalizado:['Finalizado','gray']};
 function addClientCourse(c){if(c.curso){const k='cur_'+c.id;ALLDOC[k]={k,g:'t',n:'Curso de acogida de '+c.nombre,cad:true,m:12,kw:new RegExp(c.nombre.split(' ')[0],'i')};return k}}
@@ -83,6 +83,7 @@ function seed(){
   {id:'c6',nombre:'Estadio Metropolitano · Conciertos',tipo:'evento',plataforma:'Nalanda',antel:72,contacto:'Producción',email:'produccion@estadio-demo.es',curso:false,
    reqE:['rc','ss','aeat','rnt','acc','er'],reqT:['dni','form','epi','altura','pemp'],reqV:['pc','itv','seg'],notas:'Montaje de cobertura temporal 4G/5G y WiFi en grada.'},
  ];
+ clientes.push({id:'ct',nombre:'Telefónica · emplazamientos',tipo:'operador',plataforma:'e-gestiona',antel:48,contacto:'Coordinación de accesos',email:'accesos@telefonica-demo.es',curso:false,reqE:['rc','ss','aeat','rnt','er'],reqT:['dni','form','apt','epi'],reqV:[],notas:'Flujo real: correo del jefe de proyecto → ficha del emplazamiento → solicitud CAE en e-gestiona → el cliente pide la documentación.'});
  clientes.forEach(addClientCourse);
  const docs=[];const add=(owner,k,cad)=>docs.push({id:uid('d'),owner,tipo:k,archivo:k+'_'+owner+'.pdf',caduca:ALLDOC[k].cad?cad:null,estado:'valido',por:'ia',conf:'alta',subido:addDays(-40)+'T09:00'});
  const R=(a,b)=>addDays(a+Math.floor(Math.random()*(b-a)));
@@ -103,9 +104,12 @@ function seed(){
   tr('j4','c4','Sala técnica 2',addDays(3),addDays(3),'programado',['t5'],[],'Integración de nodo y cableado de fibra',6),
   tr('j5','c6','Grada norte',addDays(-12),addDays(-10),'evento',['t1','t3'],['v1'],'Cobertura 5G concierto',24*15),
  ];
- return {v:1,cfg:{autoValidar:true,autoEnviarEmail:true,avisosCaducidad:true,diasAviso:30,avisoTrabajadores:true},empresa,trabajadores,vehiculos,clientes,docs,trabajos,mensajes:[],log:[],user:null};
+ const S0={v:2,emplazamientos:seedEmplaz(),correos:seedCorreos(),cfg:{autoValidar:true,autoEnviarEmail:true,avisosCaducidad:true,diasAviso:30,avisoTrabajadores:true},empresa,trabajadores,vehiculos,clientes,docs,trabajos,mensajes:[],log:[],user:null};
+ // ejemplo ya en marcha: esperando respuesta del cliente
+ const e3=S0.emplazamientos[2];S0.trabajos.push({id:'j6',codigo:'TR-2406',clienteId:'ct',sitio:'MAD0877 · '+e3.nombre,desde:addDays(10),hasta:addDays(10),tipo:'programado',trabajadores:['t5','t3'],vehiculos:[],descripcion:'Ampliación de la cobertura interior (DAS) en sótano -1',estado:'esperando',creado:new Date(Date.now()-26*3600e3).toISOString(),hist:[h('IA','Correo de Raúl Fernández leído'),h('Gestión','Solicitud CAE creada en e-gestiona: CAE-2026-01187')],flujo:{correo:'',de:'Raúl Fernández',cod:'MAD0877',riesgos:['elec'],horario:'22:00 – 6:00',caeReq:true,caeNum:'CAE-2026-01187',caeFecha:new Date(Date.now()-24*3600e3).toISOString()},emp:{...e3}});
+ return S0;
 }
-function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.v===1){s.clientes.forEach(addClientCourse);return s}}catch(e){}S=seed();runAI(true);return S}
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.v===2){s.clientes.forEach(addClientCourse);return s}}catch(e){}S=seed();runAI(true);return S}
 function save(){localStorage.setItem(KEY,JSON.stringify(S))}
 const tra=id=>S.trabajadores.find(t=>t.id===id);
 const veh=id=>S.vehiculos.find(v=>v.id===id);
@@ -131,7 +135,7 @@ function docSt(owner,k,hasta){
 }
 const OKST=['valido','por_caducar'],BAD=['falta','rechazado','caducado','caduca_antes'];
 function reqsFor(c){return{e:c.reqE,t:[...c.reqT,...(c.curso?['cur_'+c.id]:[])],v:c.reqV}}
-function check(j){const c=cli(j.clienteId);const r=reqsFor(c);const items=[];
+function check(j){const c=cli(j.clienteId);const r=j.req||reqsFor(c);const items=[];
  r.e.forEach(k=>items.push({owner:'e1',k}));j.trabajadores.forEach(t=>r.t.forEach(k=>items.push({owner:t,k})));j.vehiculos.forEach(v=>r.v.forEach(k=>items.push({owner:v,k})));
  const it=items.map(x=>({...x,...docSt(x.owner,x.k,j.hasta)}));
  return{items:it,bloq:it.filter(i=>BAD.includes(i.st)),pend:it.filter(i=>i.st==='pendiente'),ok:it.filter(i=>OKST.includes(i.st)).length,total:it.length}}
@@ -158,7 +162,7 @@ function runAI(silent){
    }return}
   if(k.pend.length){if(j.estado!=='revisar'){j.estado='revisar';j.hist.push(h('IA',k.pend.length+' documento(s) dudoso(s): necesita tu confirmación'));log(j.codigo+': la IA pide tu confirmación en '+k.pend.length+' documento(s)',3,true,j.id);acts++}return}
   if(j.estado!=='listo'){j.estado='listo';j.hist.push(h('IA','Paquete de '+k.total+' documentos preparado según los requisitos de '+c.nombre+'.'));log(j.codigo+': paquete de '+k.total+' documentos preparado para '+c.nombre,20,true,j.id);acts++}
-  if(c.plataforma==='Email'&&S.cfg.autoEnviarEmail){enviar(j,'IA');acts++}
+  if(c.plataforma==='Email'&&S.cfg.autoEnviarEmail&&!j.flujo){enviar(j,'IA');acts++}
  });
  if(S.cfg.avisosCaducidad){
   S.docs.forEach(d=>{if(d.estado==='valido'&&d.caduca&&d.caduca<addDays(S.cfg.diasAviso)&&!d.avisado&&lastDoc(d.owner,d.tipo)===d){
@@ -225,17 +229,17 @@ function detectReqs(text){const f={e:[],t:[],v:[]};for(const k in ALLDOC){const 
 
 /* ---------- router / layout ---------- */
 const NAV={
- gestor:[['#/panel','📊','Panel'],['#/trabajos','📋','Trabajos','att'],['#/emergencia','🚨','Emergencia'],['#/clientes','🏢','Clientes'],['#/equipo','👷','Equipo','dud']],
+ gestor:[['#/entrada','📥','Correos','corr'],['#/panel','📊','Panel'],['#/trabajos','📋','Trabajos','att'],['#/emergencia','🚨','Emergencia'],['#/clientes','🏢','Clientes'],['#/equipo','👷','Equipo','dud']],
  tecnico:[['#/t/inicio','🏠','Mis trabajos'],['#/t/docs','📁','Mis papeles','faltan'],['#/t/mensajes','✉️','Avisos','unread'],['#/t/carnet','🪪','Acreditación']],
 };
-function counts(){const u=S.user||{};return{att:S.trabajos.filter(j=>['listo','revisar'].includes(j.estado)).length,dud:S.docs.filter(d=>d.estado==='pendiente'&&lastDoc(d.owner,d.tipo)===d).length,unread:S.mensajes.filter(m=>m.to===u.tid&&!m.leido).length,faltan:u.tid?misFaltan(u.tid).length:0}}
+function counts(){const u=S.user||{};return{corr:S.correos.filter(m=>!m.hecho).length+S.trabajos.filter(j=>['emplaz','cae'].includes(j.estado)).length,att:S.trabajos.filter(j=>['listo','revisar'].includes(j.estado)).length,dud:S.docs.filter(d=>d.estado==='pendiente'&&lastDoc(d.owner,d.tipo)===d).length,unread:S.mensajes.filter(m=>m.to===u.tid&&!m.leido).length,faltan:u.tid?misFaltan(u.tid).length:0}}
 function misFaltan(tid){const m=new Map();S.trabajos.filter(j=>j.trabajadores.includes(tid)&&['faltan','preparando'].includes(j.estado)).forEach(j=>check(j).bloq.filter(i=>i.owner===tid).forEach(i=>m.set(i.k,{...i,j})));return[...m.values()]}
 function go(hh){location.hash=hh}
 function render(){
  const r=location.hash||'#/';
  if(!S.user){$('#app').innerHTML=loginView();return}
  const nav=NAV[S.user.role];if(r==='#/'||!r.startsWith('#/'))return go(nav[0][0]);
- const cn=counts();const on=hh=>r.startsWith(hh)||(hh==='#/trabajos'&&r.startsWith('#/j/'))||(hh==='#/clientes'&&r.startsWith('#/c/'))||(hh==='#/equipo'&&r.startsWith('#/o/'));
+ const cn=counts();const on=hh=>r.startsWith(hh)||(hh==='#/trabajos'&&r.startsWith('#/j/')&&!S.trabajos.find(j=>j.id===r.slice(4))?.flujo)||(hh==='#/entrada'&&r.startsWith('#/j/')&&S.trabajos.find(j=>j.id===r.slice(4))?.flujo)||(hh==='#/clientes'&&r.startsWith('#/c/'))||(hh==='#/equipo'&&r.startsWith('#/o/'));
  const navHtml=cls=>`<nav class="${cls}">${nav.map(([hh,i,t,c])=>`<a href="${hh}" class="${on(hh)?'on':''}"><span class="ic">${i}</span>${t}${c&&cn[c]?`<span class="cnt">${cn[c]}</span>`:''}</a>`).join('')}</nav>`;
  const who=S.user.role==='gestor'?'Gestión PRL':esc(tra(S.user.tid).nombre);
  let body='';try{body=view(r)}catch(e){console.error(e);body='<div class="card">Error: '+esc(e.message)+'</div>'}
@@ -244,11 +248,11 @@ function render(){
 }
 window.addEventListener('hashchange',render);
 function view(r){const p=r.slice(2).split('/').map(decodeURIComponent);
- switch(p[0]){case'panel':return vPanel();case'trabajos':return vTrabajos(p[1]);case'j':return vTrabajo(p[1]);case'nuevo':return vNuevo(p[1]);case'emergencia':return vEmergencia(p[1]);case'clientes':return vClientes();case'c':return vCliente(p[1]);case'equipo':return vEquipo(p[1]);case'o':return vOwner(p[1]);case'ajustes':return vAjustes();case'ia':return vIA();case'actividad':return vActividad();
+ switch(p[0]){case'entrada':return vEntrada();case'panel':return vPanel();case'trabajos':return vTrabajos(p[1]);case'j':return vTrabajo(p[1]);case'nuevo':return vNuevo(p[1]);case'emergencia':return vEmergencia(p[1]);case'clientes':return vClientes();case'c':return vCliente(p[1]);case'equipo':return vEquipo(p[1]);case'o':return vOwner(p[1]);case'ajustes':return vAjustes();case'ia':return vIA();case'actividad':return vActividad();
   case't':return({inicio:vTInicio,docs:vTDocs,mensajes:vTMensajes,carnet:vTCarnet,j:()=>vTTrabajo(p[2])}[p[1]]||vTInicio)()}
  return'<div class="card">Página no encontrada</div>'}
 function loginView(){return`<div class="login" style="background:linear-gradient(160deg,#0b1a42,#0f70be 60%,#7c3aed)"><div class="box"><div class="logo" style="color:var(--p);font-size:24px"><span class="sh" style="background:var(--p);color:#fff">📡</span>Tecnove Accesos</div>
- <p class="mut" style="margin:8px 0 4px">Cada cliente pide su documentación para dejar entrar a los técnicos. La IA sabe qué pide cada uno, prepara el paquete, avisa a cada técnico de lo que le falta y en una emergencia te dice quién puede ir ya.</p>
+ <p class="mut" style="margin:8px 0 4px">Llega el correo del jefe de proyecto: la IA saca emplazamiento, trabajadores, riesgos y fechas, te prepara la solicitud CAE de e-gestiona y, cuando el cliente pide los papeles, los prepara. Cada cliente pide su documentación para dejar entrar a los técnicos. La IA sabe qué pide cada uno, prepara el paquete, avisa a cada técnico de lo que le falta y en una emergencia te dice quién puede ir ya.</p>
  <p style="font-weight:700;margin:16px 0 0">Entrar como:</p>
  <button class="role" onclick="A.login('gestor')"><span class="ri">👩‍💼</span><span><b>Gestión PRL / documentación</b><br><span class="mut">Clientes, requisitos, paquetes y emergencias</span></span></button>
  <button class="role" onclick="A.loginTec()"><span class="ri">👷</span><span><b>Técnico de campo</b><br><span class="mut">Ve qué le falta y sube sus papeles con una foto</span></span></button>
@@ -271,6 +275,7 @@ function vPanel(){
  <a class="kpi ai" href="#/actividad"><b>${tl.length}</b><span>tareas hechas por la IA · ~${Math.round(min/6)/10} h ahorradas</span></a>
  <a class="kpi" href="#/trabajos/att"><b style="color:var(--ai)">${att.length}</b><span>listos para enviar o revisar</span></a>
  <a class="kpi" href="#/trabajos/fal"><b style="color:var(--warn)">${fal.length}</b><span>esperando papeles de técnicos</span></a>
+ <a class="kpi" href="#/entrada"><b style="color:var(--p2)">${S.correos.filter(m=>!m.hecho).length}</b><span>correos de jefes de proyecto sin procesar</span></a>
  <a class="kpi emerg" href="#/emergencia"><b>🚨</b><span>Emergencia: ¿quién puede ir ya?</span></a></div>
  <div class="grid g2"><div>
  <div class="card"><div class="row"><h2 class="sp">🟣 Te toca a ti</h2><a class="btn sm" href="#/nuevo">+ Trabajo</a></div>${att.length?`<div class="list">${att.map(j=>jRow(j)).join('')}</div>`:'<div class="empty">Nada pendiente ✅</div>'}</div>
@@ -298,16 +303,16 @@ function vTrabajo(id){
  else if(j.estado==='revisar')ai=`Todo está correcto salvo <b>${k.pend.length}</b> documento(s) que no he podido leer con seguridad. Confírmalos abajo y preparo el paquete.`;
  else if(j.estado==='listo')ai=`Paquete preparado: <b>${k.total} documentos</b>, todos vigentes hasta el final del trabajo. ${c.plataforma==='Email'?'Puedo enviarlo por email ahora.':'Este cliente usa <b>'+c.plataforma+'</b>: descarga el paquete y súbelo allí (en la versión real se puede conectar o automatizar).'}`;
  else if(j.estado==='enviado')ai=`Enviado el ${fdt(j.enviado)}. Cuando el cliente confirme, márcalo como concedido.`;
- else if(j.estado==='concedido')ai=`Acceso concedido. Los técnicos ya tienen el aviso.`;
- return`<a href="#/trabajos" class="mut">‹ Trabajos</a><div class="row" style="margin:6px 0 12px"><h1 class="sp" style="margin:0">${j.tipo==='emergencia'?'🚨 ':''}${j.codigo}</h1>${pill(j.estado)}</div>
- ${ai?`<div class="aibox"><h3>🤖 La IA dice</h3><div>${ai}</div></div>`:''}
+ else if(j.estado==='concedido')ai=`Acceso concedido. Los técnicos ya tienen el aviso${j.emp?' con la dirección, el mapa y las condiciones del sitio':''}.`;
+ return`<a href="${j.flujo?'#/entrada':'#/trabajos'}" class="mut">‹ ${j.flujo?'Correos':'Trabajos'}</a><div class="row" style="margin:6px 0 12px"><h1 class="sp" style="margin:0">${j.tipo==='emergencia'?'🚨 ':''}${j.codigo}</h1>${pill(j.estado)}</div>
+ ${j.flujo?flujoBox(j):''}${ai?`<div class="aibox"><h3>🤖 La IA dice</h3><div>${ai}</div></div>`:''}
  <div class="row" style="margin-bottom:14px">${j.estado==='listo'?`<button class="btn ok" onclick="A.enviar('${j.id}')">${c.plataforma==='Email'?'✉ Enviar al cliente':'✔ Marcar como subido a '+c.plataforma}</button><button class="btn sec" onclick="A.paquete('${j.id}')">📦 Ver paquete / email</button>`:''}
  ${j.estado==='enviado'?`<button class="btn ok" onclick="A.estado('${j.id}','concedido')">✔ El cliente ha dado acceso</button><button class="btn bad" onclick="A.estado('${j.id}','denegado')">✖ Lo ha denegado</button><button class="btn sec" onclick="A.paquete('${j.id}')">📦 Ver paquete</button>`:''}
  ${j.estado==='faltan'?`<button class="btn sec" onclick="A.recordar('${j.id}')">🔔 Recordar a los técnicos</button>`:''}</div>
  <div class="card"><div class="grid g2"><div><span class="mut">Cliente</span><br><a href="#/c/${c.id}"><b>${esc(c.nombre)}</b></a><br><span class="mut">${TIPOS[c.tipo]} · ${c.plataforma} · antelación ${c.antel?c.antel+' h':'inmediata'}</span></div><div><span class="mut">Dónde y cuándo</span><br><b>${esc(j.sitio)}</b><br><span class="mut">${fd(j.desde)}${j.hasta!==j.desde?' → '+fd(j.hasta):''}</span> ${plazoTxt(j)}</div></div>
  <p style="margin:12px 0 0"><span class="mut">Trabajo:</span> ${esc(j.descripcion)}</p>
- <div style="margin-top:12px"><div class="mut">Documentación ${k.ok}/${k.total}</div><div style="height:8px;background:#eef1f4;border-radius:9px;overflow:hidden;margin-top:4px"><div style="height:100%;width:${Math.round(k.ok/k.total*100)}%;background:${k.ok===k.total?'var(--ok)':'var(--p2)'}"></div></div></div></div>
- ${checkTable(j,true)}
+ ${j.flujo&&!j.req?'':`<div style="margin-top:12px"><div class="mut">Documentación ${k.ok}/${k.total}</div><div style="height:8px;background:#eef1f4;border-radius:9px;overflow:hidden;margin-top:4px"><div style="height:100%;width:${Math.round(k.ok/k.total*100)}%;background:${k.ok===k.total?'var(--ok)':'var(--p2)'}"></div></div></div>`}</div>
+ ${j.flujo&&!j.req?'':checkTable(j,true)}
  <div class="card"><h3>Historial</h3><div class="log">${j.hist.slice().reverse().map(x=>`<div class="e"><span class="when">${fdt(x.fecha)}</span><span>${x.quien==='IA'?'🤖':'👤'} ${esc(x.texto)}</span></div>`).join('')}</div></div>`}
 function alternativas(j){const c=cli(j.clienteId);const k=check(j);const malos=[...new Set(k.bloq.filter(i=>i.owner.startsWith('t')).map(i=>i.owner))];if(!malos.length)return'';
  const alt=S.trabajadores.filter(t=>!j.trabajadores.includes(t.id)&&aptitud(t.id,c,j.hasta).bad.length===0);
@@ -406,7 +411,7 @@ const A={
   else{const m=prompt('Motivo del rechazo (se avisa al técnico)','No se lee bien, súbelo de nuevo');if(m===null)return;d.estado='rechazado';d.motivo=m;d.por='gestor';if(d.owner.startsWith('t'))notify(d.owner,'Documento rechazado',docName(d.tipo)+': '+m);log('Rechazado: '+docName(d.tipo)+' de '+ownerName(d.owner),0,false)}
   runAI();render()},
  enviar(id){const j=S.trabajos.find(x=>x.id===id);enviar(j,'Gestión');save();toast('✔ '+(cli(j.clienteId).plataforma==='Email'?'Enviado a '+cli(j.clienteId).email:'Marcado como subido'));render()},
- estado(id,st){const j=S.trabajos.find(x=>x.id===id);j.estado=st;j.hist.push(h('Gestión',st==='concedido'?'El cliente ha concedido el acceso':'El cliente ha denegado el acceso'));j.trabajadores.forEach(t=>notify(t,(st==='concedido'?'✅ Acceso concedido: ':'❌ Acceso denegado: ')+cli(j.clienteId).nombre,j.codigo+' · '+j.sitio+' · '+fds(j.desde)+(st==='concedido'?'\nLleva tu DNI.':''),j.id));log(j.codigo+': '+(st==='concedido'?'acceso concedido':'denegado'),0,false,j.id);save();render()},
+ estado(id,st){const j=S.trabajos.find(x=>x.id===id);j.estado=st;j.hist.push(h('Gestión',st==='concedido'?'El cliente ha concedido el acceso':'El cliente ha denegado el acceso'));if(st==='concedido'&&j.emp)avisoAcceso(j);else j.trabajadores.forEach(t=>notify(t,(st==='concedido'?'✅ Acceso concedido: ':'❌ Acceso denegado: ')+cli(j.clienteId).nombre,j.codigo+' · '+j.sitio+' · '+fds(j.desde)+(st==='concedido'?'\nLleva tu DNI.':''),j.id));log(j.codigo+': '+(st==='concedido'?'acceso concedido':'denegado'),0,false,j.id);save();render()},
  recordar(id){const j=S.trabajos.find(x=>x.id===id);const k=check(j);const ts=[...new Set(k.bloq.map(i=>i.owner).filter(o=>o.startsWith('t')))];ts.forEach(t=>notify(t,'🔔 Recordatorio: '+cli(j.clienteId).nombre,'Aún te falta:\n'+k.bloq.filter(i=>i.owner===t).map(i=>'• '+docName(i.k)).join('\n'),j.id));log('Recordatorio a '+ts.length+' técnico(s) para '+j.codigo,2,true,j.id);save();toast('🔔 Recordatorio enviado a '+ts.length+' técnico(s)',true)},
  sustituir(id,from,to){const j=S.trabajos.find(x=>x.id===id);j.trabajadores=j.trabajadores.map(t=>t===from?to:t);j.hist.push(h('Gestión','Cambio de técnico: '+tra(from).nombre+' → '+tra(to).nombre+' (propuesto por la IA)'));notify(to,'Nuevo trabajo: '+cli(j.clienteId).nombre,j.codigo+' · '+j.sitio+' · '+fds(j.desde),j.id);log('Cambio de técnico en '+j.codigo+' sugerido por la IA',5,true,j.id);runAI();render()},
  paquete(id){const j=S.trabajos.find(x=>x.id===id);const k=check(j);const c=cli(j.clienteId);
@@ -443,6 +448,97 @@ const A={
   $('#ures').innerHTML=`<div class="aibox" style="margin-top:12px"><h3>🤖 Resultado</h3>${a.steps.map(([i,t])=>`<div class="aistep"><i>${i}</i><span>${esc(t)}</span></div>`).join('')}<div style="margin-top:8px">${a.estado==='valido'?'<span class="pill ok">VALIDADO</span>':a.estado==='rechazado'?'<span class="pill bad">RECHAZADO</span>':'<span class="pill ai">LO REVISA PRL</span>'}</div>${nuevos.length?`<p><b>🎉 Ya está completa la documentación de ${nuevos.map(j=>j.codigo+' ('+esc(cli(j.clienteId).nombre)+')').join(', ')}${nuevos.some(j=>j.estado==='enviado')?' y se ha enviado al cliente':''}.</b></p>`:''}</div><button class="btn block" style="margin-top:10px" onclick="closeModal();render()">Hecho</button>`},
 };
 function recheck(){S.trabajos.forEach(j=>{if(['listo','faltan','revisar'].includes(j.estado)){j.estado='preparando';j.reqKey=null}});runAI(true)}
+
+/* ---------- flujo real: email del jefe de proyecto → emplazamiento → CAE e-gestiona → respuesta cliente → paquete ---------- */
+const RIESGOS=[
+ {k:'altura',n:'Trabajos en altura',re:/altura|torre|azotea|m[aá]stil|cubierta/i,docs:['altura','rescate']},
+ {k:'elec',n:'Riesgo eléctrico',re:/el[eé]ctric|tensi[oó]n|cuadro|energ[ií]a|rectificador/i,docs:['rd614']},
+ {k:'rf',n:'Radiofrecuencia',re:/radiofrecuencia|\bRF\b|emisi[oó]n|campos electromagn/i,docs:['rf']},
+ {k:'conf',n:'Espacios confinados',re:/confinad|arqueta|galer[ií]a/i,docs:['conf']},
+ {k:'pemp',n:'Plataforma elevadora',re:/plataforma elevadora|PEMP|cesta|gr[uú]a/i,docs:['pemp']},
+];
+const FEST={correo:'Leer email',emplaz:'Consultar emplazamiento',cae:'Crear CAE en e-gestiona',esperando:'Esperando al cliente'};
+Object.entries(FEST).forEach(([k,t])=>EST[k]=[t,k==='esperando'?'info':'warn']);
+const PASOS=[['correo','📧','Email del jefe de proyecto'],['emplaz','📍','Emplazamiento (plataforma Telefónica)'],['cae','📝','Solicitud CAE en e-gestiona'],['esperando','📨','Respuesta del cliente'],['docs','📦','Documentación a enviar'],['fin','✅','Acceso']];
+function pasoIdx(j){const s=j.estado;if(s==='correo')return 0;if(s==='emplaz')return 1;if(s==='cae')return 2;if(s==='esperando')return 3;if(['preparando','faltan','revisar','listo'].includes(s))return 4;if(s==='enviado')return 5;return 6}
+function seedEmplaz(){return[
+ {cod:'MAD0231',nombre:'Alcobendas Norte',tipo:'Azotea de edificio de oficinas',dir:'Av. de Bruselas 20, 28108 Alcobendas (Madrid)',lat:40.5372,lon:-3.6358,prop:'Comunidad de propietarios Edificio Bruselas',acceso:'Llave en conserjería. Avisar al presidente de la comunidad con 48 h. Acceso a cubierta por escalera de gato con línea de vida.',horario:'L-V 8:00-18:00',cae:true,riesgos:['altura','rf']},
+ {cod:'MAD1042',nombre:'San Sebastián de los Reyes Polígono',tipo:'Torre de celosía 30 m',dir:'C/ Sierra de Guadarrama 14, 28703 San Sebastián de los Reyes',lat:40.5531,lon:-3.6105,prop:'Torre compartida (gestor de infraestructuras)',acceso:'Candado con código: pedirlo al centro de control antes de llegar. Vallado perimetral.',horario:'24 h',cae:false,riesgos:['altura','rf','elec']},
+ {cod:'MAD0877',nombre:'Hospital Universitario Norte',tipo:'Cobertura interior (DAS) en sótano -1',dir:'Paseo de la Salud 1, 28034 Madrid',lat:40.4805,lon:-3.6890,prop:'Hospital Universitario Norte',acceso:'Presentarse en seguridad (puerta 3) con DNI. Acompañados por mantenimiento del hospital.',horario:'Noches 22:00-6:00',cae:true,riesgos:['elec']},
+ {cod:'MAD2210',nombre:'Centro Comercial La Moraleja',tipo:'Azotea de centro comercial',dir:'Av. de Europa 13, 28108 Alcobendas',lat:40.5293,lon:-3.6467,prop:'Gerencia del centro comercial',acceso:'Muelle de carga, control de seguridad. Permiso de trabajo del centro.',horario:'L-S 7:00-10:00',cae:true,riesgos:['altura','rf']},
+ {cod:'TOL0315',nombre:'Polán Rural',tipo:'Torre tubular en finca',dir:'Camino del Cerro s/n, 45161 Polán (Toledo)',lat:39.7915,lon:-4.1720,prop:'Finca privada (arrendamiento)',acceso:'Camino de tierra 2 km, recomendable 4x4. Llave en caja de seguridad.',horario:'Libre',cae:false,riesgos:['altura','elec']},
+]}
+const emp=cod=>S.emplazamientos.find(e=>e.cod===String(cod||'').toUpperCase().replace(/[\s-]/g,''));
+const dmy=d=>d.split('-').reverse().join('/');
+function seedCorreos(){const a=addDays(6),b=addDays(7),c=addDays(3);return[
+ {id:'m1',de:'Raúl Fernández · Jefe de proyecto',fecha:new Date(Date.now()-40*60e3).toISOString(),asunto:'Acceso MAD0231 - cambio de antenas y radioenlace',texto:`Hola,\n\nNecesito acceso al emplazamiento MAD0231 para el cambio de antenas (swap) y la revisión del radioenlace.\n\nFechas: del ${dmy(a)} al ${dmy(b)}, de 8:00 a 18:00.\nTrabajadores: Javier Morales y Sergio Blanco.\nVehículo: furgoneta F-03.\nRiesgos: trabajos en altura en la azotea y exposición a radiofrecuencia (se pedirá corte de emisión).\n\nGracias,\nRaúl Fernández\nJefe de proyecto · Tecnove Telecom`},
+ {id:'m2',de:'Marta Gil · Jefa de proyecto',fecha:new Date(Date.now()-15*60e3).toISOString(),asunto:'Acceso MAD1042 - revisión de energía',texto:`Buenos días,\n\nPor favor gestiona el acceso al emplazamiento MAD1042 el ${dmy(c)} de 9:00 a 14:00.\nTrabajo: revisión del rectificador y del cuadro eléctrico de la torre.\nVan Alberto Ramos y Laura Castillo.\nRiesgo eléctrico y trabajos en altura.\n\nUn saludo,\nMarta Gil`},
+]}
+function parseCorreo(text){
+ const out={};const n=norm(text);
+ const m=text.match(/\b([A-Z]{3}\s?-?\d{4})\b/)||text.match(/emplazamiento[:\s]+([A-Z0-9-]{4,12})/i);out.cod=m?m[1].toUpperCase().replace(/[\s-]/g,''):'';
+ let ds=findDates(text).map(x=>x.d);if(!ds.length){let r=/(\d{1,2})\/(\d{1,2})(?!\/\d)/g,x;while(x=r.exec(text))ds.push(`${TODAY.slice(0,4)}-${x[2].padStart(2,'0')}-${x[1].padStart(2,'0')}`)}
+ ds.sort();out.desde=ds[0]||addDays(5);out.hasta=ds[ds.length-1]||out.desde;
+ const hm=text.match(/(\d{1,2}[:.]\d{2})\s*(?:a|-|hasta)\s*(\d{1,2}[:.]\d{2})/i);out.horario=hm?hm[1]+' – '+hm[2]:'';
+ out.trabajadores=S.trabajadores.filter(t=>{const p=norm(t.nombre).split(' ');return n.includes(t.dni.toLowerCase())||(new RegExp('\\b'+p[0]+'\\b').test(n)&&p.slice(1).some(w=>w.length>3&&new RegExp('\\b'+w+'\\b').test(n)))}).map(t=>t.id);
+ out.vehiculos=S.vehiculos.filter(v=>{const c=(v.nombre.match(/[A-Z]{1,2}-\d{2}/)||[])[0];return(c&&new RegExp(c.replace('-','[- ]?'),'i').test(text))||text.includes(v.mat)}).map(v=>v.id);
+ out.riesgos=RIESGOS.filter(r=>r.re.test(text)).map(r=>r.k);
+ const s=text.match(/asunto:[^\n]*?-\s*([^\n]+)/i)||text.match(/trabajos?(?: a realizar)?:\s*([^\n]+)/i)||text.match(/para (?:el |la |los |las )?([^.\n]{8,90})/i);out.desc=s?s[1].trim().replace(/\.$/,''):'';
+ const f=text.match(/(?:saludos|gracias|un saludo|atentamente)[,.!]*\s*\n+\s*([^\n]+)/i);out.de=f?f[1].trim():'';
+ return out}
+function parseFicha(text,cod){const g=re=>{const m=text.match(re);return m?m[1].trim():''};const c=text.match(/(-?\d{1,2}[.,]\d{3,})\s*[,; ]\s*(-?\d{1,3}[.,]\d{3,})/);
+ return{cod,nombre:g(/nombre[:\s]+([^\n]+)/i)||cod,tipo:g(/tipo[:\s]+([^\n]+)/i),dir:g(/direcci[oó]n[:\s]+([^\n]+)/i),lat:c?+c[1].replace(',','.'):null,lon:c?+c[2].replace(',','.'):null,prop:g(/(?:propietario|propiedad|titular)[:\s]+([^\n]+)/i),acceso:g(/(?:acceso|condiciones)[^:\n]*[:\s]+([^\n]+)/i)||text.slice(0,200),horario:g(/horario[:\s]+([^\n]+)/i),cae:/CAE|e-?gestiona|documentaci[oó]n/i.test(text)&&!/sin CAE|no (requiere|necesita|pide) (CAE|documentaci)/i.test(text),riesgos:RIESGOS.filter(r=>r.re.test(text)).map(r=>r.k),manual:true}}
+function fichaEmp(e){if(!e)return'';const maps=e.lat!=null?`https://www.google.com/maps?q=${e.lat},${e.lon}`:'https://www.google.com/maps/search/'+encodeURIComponent(e.dir);
+ return`<div class="card"><div class="row"><h3 class="sp" style="margin:0">📍 ${esc(e.cod)} · ${esc(e.nombre)}</h3><span class="pill ${e.cae?'warn':'ok'}">${e.cae?'Pide CAE':'Sin CAE'}</span></div>
+ <p style="margin:8px 0 4px">${esc(e.dir)}</p>${e.lat!=null?`<p class="mut" style="margin:0">Coordenadas: ${e.lat}, ${e.lon}</p>`:''}<a class="btn sm sec" style="margin:8px 0" href="${maps}" target="_blank" rel="noopener">🗺️ Abrir en el mapa</a>
+ <div class="grid g2"><div><span class="mut">Tipo</span><br>${esc(e.tipo||'—')}</div><div><span class="mut">Propiedad</span><br>${esc(e.prop||'—')}</div><div><span class="mut">Horario de acceso</span><br>${esc(e.horario||'—')}</div><div><span class="mut">Riesgos del sitio</span><br>${(e.riesgos||[]).map(k=>RIESGOS.find(r=>r.k===k).n).join(', ')||'—'}</div></div>
+ <p style="margin:10px 0 0"><span class="mut">Condiciones de acceso:</span> ${esc(e.acceso||'—')}</p>${e.manual?'<p class="mut" style="font-size:12px">🤖 Leído del texto pegado de la plataforma.</p>':'<p class="mut" style="font-size:12px">Datos de ejemplo (en la real: los de la plataforma de Telefónica).</p>'}</div>`}
+function riesgosJ(j){return[...new Set([...(j.flujo.riesgos||[]),...(j.emp?.riesgos||[])])]}
+function docsProbables(j){return[...new Set(['dni','form','apt','epi',...riesgosJ(j).flatMap(k=>RIESGOS.find(r=>r.k===k).docs)])]}
+function preCheck(j){const ks=docsProbables(j);return j.trabajadores.map(t=>({t,bad:ks.map(k=>({k,...docSt(t,k,j.hasta)})).filter(i=>!OKST.includes(i.st))})).filter(x=>x.bad.length)}
+function caeCampos(j){const e=j.emp||{};return[
+ ['Empresa contratista',S.empresa.nombre+' · CIF '+S.empresa.cif],['Código de emplazamiento',e.cod||j.flujo.cod],['Dirección',e.dir||''],['Fechas',fd(j.desde)+(j.hasta!==j.desde?' → '+fd(j.hasta):'')+(j.flujo.horario?' · '+j.flujo.horario:'')],
+ ['Trabajos a realizar',j.descripcion],['Riesgos',riesgosJ(j).map(k=>RIESGOS.find(r=>r.k===k).n).join(', ')||'—'],
+ ['Trabajadores',j.trabajadores.map(t=>tra(t).nombre+' (DNI '+tra(t).dni+')').join('; ')],['Vehículos',j.vehiculos.map(v=>veh(v).nombre+' '+veh(v).mat).join('; ')||'—'],
+ ['Responsable / jefe de proyecto',j.flujo.de||'—']]}
+function ejemploRespuesta(j){const ks=docsProbables(j);return`Buenos días,\n\nPara autorizar el acceso de Tecnove Telecom al emplazamiento ${j.emp?.cod||''} necesitamos la siguiente documentación:\n- Seguro de responsabilidad civil y último recibo\n- Certificado de estar al corriente con la Seguridad Social\n- Certificado de Hacienda\n- RNT / TC2 del último mes\n- Evaluación de riesgos del trabajo\nDe cada trabajador: DNI, formación PRL del puesto, certificado de aptitud médica y entrega de EPIs${ks.includes('altura')?', formación de trabajos en altura y rescate':''}${ks.includes('rd614')?', formación en riesgo eléctrico RD 614/2001':''}${ks.includes('rf')?', formación en radiofrecuencia':''}.${j.vehiculos.length?'\nDel vehículo: ITV y seguro.':''}\n\nEnviar con al menos 48 horas de antelación.\nUn saludo,\nCoordinación de accesos`}
+function flujoBox(j){const pi=pasoIdx(j);const f=j.flujo;
+ const steps=`<div class="steps">${PASOS.map(([k,i,t],x)=>`<div class="st ${x<pi?'done':x===pi?'now':''}"><span>${x<pi?'✔':i}</span>${t}</div>`).join('')}</div>`;
+ let body='';const pc=['cae','esperando'].includes(j.estado)?preCheck(j):[];
+ const pcHtml=pc.length?`<div class="aibox" style="margin-top:10px"><h3>🤖 Adelanto mientras contesta el cliente</h3><div>Por los riesgos (${riesgosJ(j).map(k=>RIESGOS.find(r=>r.k===k).n.toLowerCase()).join(', ')}) seguramente pedirán:<br>${pc.map(x=>`<b>${esc(tra(x.t).nombre)}</b>: le falta ${x.bad.map(b=>esc(docName(b.k))+' ('+b.txt.toLowerCase()+')').join(', ')}`).join('<br>')}</div>${f.preavisado?'<p class="mut">✔ Ya avisados</p>':`<button class="btn sm ai" style="margin-top:8px" onclick="A.preaviso('${j.id}')">Avisarles ya</button>`}</div>`:'';
+ if(j.estado==='emplaz')body=`<p>🤖 No tengo el emplazamiento <b>${esc(f.cod||'(sin código)')}</b> en la lista. Búscalo en la plataforma de Telefónica y <b>pega aquí lo que aparece</b> (dirección, coordenadas, condiciones):</p><textarea id="fic" placeholder="Dirección: ...\nCoordenadas: 40.12345, -3.12345\nCondiciones de acceso: ...\nRequiere CAE: sí"></textarea><button class="btn ai" style="margin-top:8px" onclick="A.ficha('${j.id}')">🤖 Leer ficha</button>`;
+ if(j.estado==='cae')body=`<p>🤖 El emplazamiento <b>pide documentación</b>. Te he preparado los datos para crear la solicitud CAE en <b>e-gestiona</b>: copia y pega.</p><div class="card" style="background:#fff;margin:8px 0">${caeCampos(j).map(([k,v],x)=>`<div class="row" style="border-bottom:1px solid var(--line);padding:6px 0"><span class="sp"><span class="mut">${k}</span><br><b id="cf${x}">${esc(v)}</b></span><button class="btn sm ghost" onclick="navigator.clipboard.writeText($('#cf${x}').innerText);toast('Copiado')">Copiar</button></div>`).join('')}</div><button class="btn sm sec" onclick="navigator.clipboard.writeText(caeCampos(S.trabajos.find(x=>x.id==='${j.id}')).map(r=>r.join(': ')).join('\\n'));toast('Copiado todo')">📋 Copiar todo</button>
+  <label>Nº de solicitud que te da e-gestiona</label><div class="row"><input id="caenum" placeholder="Ej.: CAE-2026-01234" style="flex:1"><button class="btn ok" onclick="A.caeHecha('${j.id}')">✔ Solicitud creada</button></div>${pcHtml}`;
+ if(j.estado==='esperando')body=`<p>📨 Solicitud CAE <b>${esc(f.caeNum||'')}</b> creada el ${fdt(f.caeFecha)}. Telefónica avisa al cliente y el cliente responde pidiendo los documentos de Tecnove.</p><p><b>Cuando llegue la respuesta, pégala aquí</b> (o sube el PDF) y la IA prepara todo:</p><textarea id="resp" style="min-height:140px" placeholder="Pega aquí el correo del cliente..."></textarea><div class="row" style="margin-top:8px"><button class="btn ai" onclick="A.respuesta('${j.id}')">🤖 Leer lo que piden</button><label class="btn sm ghost" style="cursor:pointer">📄 PDF<input type="file" accept="application/pdf" hidden onchange="A.respuestaPdf('${j.id}',this.files[0])"></label><button class="btn sm ghost" onclick="$('#resp').value=ejemploRespuesta(S.trabajos.find(x=>x.id==='${j.id}'))">Probar con un ejemplo</button></div>${pcHtml}`;
+ if(f.respuesta&&pi>=4)body=`<p class="mut">📨 El cliente pidió ${(j.req.e.length+j.req.t.length+j.req.v.length)} tipos de documento (leídos por la IA de su correo). Abajo está todo cruzado.</p>`;
+ if(j.estado==='concedido'&&!f.caeReq)body=`<p>✅ El emplazamiento <b>no pide CAE</b>: no hace falta e-gestiona. Ya he mandado a los técnicos la dirección, el mapa y las condiciones de acceso.</p>`;
+ return`<div class="card">${steps}${body}</div>${fichaEmp(j.emp)}`}
+function vEntrada(){const nuevos=S.correos.filter(m=>!m.hecho);const enCurso=S.trabajos.filter(j=>j.flujo&&['correo','emplaz','cae','esperando'].includes(j.estado));
+ return`<h1>📥 Correos de los jefes de proyecto</h1><div class="aibox" style="padding:10px 14px">🤖 Le paso cada correo a la IA: saca el emplazamiento, los trabajadores, los riesgos y las fechas. Busca la ficha del sitio, te deja preparada la solicitud CAE y, cuando conteste el cliente, prepara la documentación.</div>
+ <div class="card"><h2>Sin procesar (${nuevos.length})</h2>${nuevos.length?`<div class="list">${nuevos.map(m=>`<div class="it" style="display:block"><div class="row"><b class="sp">${esc(m.asunto)}</b><span class="mut">${fdt(m.fecha)}</span></div><div class="mut">${esc(m.de)}</div><details style="margin:6px 0"><summary class="mut">Ver correo</summary><pre style="white-space:pre-wrap;font:inherit;font-size:13px">${esc(m.texto)}</pre></details><button class="btn ai sm" onclick="A.procesar('${m.id}')">🤖 Que la IA lo procese</button></div>`).join('')}</div>`:'<div class="empty">Todo procesado ✅</div>'}</div>
+ <div class="card"><h2>Pegar un correo nuevo</h2><textarea id="nuevoCorreo" style="min-height:120px" placeholder="Pega aquí el correo del jefe de proyecto (emplazamiento, trabajos, trabajadores, riesgos, fechas)"></textarea><button class="btn ai" style="margin-top:8px" onclick="A.procesar(null)">🤖 Procesar</button></div>
+ <div class="card"><h2>En curso (${enCurso.length})</h2>${enCurso.length?`<div class="list">${enCurso.map(j=>jRow(j)).join('')}</div>`:'<div class="empty">Ninguno</div>'}</div>`}
+const AF={
+ procesar(id){let m=id?S.correos.find(x=>x.id===id):null;const text=m?('Asunto: '+m.asunto+'\n'+m.texto):$('#nuevoCorreo').value;if(!text.trim())return alert('Pega primero el correo');
+  const p=parseCorreo(text);const e=emp(p.cod);const n=S.trabajos.length+1;
+  const j={id:'j'+Date.now(),codigo:'TR-'+(2400+n),clienteId:'ct',sitio:(p.cod||'Emplazamiento')+(e?' · '+e.nombre:''),desde:p.desde,hasta:p.hasta<p.desde?p.desde:p.hasta,tipo:'programado',trabajadores:p.trabajadores,vehiculos:p.vehiculos,descripcion:p.desc||'Trabajo en emplazamiento',estado:'emplaz',creado:new Date().toISOString(),hist:[h('IA','Correo de '+(p.de||m?.de||'jefe de proyecto')+' leído: '+(p.cod||'sin código')+', '+p.trabajadores.length+' trabajador(es), '+p.riesgos.length+' riesgo(s)')],flujo:{correo:text,de:p.de||m?.de||'',cod:p.cod,riesgos:p.riesgos,horario:p.horario},emp:e?{...e}:null};
+  if(m)m.hecho=true;S.trabajos.push(j);log(j.codigo+': correo leído ('+(p.cod||'?')+', '+p.trabajadores.map(t=>tra(t).nombre.split(' ')[0]).join(', ')+')',5,true,j.id);
+  if(e){j.hist.push(h('IA','Ficha del emplazamiento '+e.cod+' consultada'));AF.trasFicha(j)}
+  save();modal(`<div style="padding:6px"><h2>🤖 Esto es lo que he entendido</h2>${[['Emplazamiento',p.cod||'❓ no lo encuentro'],['Trabajo',j.descripcion],['Fechas',fd(j.desde)+(j.hasta!==j.desde?' → '+fd(j.hasta):'')+(p.horario?' · '+p.horario:'')],['Trabajadores',p.trabajadores.map(t=>tra(t).nombre).join(', ')||'❓ ninguno reconocido'],['Vehículos',p.vehiculos.map(v=>veh(v).nombre).join(', ')||'—'],['Riesgos',p.riesgos.map(k=>RIESGOS.find(r=>r.k===k).n).join(', ')||'—'],['Pide',p.de||'—']].map(([k,v])=>`<div style="padding:5px 0;border-bottom:1px solid var(--line)"><span class="mut">${k}</span><br><b>${esc(v)}</b></div>`).join('')}<p class="mut">${e?(e.cae?'📍 Sitio encontrado: pide CAE → te preparo e-gestiona.':'📍 Sitio encontrado: no pide CAE → técnicos avisados.'):'📍 No tengo la ficha de ese emplazamiento: pégala desde la plataforma.'}</p><button class="btn block" onclick="closeModal();go('#/j/${j.id}')">Continuar</button></div>`)},
+ trasFicha(j){j.flujo.caeReq=!!j.emp.cae;
+  if(j.emp.cae){j.estado='cae';j.hist.push(h('IA','El emplazamiento pide CAE: datos para e-gestiona preparados'));log(j.codigo+': datos para e-gestiona preparados',10,true,j.id)}
+  else{j.estado='concedido';j.hist.push(h('IA','Sin CAE: técnicos avisados con dirección y condiciones'));avisoAcceso(j);log(j.codigo+': sin CAE, técnicos avisados con la ficha del sitio',5,true,j.id)}},
+ ficha(id){const j=S.trabajos.find(x=>x.id===id);const t=$('#fic').value;if(t.trim().length<15)return alert('Pega la ficha del emplazamiento');j.emp=parseFicha(t,j.flujo.cod||'SITIO');S.emplazamientos.push({...j.emp});j.hist.push(h('IA','Ficha del emplazamiento leída del texto pegado'));AF.trasFicha(j);save();render()},
+ caeHecha(id){const j=S.trabajos.find(x=>x.id===id);j.flujo.caeNum=$('#caenum').value.trim()||'(sin número)';j.flujo.caeFecha=new Date().toISOString();j.estado='esperando';j.hist.push(h('Gestión','Solicitud CAE creada en e-gestiona: '+j.flujo.caeNum));log(j.codigo+': CAE creada en e-gestiona',0,false,j.id);save();render()},
+ preaviso(id){const j=S.trabajos.find(x=>x.id===id);preCheck(j).forEach(x=>notify(x.t,'Prepara documentación: '+j.sitio,'Hola '+tra(x.t).nombre.split(' ')[0]+',\n\nVas a '+j.sitio+' ('+fds(j.desde)+'). Es casi seguro que el cliente pida:\n'+x.bad.map(b=>'• '+docName(b.k)).join('\n')+'\n\nVe preparándolo y súbelo a la app.\n\nPRL Tecnove',j.id));j.flujo.preavisado=true;log(j.codigo+': técnicos avisados por adelantado',5,true,j.id);save();toast('🔔 Técnicos avisados',true);render()},
+ respuesta(id,text){const j=S.trabajos.find(x=>x.id===id);text=text??$('#resp').value;if(!text.trim())return alert('Pega el correo del cliente');const f=detectReqs(text);if(!f.e.length&&!f.t.length&&!f.v.length)return alert('No he reconocido ningún documento en ese texto. Revísalo o pégalo completo.');
+  j.req={e:f.e,t:f.t,v:j.vehiculos.length?f.v:[]};j.flujo.respuesta=text;j.estado='preparando';j.hist.push(h('IA','Respuesta del cliente leída: pide '+(f.e.length+f.t.length+f.v.length)+' tipos de documento'));log(j.codigo+': respuesta del cliente leída por la IA',15,true,j.id);runAI(true);save();
+  toast(j.estado==='listo'?'🤖 Paquete listo para enviar':j.estado==='faltan'?'🤖 Faltan documentos: técnicos avisados':'🤖 Revisa los documentos dudosos',true);render()},
+ async respuestaPdf(id,file){if(!file)return;let t='';try{t=await pdfText(file)}catch(e){}if(t.trim().length<20)return alert('No se ha podido leer ese PDF. Pega el texto.');AF.respuesta(id,t)},
+};
+Object.assign(A,AF);
+function avisoAcceso(j){const e=j.emp;j.trabajadores.forEach(t=>notify(t,'✅ Acceso: '+j.sitio,j.codigo+' · '+fds(j.desde)+(j.flujo?.horario?' · '+j.flujo.horario:'')+'\n'+j.descripcion+(e?'\n\n📍 '+e.dir+(e.lat!=null?'\nMapa: https://www.google.com/maps?q='+e.lat+','+e.lon:'')+'\n🔑 '+e.acceso:'')+'\n\nLleva tu DNI.',j.id))}
+
 $('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});
 window.A=A;window.go=go;window.closeModal=closeModal;window.render=render;window.toast=toast;window.$=$;
 S=load();runAI(true);render();
