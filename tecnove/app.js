@@ -1,5 +1,5 @@
 'use strict';
-/* Tecnove Accesos — demo (localStorage). Tecnove es la contrata; cada cliente pide su documentación. */
+/* SitePass — demo (localStorage). Tecnove es la contrata; cada cliente pide su documentación. */
 const KEY='tecnove_accesos_v1';
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -243,7 +243,7 @@ function render(){
  const navHtml=cls=>`<nav class="${cls}">${nav.map(([hh,i,t,c])=>`<a href="${hh}" class="${on(hh)?'on':''}"><span class="ic">${i}</span>${t}${c&&cn[c]?`<span class="cnt">${cn[c]}</span>`:''}</a>`).join('')}</nav>`;
  const who=S.user.role==='gestor'?'Gestión PRL':esc(tra(S.user.tid).nombre);
  let body='';try{body=view(r)}catch(e){console.error(e);body='<div class="card">Error: '+esc(e.message)+'</div>'}
- $('#app').innerHTML=`<header class="top"><div class="logo"><span class="sh">📡</span>Tecnove Accesos</div><div class="who">${who}</div>${S.user.role==='gestor'?'<button class="gear" onclick="go(\'#/ajustes\')" aria-label="Ajustes">⚙️</button>':''}<button class="out" onclick="A.logout()">Salir</button></header><div class="layout">${navHtml('side')}<main>${body}</main></div>${navHtml('bottom')}${S.user.role==='gestor'&&!r.startsWith('#/ia')?'<button class="fab" onclick="go(\'#/ia\')" aria-label="Asistente IA">🤖</button>':''}`;
+ $('#app').innerHTML=`<header class="top"><div class="logo"><span class="sh">📡</span>SitePass</div><div class="who">${who}</div>${S.user.role==='gestor'?'<button class="gear" onclick="go(\'#/ajustes\')" aria-label="Ajustes">⚙️</button>':''}<button class="out" onclick="A.logout()">Salir</button></header><div class="layout">${navHtml('side')}<main>${body}</main></div>${navHtml('bottom')}${S.user.role==='gestor'&&!r.startsWith('#/ia')?'<button class="fab" onclick="go(\'#/ia\')" aria-label="Asistente IA">🤖</button>':''}`;
  window.scrollTo(0,0);if(r.startsWith('#/ia'))setTimeout(()=>{const c=$('.chat');if(c)c.scrollTop=1e6},0);
 }
 window.addEventListener('hashchange',render);
@@ -251,7 +251,7 @@ function view(r){const p=r.slice(2).split('/').map(decodeURIComponent);
  switch(p[0]){case'entrada':return vEntrada();case'panel':return vPanel();case'trabajos':return vTrabajos(p[1]);case'j':return vTrabajo(p[1]);case'nuevo':return vNuevo(p[1]);case'emergencia':return vEmergencia(p[1]);case'clientes':return vClientes();case'c':return vCliente(p[1]);case'equipo':return vEquipo(p[1]);case'o':return vOwner(p[1]);case'ajustes':return vAjustes();case'ia':return vIA();case'actividad':return vActividad();
   case't':return({inicio:vTInicio,docs:vTDocs,mensajes:vTMensajes,carnet:vTCarnet,j:()=>vTTrabajo(p[2])}[p[1]]||vTInicio)()}
  return'<div class="card">Página no encontrada</div>'}
-function loginView(){return`<div class="login" style="background:linear-gradient(160deg,#0b1a42,#0f70be 60%,#7c3aed)"><div class="box"><div class="logo" style="color:var(--p);font-size:24px"><span class="sh" style="background:var(--p);color:#fff">📡</span>Tecnove Accesos</div>
+function loginView(){return`<div class="login" style="background:linear-gradient(160deg,#0b1a42,#0f70be 60%,#7c3aed)"><div class="box"><div class="logo" style="color:var(--p);font-size:24px"><span class="sh" style="background:var(--p);color:#fff">📡</span>SitePass</div>
  <p class="mut" style="margin:8px 0 4px">Llega el correo del jefe de proyecto: la IA saca emplazamiento, trabajadores, riesgos y fechas, te prepara la solicitud CAE de e-gestiona y, cuando el cliente pide los papeles, los prepara. Cada cliente pide su documentación para dejar entrar a los técnicos. La IA sabe qué pide cada uno, prepara el paquete, avisa a cada técnico de lo que le falta y en una emergencia te dice quién puede ir ya.</p>
  <p style="font-weight:700;margin:16px 0 0">Entrar como:</p>
  <button class="role" onclick="A.login('gestor')"><span class="ri">👩‍💼</span><span><b>Gestión PRL / documentación</b><br><span class="mut">Clientes, requisitos, paquetes y emergencias</span></span></button>
