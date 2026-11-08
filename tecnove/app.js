@@ -42,6 +42,8 @@ const CAT={
   {k:'pemp',n:'Operador de plataforma elevadora (PEMP)',cad:true,m:60,kw:/plataforma elevadora|PEMP/i},
   {k:'conf',n:'Formación espacios confinados (arquetas)',cad:true,m:60,kw:/confinad/i},
   {k:'aux',n:'Primeros auxilios',cad:true,m:24,kw:/primeros auxilios/i},
+  {k:'rp',n:'Formación de recurso preventivo (nivel básico 60 h)',cad:false,kw:/recurso preventivo|nivel b[aá]sico/i},
+  {k:'esc',n:'Formación en uso de escaleras portátiles',cad:false,kw:/escaleras? port[aá]til/i},
   {k:'carnet',n:'Permiso de conducir (C para unidades móviles)',cad:true,m:120,kw:/permiso de conducci[oó]n|permiso de conducir|carnet de conducir/i},
  ],
  v:[
@@ -104,12 +106,12 @@ function seed(){
   tr('j4','c4','Sala técnica 2',addDays(3),addDays(3),'programado',['t5'],[],'Integración de nodo y cableado de fibra',6),
   tr('j5','c6','Grada norte',addDays(-12),addDays(-10),'evento',['t1','t3'],['v1'],'Cobertura 5G concierto',24*15),
  ];
- const S0={v:2,emplazamientos:seedEmplaz(),correos:seedCorreos(),cfg:{autoValidar:true,autoEnviarEmail:true,avisosCaducidad:true,diasAviso:30,avisoTrabajadores:true},empresa,trabajadores,vehiculos,clientes,docs,trabajos,mensajes:[],log:[],user:null};
+ const S0={v:3,emplazamientos:seedEmplaz(),correos:seedCorreos(),cfg:{autoValidar:true,autoEnviarEmail:true,avisosCaducidad:true,diasAviso:30,avisoTrabajadores:true},empresa,trabajadores,vehiculos,clientes,docs,trabajos,mensajes:[],log:[],user:null};
  // ejemplo ya en marcha: esperando respuesta del cliente
  const e3=S0.emplazamientos[2];S0.trabajos.push({id:'j6',codigo:'TR-2406',clienteId:'ct',sitio:'MAD0877 · '+e3.nombre,desde:addDays(10),hasta:addDays(10),tipo:'programado',trabajadores:['t5','t3'],vehiculos:[],descripcion:'Ampliación de la cobertura interior (DAS) en sótano -1',estado:'esperando',creado:new Date(Date.now()-26*3600e3).toISOString(),hist:[h('IA','Correo de Raúl Fernández leído'),h('Gestión','Solicitud CAE creada en e-gestiona: CAE-2026-01187')],flujo:{correo:'',de:'Raúl Fernández',cod:'MAD0877',riesgos:['elec'],horario:'22:00 – 6:00',caeReq:true,caeNum:'CAE-2026-01187',caeFecha:new Date(Date.now()-24*3600e3).toISOString()},emp:{...e3}});
  return S0;
 }
-function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.v===2){s.clientes.forEach(addClientCourse);return s}}catch(e){}S=seed();runAI(true);return S}
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.v===3){s.clientes.forEach(addClientCourse);return s}}catch(e){}S=seed();runAI(true);return S}
 function save(){localStorage.setItem(KEY,JSON.stringify(S))}
 const tra=id=>S.trabajadores.find(t=>t.id===id);
 const veh=id=>S.vehiculos.find(v=>v.id===id);
@@ -455,6 +457,7 @@ const RIESGOS=[
  {k:'elec',n:'Riesgo eléctrico',re:/el[eé]ctric|tensi[oó]n|cuadro|energ[ií]a|rectificador/i,docs:['rd614']},
  {k:'rf',n:'Radiofrecuencia',re:/radiofrecuencia|\bRF\b|emisi[oó]n|campos electromagn/i,docs:['rf']},
  {k:'conf',n:'Espacios confinados',re:/confinad|arqueta|galer[ií]a/i,docs:['conf']},
+ {k:'esc',n:'Escaleras portátiles',re:/escaleras? port[aá]til|escalera de mano/i,docs:['esc']},
  {k:'pemp',n:'Plataforma elevadora',re:/plataforma elevadora|PEMP|cesta|gr[uú]a/i,docs:['pemp']},
 ];
 const FEST={correo:'Leer email',emplaz:'Consultar emplazamiento',cae:'Crear CAE en e-gestiona',esperando:'Esperando al cliente'};
@@ -462,6 +465,7 @@ Object.entries(FEST).forEach(([k,t])=>EST[k]=[t,k==='esperando'?'info':'warn']);
 const PASOS=[['correo','📧','Email del jefe de proyecto'],['emplaz','📍','Emplazamiento (plataforma Telefónica)'],['cae','📝','Solicitud CAE en e-gestiona'],['esperando','📨','Respuesta del cliente'],['docs','📦','Documentación a enviar'],['fin','✅','Acceso']];
 function pasoIdx(j){const s=j.estado;if(s==='correo')return 0;if(s==='emplaz')return 1;if(s==='cae')return 2;if(s==='esperando')return 3;if(['preparando','faltan','revisar','listo'].includes(s))return 4;if(s==='enviado')return 5;return 6}
 function seedEmplaz(){return[
+ {cod:'1234567',nombre:'VALDEMORO / CLIENTE DEMO',tipo:'Local de cliente (banca)',dir:'Avda. Ejemplo 1, Valdemoro (Madrid)',lat:40.1907,lon:-3.6788,prop:'Cliente final',acceso:'Llamar al contacto del cliente antes de ir. Acceso por la puerta principal en horario de oficina.',horario:'L-V 9:00-14:00',cae:true,riesgos:['esc']},
  {cod:'MAD0231',nombre:'Alcobendas Norte',tipo:'Azotea de edificio de oficinas',dir:'Av. de Bruselas 20, 28108 Alcobendas (Madrid)',lat:40.5372,lon:-3.6358,prop:'Comunidad de propietarios Edificio Bruselas',acceso:'Llave en conserjería. Avisar al presidente de la comunidad con 48 h. Acceso a cubierta por escalera de gato con línea de vida.',horario:'L-V 8:00-18:00',cae:true,riesgos:['altura','rf']},
  {cod:'MAD1042',nombre:'San Sebastián de los Reyes Polígono',tipo:'Torre de celosía 30 m',dir:'C/ Sierra de Guadarrama 14, 28703 San Sebastián de los Reyes',lat:40.5531,lon:-3.6105,prop:'Torre compartida (gestor de infraestructuras)',acceso:'Candado con código: pedirlo al centro de control antes de llegar. Vallado perimetral.',horario:'24 h',cae:false,riesgos:['altura','rf','elec']},
  {cod:'MAD0877',nombre:'Hospital Universitario Norte',tipo:'Cobertura interior (DAS) en sótano -1',dir:'Paseo de la Salud 1, 28034 Madrid',lat:40.4805,lon:-3.6890,prop:'Hospital Universitario Norte',acceso:'Presentarse en seguridad (puerta 3) con DNI. Acompañados por mantenimiento del hospital.',horario:'Noches 22:00-6:00',cae:true,riesgos:['elec']},
@@ -471,10 +475,25 @@ function seedEmplaz(){return[
 const emp=cod=>S.emplazamientos.find(e=>e.cod===String(cod||'').toUpperCase().replace(/[\s-]/g,''));
 const dmy=d=>d.split('-').reverse().join('/');
 function seedCorreos(){const a=addDays(6),b=addDays(7),c=addDays(3);return[
+ {id:'m0',de:'Solicitudes Operaciones',fecha:new Date(Date.now()-5*60e3).toISOString(),asunto:'[PRL-26.001] NUEVA SOLICITUD PRL - 1234567 VALDEMORO / CLIENTE DEMO (OP260001)',texto:`NUEVA SOLICITUD PRL\nSolicitud de acceso a emplazamiento\nID SOLICITUD\tPRL-26.001\nSolicitante\tJosé Ejemplo Ruiz\nFecha de solicitud\t${dmy(TODAY)} 09:31\nOP\tOP260001\nCódigo emplazamiento\t1234567\nDescripción emplazamiento\tVALDEMORO / CLIENTE DEMO\nTRABAJOS A REALIZAR\nRealizar visita para ver reparos en la instalación.\nRIESGOS Y PERSONAL\nRiesgos\t["TRABAJOS CON ESCALERAS PORTÁTILES"]\nEmpresa\tTecnove Telecom\nTrabajadores\tJavier Morales Ruiz 12345678Z Laura Castillo Vera 56789012B Pablo Nuevo Díaz 11111111H\nRecurso preventivo\ttodos son recurso preventivo\nFECHAS DE ACCESO\nFecha inicio\t${addDays(4)}\nFecha fin\t${addDays(34)}\nDATOS DE CONTACTO\nNombre\tContacto Cliente Demo\nCorreo\tcontacto@cliente-demo.es\nTeléfono\t600000000\nCIF\tA00000000\nDirección\tAvda. Ejemplo 1, Valdemoro\nOTRAS INDICACIONES\nRealizar CAE y llamar al contacto antes de ir.`},
  {id:'m1',de:'Raúl Fernández · Jefe de proyecto',fecha:new Date(Date.now()-40*60e3).toISOString(),asunto:'Acceso MAD0231 - cambio de antenas y radioenlace',texto:`Hola,\n\nNecesito acceso al emplazamiento MAD0231 para el cambio de antenas (swap) y la revisión del radioenlace.\n\nFechas: del ${dmy(a)} al ${dmy(b)}, de 8:00 a 18:00.\nTrabajadores: Javier Morales y Sergio Blanco.\nVehículo: furgoneta F-03.\nRiesgos: trabajos en altura en la azotea y exposición a radiofrecuencia (se pedirá corte de emisión).\n\nGracias,\nRaúl Fernández\nJefe de proyecto · Tecnove Telecom`},
  {id:'m2',de:'Marta Gil · Jefa de proyecto',fecha:new Date(Date.now()-15*60e3).toISOString(),asunto:'Acceso MAD1042 - revisión de energía',texto:`Buenos días,\n\nPor favor gestiona el acceso al emplazamiento MAD1042 el ${dmy(c)} de 9:00 a 14:00.\nTrabajo: revisión del rectificador y del cuadro eléctrico de la torre.\nVan Alberto Ramos y Laura Castillo.\nRiesgo eléctrico y trabajos en altura.\n\nUn saludo,\nMarta Gil`},
 ]}
-function parseCorreo(text){
+const FORM_L=[['request_id','ID SOLICITUD'],['applicant','Solicitante'],['requested','Fecha de solicitud'],['op','OP'],['site_code','C[oó]digo emplazamiento'],['site_desc','Descripci[oó]n emplazamiento'],['works','TRABAJOS A REALIZAR'],['_r','RIESGOS Y PERSONAL'],['risks','Riesgos'],['company','Empresa'],['workers','Trabajadores'],['preventive','Recurso preventivo'],['_f','FECHAS DE ACCESO'],['date_from','Fecha inicio'],['date_to','Fecha fin'],['_c','DATOS DE CONTACTO'],['c_name','Nombre'],['c_email','Correo'],['c_phone','Tel[eé]fono'],['c_cif','CIF'],['c_address','Direcci[oó]n'],['notes','OTRAS INDICACIONES']];
+function parseForm(text){if(!/ID SOLICITUD/i.test(text)||!/C[oó]digo emplazamiento/i.test(text))return null;
+ const rx=new RegExp('^[ \\t]*(?:'+FORM_L.map(([k,r])=>'('+r+')').join('|')+')(?=[ \\t:]|$)[ \\t]*:?[ \\t]*','gim');const marks=[];let m;
+ while(m=rx.exec(text)){const gi=m.slice(1).findIndex(x=>x!==undefined);marks.push({s:m.index,e:m.index+m[0].length,k:FORM_L[gi][0]});if(m[0].length===0)rx.lastIndex++}
+ const f={};marks.forEach((x,i)=>{if(x.k[0]==='_'||f[x.k]!==undefined)return;f[x.k]=text.slice(x.e,i+1<marks.length?marks[i+1].s:text.length).replace(/\s+/g,' ').trim()});
+ const out={cod:(f.site_code||'').toUpperCase().replace(/[\s-]/g,''),desc:(f.works||'').replace(/\.$/,''),horario:'',vehiculos:[],de:f.applicant||''};
+ out.desde=(f.date_from||'').slice(0,10)||addDays(5);out.hasta=(f.date_to||'').slice(0,10)||out.desde;
+ out.riesgos=RIESGOS.filter(r=>r.re.test((f.risks||'')+' '+(f.works||''))).map(r=>r.k);
+ out.trabajadores=[];out.nuevos=[];const wr=/([A-ZÁÉÍÓÚÑ][^\d\n]{3,80}?)\s+((?:\d{8}|[XYZ]\d{7})[A-Z])\b/gi;let w;
+ while(w=wr.exec(f.workers||'')){const dni=w[2].toUpperCase();let t=S.trabajadores.find(x=>x.dni===dni);
+  if(!t){t={id:'t'+Date.now().toString(36)+out.nuevos.length,nombre:w[1].trim(),dni,puesto:'Añadido desde una solicitud',tel:''};S.trabajadores.push(t);out.nuevos.push(t.nombre)}
+  if(!out.trabajadores.includes(t.id))out.trabajadores.push(t.id)}
+ out.form={id:f.request_id||'',op:f.op||'',sitio:f.site_desc||'',prev:f.preventive||'',riesgosTxt:f.risks||'',notas:f.notes||'',contacto:{nombre:f.c_name||'',email:f.c_email||'',tel:f.c_phone||'',cif:f.c_cif||'',dir:f.c_address||''}};
+ return out}
+function parseCorreo(text){const fm=parseForm(text);if(fm)return fm;
  const out={};const n=norm(text);
  const m=text.match(/\b([A-Z]{3}\s?-?\d{4})\b/)||text.match(/emplazamiento[:\s]+([A-Z0-9-]{4,12})/i);out.cod=m?m[1].toUpperCase().replace(/[\s-]/g,''):'';
  let ds=findDates(text).map(x=>x.d);if(!ds.length){let r=/(\d{1,2})\/(\d{1,2})(?!\/\d)/g,x;while(x=r.exec(text))ds.push(`${TODAY.slice(0,4)}-${x[2].padStart(2,'0')}-${x[1].padStart(2,'0')}`)}
@@ -494,13 +513,13 @@ function fichaEmp(e){if(!e)return'';const maps=e.lat!=null?`https://www.google.c
  <div class="grid g2"><div><span class="mut">Tipo</span><br>${esc(e.tipo||'—')}</div><div><span class="mut">Propiedad</span><br>${esc(e.prop||'—')}</div><div><span class="mut">Horario de acceso</span><br>${esc(e.horario||'—')}</div><div><span class="mut">Riesgos del sitio</span><br>${(e.riesgos||[]).map(k=>RIESGOS.find(r=>r.k===k).n).join(', ')||'—'}</div></div>
  <p style="margin:10px 0 0"><span class="mut">Condiciones de acceso:</span> ${esc(e.acceso||'—')}</p>${e.manual?'<p class="mut" style="font-size:12px">🤖 Leído del texto pegado de la plataforma.</p>':'<p class="mut" style="font-size:12px">Datos de ejemplo (en la real: los de la plataforma de Telefónica).</p>'}</div>`}
 function riesgosJ(j){return[...new Set([...(j.flujo.riesgos||[]),...(j.emp?.riesgos||[])])]}
-function docsProbables(j){return[...new Set(['dni','form','apt','epi',...riesgosJ(j).flatMap(k=>RIESGOS.find(r=>r.k===k).docs)])]}
+function docsProbables(j){return[...new Set(['dni','form','apt','epi',...(j.flujo.form&&j.flujo.form.prev?['rp']:[]),...riesgosJ(j).flatMap(k=>RIESGOS.find(r=>r.k===k).docs)])]}
 function preCheck(j){const ks=docsProbables(j);return j.trabajadores.map(t=>({t,bad:ks.map(k=>({k,...docSt(t,k,j.hasta)})).filter(i=>!OKST.includes(i.st))})).filter(x=>x.bad.length)}
 function caeCampos(j){const e=j.emp||{};return[
  ['Empresa contratista',S.empresa.nombre+' · CIF '+S.empresa.cif],['Código de emplazamiento',e.cod||j.flujo.cod],['Dirección',e.dir||''],['Fechas',fd(j.desde)+(j.hasta!==j.desde?' → '+fd(j.hasta):'')+(j.flujo.horario?' · '+j.flujo.horario:'')],
  ['Trabajos a realizar',j.descripcion],['Riesgos',riesgosJ(j).map(k=>RIESGOS.find(r=>r.k===k).n).join(', ')||'—'],
  ['Trabajadores',j.trabajadores.map(t=>tra(t).nombre+' (DNI '+tra(t).dni+')').join('; ')],['Vehículos',j.vehiculos.map(v=>veh(v).nombre+' '+veh(v).mat).join('; ')||'—'],
- ['Responsable / jefe de proyecto',j.flujo.de||'—']]}
+ ['Responsable / jefe de proyecto',j.flujo.de||'—'],...(j.flujo.form?[['ID solicitud / OP',j.flujo.form.id+' · '+j.flujo.form.op],['Recurso preventivo',j.flujo.form.prev||'—'],['Contacto del cliente',[j.flujo.form.contacto.nombre,j.flujo.form.contacto.tel,j.flujo.form.contacto.email].filter(Boolean).join(' · ')||'—']]:[])]}
 function ejemploRespuesta(j){const ks=docsProbables(j);return`Buenos días,\n\nPara autorizar el acceso de Tecnove Telecom al emplazamiento ${j.emp?.cod||''} necesitamos la siguiente documentación:\n- Seguro de responsabilidad civil y último recibo\n- Certificado de estar al corriente con la Seguridad Social\n- Certificado de Hacienda\n- RNT / TC2 del último mes\n- Evaluación de riesgos del trabajo\nDe cada trabajador: DNI, formación PRL del puesto, certificado de aptitud médica y entrega de EPIs${ks.includes('altura')?', formación de trabajos en altura y rescate':''}${ks.includes('rd614')?', formación en riesgo eléctrico RD 614/2001':''}${ks.includes('rf')?', formación en radiofrecuencia':''}.${j.vehiculos.length?'\nDel vehículo: ITV y seguro.':''}\n\nEnviar con al menos 48 horas de antelación.\nUn saludo,\nCoordinación de accesos`}
 function flujoBox(j){const pi=pasoIdx(j);const f=j.flujo;
  const steps=`<div class="steps">${PASOS.map(([k,i,t],x)=>`<div class="st ${x<pi?'done':x===pi?'now':''}"><span>${x<pi?'✔':i}</span>${t}</div>`).join('')}</div>`;
@@ -521,10 +540,10 @@ function vEntrada(){const nuevos=S.correos.filter(m=>!m.hecho);const enCurso=S.t
 const AF={
  procesar(id){let m=id?S.correos.find(x=>x.id===id):null;const text=m?('Asunto: '+m.asunto+'\n'+m.texto):$('#nuevoCorreo').value;if(!text.trim())return alert('Pega primero el correo');
   const p=parseCorreo(text);const e=emp(p.cod);const n=S.trabajos.length+1;
-  const j={id:'j'+Date.now(),codigo:'TR-'+(2400+n),clienteId:'ct',sitio:(p.cod||'Emplazamiento')+(e?' · '+e.nombre:''),desde:p.desde,hasta:p.hasta<p.desde?p.desde:p.hasta,tipo:'programado',trabajadores:p.trabajadores,vehiculos:p.vehiculos,descripcion:p.desc||'Trabajo en emplazamiento',estado:'emplaz',creado:new Date().toISOString(),hist:[h('IA','Correo de '+(p.de||m?.de||'jefe de proyecto')+' leído: '+(p.cod||'sin código')+', '+p.trabajadores.length+' trabajador(es), '+p.riesgos.length+' riesgo(s)')],flujo:{correo:text,de:p.de||m?.de||'',cod:p.cod,riesgos:p.riesgos,horario:p.horario},emp:e?{...e}:null};
+  const j={id:'j'+Date.now(),codigo:'TR-'+(2400+n),clienteId:'ct',sitio:(p.cod||'Emplazamiento')+(e?' · '+e.nombre:''),desde:p.desde,hasta:p.hasta<p.desde?p.desde:p.hasta,tipo:'programado',trabajadores:p.trabajadores,vehiculos:p.vehiculos,descripcion:p.desc||'Trabajo en emplazamiento',estado:'emplaz',creado:new Date().toISOString(),hist:[h('IA','Correo de '+(p.de||m?.de||'jefe de proyecto')+' leído: '+(p.cod||'sin código')+', '+p.trabajadores.length+' trabajador(es), '+p.riesgos.length+' riesgo(s)')],flujo:{correo:text,de:p.de||m?.de||'',cod:p.cod,riesgos:p.riesgos,horario:p.horario,form:p.form||null},emp:e?{...e}:null};
   if(m)m.hecho=true;S.trabajos.push(j);log(j.codigo+': correo leído ('+(p.cod||'?')+', '+p.trabajadores.map(t=>tra(t).nombre.split(' ')[0]).join(', ')+')',5,true,j.id);
   if(e){j.hist.push(h('IA','Ficha del emplazamiento '+e.cod+' consultada'));AF.trasFicha(j)}
-  save();modal(`<div style="padding:6px"><h2>🤖 Esto es lo que he entendido</h2>${[['Emplazamiento',p.cod||'❓ no lo encuentro'],['Trabajo',j.descripcion],['Fechas',fd(j.desde)+(j.hasta!==j.desde?' → '+fd(j.hasta):'')+(p.horario?' · '+p.horario:'')],['Trabajadores',p.trabajadores.map(t=>tra(t).nombre).join(', ')||'❓ ninguno reconocido'],['Vehículos',p.vehiculos.map(v=>veh(v).nombre).join(', ')||'—'],['Riesgos',p.riesgos.map(k=>RIESGOS.find(r=>r.k===k).n).join(', ')||'—'],['Pide',p.de||'—']].map(([k,v])=>`<div style="padding:5px 0;border-bottom:1px solid var(--line)"><span class="mut">${k}</span><br><b>${esc(v)}</b></div>`).join('')}<p class="mut">${e?(e.cae?'📍 Sitio encontrado: pide CAE → te preparo e-gestiona.':'📍 Sitio encontrado: no pide CAE → técnicos avisados.'):'📍 No tengo la ficha de ese emplazamiento: pégala desde la plataforma.'}</p><button class="btn block" onclick="closeModal();go('#/j/${j.id}')">Continuar</button></div>`)},
+  save();modal(`<div style="padding:6px"><h2>🤖 Esto es lo que he entendido</h2>${[['Emplazamiento',p.cod||'❓ no lo encuentro'],['Trabajo',j.descripcion],['Fechas',fd(j.desde)+(j.hasta!==j.desde?' → '+fd(j.hasta):'')+(p.horario?' · '+p.horario:'')],['Trabajadores',p.trabajadores.map(t=>tra(t).nombre).join(', ')||'❓ ninguno reconocido'],['Vehículos',p.vehiculos.map(v=>veh(v).nombre).join(', ')||'—'],['Riesgos',p.riesgos.map(k=>RIESGOS.find(r=>r.k===k).n).join(', ')||'—'],['Pide',p.de||'—'],...(p.form?[['ID solicitud / OP',p.form.id+' · '+p.form.op],['Recurso preventivo',p.form.prev||'—'],['Contacto del cliente',[p.form.contacto.nombre,p.form.contacto.tel,p.form.contacto.email].filter(Boolean).join(' · ')||'—'],['Otras indicaciones',p.form.notas||'—']]:[]),...((p.nuevos||[]).length?[['Añadidos al equipo (eran nuevos)',p.nuevos.join(', ')]]:[])].map(([k,v])=>`<div style="padding:5px 0;border-bottom:1px solid var(--line)"><span class="mut">${k}</span><br><b>${esc(v)}</b></div>`).join('')}<p class="mut">${e?(e.cae?'📍 Sitio encontrado: pide CAE → te preparo e-gestiona.':'📍 Sitio encontrado: no pide CAE → técnicos avisados.'):'📍 No tengo la ficha de ese emplazamiento: pégala desde la plataforma.'}</p><button class="btn block" onclick="closeModal();go('#/j/${j.id}')">Continuar</button></div>`)},
  trasFicha(j){j.flujo.caeReq=!!j.emp.cae;
   if(j.emp.cae){j.estado='cae';j.hist.push(h('IA','El emplazamiento pide CAE: datos para e-gestiona preparados'));log(j.codigo+': datos para e-gestiona preparados',10,true,j.id)}
   else{j.estado='concedido';j.hist.push(h('IA','Sin CAE: técnicos avisados con dirección y condiciones'));avisoAcceso(j);log(j.codigo+': sin CAE, técnicos avisados con la ficha del sitio',5,true,j.id)}},
