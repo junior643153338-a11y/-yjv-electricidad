@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Activar Tekopora (5 minutos)</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="estilos.css">
+<style>body{padding:0}.pane{max-width:720px;margin:0 auto;padding:30px 18px 60px}ol{padding-left:22px}li{margin:14px 0}code{background:var(--soft);padding:2px 6px;border-radius:6px}pre{background:#14211f;color:#cfe;border-radius:12px;padding:14px;max-height:220px;overflow:auto;font-size:.75rem;margin-top:10px}</style>
+</head>
+<body><div class="pane">
+<h1>Activar la base de datos de Tekopora</h1>
+<p style="color:var(--muted);margin:8px 0 18px">Hazlo en el portátil, con tu Gmail. Son unos 5 minutos.</p>
+<ol>
+<li>Abre <a href="https://sheets.new" target="_blank"><b>sheets.new</b></a> (crea una hoja de cálculo nueva). Arriba a la izquierda ponle de nombre <b>Tekopora</b>.</li>
+<li>En el menú: <b>Extensiones → Apps Script</b>.</li>
+<li>Borra lo que haya escrito, pulsa este botón y pega (Ctrl+V). Luego pulsa el icono del disquete (Guardar).<br>
+<button class="btn btn-acc" id="copy" style="margin-top:10px">Copiar código</button> <span id="cs"></span><pre id="code">Cargando…</pre></li>
+<li>Arriba, al lado de «Depurar», elige <code>configurar</code> y pulsa <b>Ejecutar</b>. Te pedirá permisos: <b>Revisar permisos</b> → tu cuenta → <b>Configuración avanzada</b> → <b>Ir a Tekopora (no seguro)</b> → <b>Permitir</b>. (Es tu propio programa, por eso Google avisa.)</li>
+<li>Arriba a la derecha: <b>Implementar → Nueva implementación</b>. En la rueda ⚙ elige <b>Aplicación web</b>. Ejecutar como: <b>Yo</b>. Quién tiene acceso: <b>Cualquier usuario</b>. Pulsa <b>Implementar</b>.</li>
+<li>Copia la <b>URL de la aplicación web</b> (termina en <code>/exec</code>) y mándasela a Devin.</li>
+</ol>
+</div>
+<script>
+fetch('tekopora-backend.gs').then(r=>r.text()).then(t=>{document.getElementById('code').textContent=t;
+document.getElementById('copy').onclick=()=>navigator.clipboard.writeText(t).then(()=>document.getElementById('cs').textContent='✅ Copiado')})
+</script>
+</body></html>

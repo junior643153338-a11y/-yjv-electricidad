@@ -15,122 +15,7 @@
 <link rel="apple-touch-icon" href="/-yjv-electricidad/tekopora/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Work+Sans:wght@400;500;600;700&display=swap">
-<style>
-:root{--bg:#F4F2EC;--card:#fff;--soft:#EAE7DC;--ink:#1C2B2B;--muted:#56645f;--pri:#0E5C56;--pri2:#0b4a45;--acc:#E08A2E;--line:#D9D4C4;--wa:#25D366;--r:16px}
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:"Work Sans",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;padding-bottom:76px}
-h1,h2,h3{font-family:"Fraunces",Georgia,serif;line-height:1.15}
-a{color:inherit}
-button{font:inherit;cursor:pointer}
-.wrap{max-width:1120px;margin:0 auto;padding:0 18px}
-/* header */
-header{position:sticky;top:0;z-index:30;background:rgba(244,242,236,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
-.hd{display:flex;align-items:center;justify-content:space-between;height:62px;gap:12px}
-.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:"Fraunces",serif;font-weight:700;font-size:1.2rem;color:var(--pri)}
-.brand img{width:36px;height:36px}
-.nav{display:flex;gap:22px;align-items:center;font-size:.95rem}
-.nav a{text-decoration:none;color:var(--muted)}
-.nav a:hover{color:var(--pri)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:12px 22px;font-weight:600;text-decoration:none;transition:.15s}
-.btn-pri{background:var(--pri);color:#fff}.btn-pri:hover{background:var(--pri2)}
-.btn-acc{background:var(--acc);color:#231404}.btn-acc:hover{filter:brightness(.95)}
-.btn-out{background:transparent;border:1.5px solid var(--pri);color:var(--pri)}
-.btn-wa{background:var(--wa);color:#08361b}
-.btn-sm{padding:8px 16px;font-size:.9rem}
-@media(max-width:820px){.nav .hide-m{display:none}}
-/* hero */
-.hero{background:linear-gradient(160deg,#0E5C56 0%,#0b4a45 60%,#173c39 100%);color:#fff;padding:54px 0 64px;position:relative;overflow:hidden}
-.hero:after{content:"";position:absolute;right:-120px;top:-120px;width:380px;height:380px;border-radius:50%;background:rgba(224,138,46,.18)}
-.hero h1{font-size:clamp(2rem,5vw,3.2rem);max-width:17ch;position:relative;z-index:1}
-.hero p{margin-top:12px;font-size:1.08rem;opacity:.9;max-width:52ch;position:relative;z-index:1}
-.search{margin-top:26px;background:#fff;border-radius:18px;padding:8px;display:grid;grid-template-columns:1.6fr 1fr auto;gap:8px;max-width:760px;box-shadow:0 14px 40px rgba(0,0,0,.25);position:relative;z-index:2}
-.search .f{position:relative;display:flex;align-items:center;background:var(--bg);border-radius:12px;padding:0 12px}
-.search .f span{font-size:1.1rem;margin-right:6px}
-.search input,.search select{border:0;background:transparent;font:inherit;color:var(--ink);padding:14px 4px;width:100%;outline:none}
-.sugg{position:absolute;left:0;right:0;top:calc(100% + 6px);background:#fff;border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.18);list-style:none;max-height:300px;overflow:auto;display:none;color:var(--ink);z-index:5}
-.sugg li{padding:11px 14px;cursor:pointer;display:flex;gap:10px}
-.sugg li:hover,.sugg li.on{background:var(--soft)}
-@media(max-width:700px){.search{grid-template-columns:1fr}.search .btn{padding:15px}}
-.trust{display:flex;flex-wrap:wrap;gap:10px 22px;margin-top:22px;font-size:.93rem;opacity:.95;position:relative;z-index:1}
-.trust b{color:#ffd2a0}
-/* sections */
-section{padding:56px 0}
-.sec-t{font-size:clamp(1.6rem,3.4vw,2.2rem);margin-bottom:8px}
-.sec-s{color:var(--muted);margin-bottom:28px;max-width:60ch}
-.cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
-.cat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 14px;text-align:left;display:flex;flex-direction:column;gap:8px;transition:.15s;color:var(--ink)}
-.cat:hover{border-color:var(--pri);transform:translateY(-2px);box-shadow:0 8px 20px rgba(14,92,86,.12)}
-.cat .i{font-size:1.8rem}
-.cat b{font-weight:600;font-size:.98rem}
-.cat small{color:var(--muted);font-size:.8rem}
-.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;counter-reset:s}
-.step{background:var(--card);border-radius:var(--r);padding:24px;border:1px solid var(--line)}
-.step .n{width:42px;height:42px;border-radius:50%;background:var(--acc);color:#231404;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-bottom:12px}
-.step h3{font-size:1.2rem;margin-bottom:6px}
-.step p{color:var(--muted);font-size:.95rem}
-.alt{background:var(--soft)}
-.cities{display:flex;flex-wrap:wrap;gap:10px}
-.chip{background:#fff;border:1px solid var(--line);border-radius:999px;padding:9px 16px;font-size:.93rem;color:var(--ink)}
-.chip:hover{border-color:var(--pri);color:var(--pri)}
-.pro{background:var(--ink);color:#fff;border-radius:24px;padding:40px 30px;display:grid;grid-template-columns:1.2fr 1fr;gap:30px;align-items:center}
-.pro h2{font-size:clamp(1.6rem,3.4vw,2.3rem)}
-.pro p{opacity:.85;margin-top:10px}
-.pro ul{list-style:none;display:grid;gap:12px}
-.pro li{background:rgba(255,255,255,.07);border-radius:12px;padding:14px 16px;display:flex;gap:12px}
-.pro .cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
-@media(max-width:820px){.pro{grid-template-columns:1fr;padding:30px 20px}}
-.faq details{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:10px}
-.faq summary{font-weight:600;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:10px}
-.faq summary:after{content:"+";color:var(--pri);font-size:1.3rem;line-height:1}
-.faq details[open] summary:after{content:"–"}
-.faq p{margin-top:10px;color:var(--muted)}
-footer{background:#14211f;color:#cfd8d5;padding:36px 0 24px;font-size:.92rem}
-.ft{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px}
-footer h4{color:#fff;margin-bottom:10px;font-size:1rem}
-footer a{display:block;text-decoration:none;opacity:.85;margin:5px 0}
-footer .cp{border-top:1px solid rgba(255,255,255,.1);margin-top:26px;padding-top:16px;opacity:.7}
-.bar{position:fixed;left:0;right:0;bottom:0;z-index:25;background:#fff;border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:flex;gap:10px}
-.bar .btn{flex:1;padding:13px}
-@media(min-width:821px){.bar{display:none}body{padding-bottom:0}}
-/* mis solicitudes */
-.req{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px;display:flex;justify-content:space-between;gap:12px;align-items:center}
-.req small{color:var(--muted)}
-.tag{background:#fff3e3;color:#8a4a07;font-size:.78rem;padding:3px 10px;border-radius:999px;font-weight:600;white-space:nowrap}
-/* modal wizard */
-.mod{position:fixed;inset:0;z-index:50;background:rgba(10,25,23,.55);display:none;align-items:center;justify-content:center;padding:16px}
-.mod.open{display:flex}
-.box{background:#fff;width:100%;max-width:560px;border-radius:22px;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;animation:up .2s ease}
-@keyframes up{from{transform:translateY(20px);opacity:0}to{transform:none;opacity:1}}
-@media(max-width:600px){.mod{padding:0;align-items:flex-end}.box{border-radius:22px 22px 0 0;max-height:94vh}}
-.bh{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px}
-.bh .x{margin-left:auto;background:var(--soft);border:0;width:36px;height:36px;border-radius:50%;font-size:1.2rem}
-.bh .back{background:none;border:0;font-size:1.3rem;color:var(--pri);width:30px}
-.prog{height:4px;background:var(--soft)}
-.prog i{display:block;height:100%;background:var(--acc);width:0;transition:width .25s}
-.bb{padding:22px 20px;overflow:auto;flex:1}
-.bb h3{font-size:1.35rem;margin-bottom:4px}
-.bb .hint{color:var(--muted);font-size:.92rem;margin-bottom:16px}
-.opts{display:grid;gap:10px}
-.opts.g2{grid-template-columns:1fr 1fr}
-.opt{border:1.5px solid var(--line);background:#fff;border-radius:14px;padding:14px;text-align:left;display:flex;gap:10px;align-items:center;color:var(--ink)}
-.opt:hover{border-color:var(--pri)}
-.opt.sel{border-color:var(--pri);background:#e7f1ef}
-.opt .i{font-size:1.4rem}
-label.l{display:block;font-weight:600;font-size:.92rem;margin:14px 0 6px}
-.in{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:13px 14px;font:inherit;background:#fff;color:var(--ink)}
-.in:focus{outline:none;border-color:var(--pri)}
-textarea.in{min-height:120px;resize:vertical}
-.err{color:#b3261e;font-size:.88rem;margin-top:8px;display:none}
-.bf{padding:14px 20px calc(14px + env(safe-area-inset-bottom));border-top:1px solid var(--line)}
-.bf .btn{width:100%;padding:15px}
-.ck{display:flex;gap:10px;align-items:flex-start;font-size:.88rem;color:var(--muted);margin-top:14px}
-.ck input{margin-top:4px;width:18px;height:18px;accent-color:var(--pri)}
-.sum{background:var(--bg);border-radius:14px;padding:14px 16px;font-size:.93rem;display:grid;gap:6px}
-.sum b{color:var(--pri)}
-.ok{text-align:center;padding:10px 0}
-.ok .big{font-size:3rem}
-</style>
+<link rel="stylesheet" href="estilos.css">
 </head>
 <body>
 <header><div class="wrap hd">
@@ -139,7 +24,7 @@ textarea.in{min-height:120px;resize:vertical}
     <a class="hide-m" href="#servicios">Servicios</a>
     <a class="hide-m" href="#como">Cómo funciona</a>
     <a class="hide-m" href="#mis" id="navMis" hidden>Mis solicitudes</a>
-    <a class="hide-m" href="#pro">Soy profesional</a>
+    <a class="hide-m" href="pro.html">Zona profesionales</a>
     <button class="btn btn-acc btn-sm" data-open>Pedir presupuesto</button>
   </nav>
 </div></header>
@@ -190,7 +75,8 @@ textarea.in{min-height:120px;resize:vertical}
       <h2>¿Sos profesional? Conseguí más clientes</h2>
       <p>Electricistas, plomeros, técnicos de aire, albañiles, pintores, jardineros y todos los oficios. Te pasamos trabajos de tu rubro y tu ciudad.</p>
       <div class="cta">
-        <a class="btn btn-acc" target="_blank" rel="noopener" href="https://docs.google.com/forms/d/e/1FAIpQLSfotUOdbOKou3IuhGWA_kVDyXGlGkSmbJsG9AfHAGJqgq3vIQ/viewform">Registrarme gratis</a>
+        <a class="btn btn-acc" href="pro.html#registro">Registrarme gratis</a>
+        <a class="btn btn-out" style="border-color:#fff;color:#fff" href="pro.html">Ya tengo cuenta</a>
         <a class="btn btn-wa" target="_blank" rel="noopener" id="proWa" href="#">Consultar por WhatsApp</a>
       </div>
     </div>
@@ -216,7 +102,7 @@ textarea.in{min-height:120px;resize:vertical}
   <div class="ft">
     <div><a class="brand" href="#top" style="color:#fff;opacity:1"><img src="../logo-emblema.png" alt="">Tekopora</a><p style="margin-top:10px">Te conectamos con profesionales de confianza en Gran Asunción, Paraguay.</p></div>
     <div><h4>Clientes</h4><a href="#" data-open>Pedir presupuesto</a><a href="#servicios">Servicios</a><a href="#como">Cómo funciona</a></div>
-    <div><h4>Profesionales</h4><a href="#pro">Registrarme</a><a href="#" id="ftWa">WhatsApp</a></div>
+    <div><h4>Profesionales</h4><a href="pro.html#registro">Registrarme</a><a href="pro.html">Entrar</a><a href="#" id="ftWa">WhatsApp</a></div>
     <div><h4>Legal</h4><a href="../privacidad.html">Privacidad</a></div>
   </div>
   <div class="cp">© <span id="yr"></span> Tekopora Servicios · Gran Asunción, Paraguay</div>
@@ -233,33 +119,8 @@ textarea.in{min-height:120px;resize:vertical}
   </div>
 </div>
 
+<script src="datos.js"></script>
 <script>
-const WA='595987642351';
-const CITIES=['Asunción','San Lorenzo','Luque','Fernando de la Mora','Lambaré','Mariano Roque Alonso','Ñemby','Capiatá','Limpio','Villa Elisa','San Antonio','Itauguá'];
-const S=[
- {id:'aire',i:'❄️',n:'Aire acondicionado',d:'Instalación y service',k:'aire split climatizacion clima frio gas',o:['Instalar un aire nuevo','Limpieza / mantenimiento (service)','Reparación: no enfría o hace ruido','Carga de gas','Mover el aire de lugar']},
- {id:'electricista',i:'⚡',n:'Electricistas',d:'Instalaciones y averías',k:'electricidad luz cable tablero toma enchufe corto',o:['Corte de luz o avería','Instalación eléctrica nueva','Tablero o llaves térmicas','Tomas, luces y ventiladores de techo','Revisión general']},
- {id:'plomero',i:'🚿',n:'Plomeros',d:'Pérdidas y destapaciones',k:'plomeria agua caño perdida destapar cloaca baño termocalefon',o:['Pérdida de agua','Destapación de cañerías o cloaca','Instalar inodoro, pileta o ducha','Termocalefón','Instalación de agua nueva']},
- {id:'albanil',i:'🧱',n:'Albañiles',d:'Construcción y ampliaciones',k:'albañileria construccion obra muro pared revoque contrapiso',o:['Construir o ampliar','Levantar un muro','Revoque o contrapiso','Arreglos menores','Quincho o parrilla']},
- {id:'banho',i:'🛁',n:'Reforma de baño',d:'Baño completo o parcial',k:'reforma baño ducha azulejo sanitario',o:['Reforma completa del baño','Cambiar azulejos / pisos','Cambiar sanitarios','Cambiar bañera por ducha']},
- {id:'cocina',i:'🍳',n:'Reforma de cocina',d:'Muebles, mesadas y más',k:'reforma cocina mesada granito muebles',o:['Reforma completa de cocina','Cambiar mesada','Muebles de cocina','Revestimiento / azulejos']},
- {id:'reforma',i:'🏠',n:'Reformas de casa',d:'Integral o por ambientes',k:'reforma casa vivienda remodelacion',o:['Reforma integral','Reformar un ambiente','Cambiar pisos','Cielorraso / durlock']},
- {id:'pintor',i:'🎨',n:'Pintores',d:'Interior y exterior',k:'pintura pintar pared fachada',o:['Pintar interior','Pintar exterior / fachada','Pintar rejas o aberturas','Pintar un ambiente']},
- {id:'techo',i:'🏚️',n:'Techos y humedad',d:'Goteras e impermeabilización',k:'techo gotera humedad impermeabilizacion tejas membrana',o:['Goteras','Impermeabilizar techo o losa','Humedad en paredes','Techo nuevo o cambio de tejas']},
- {id:'jardinero',i:'🌿',n:'Jardineros',d:'Pasto, poda y mantenimiento',k:'jardin jardineria pasto poda arbol',o:['Corte de pasto','Poda de árboles','Mantenimiento mensual','Diseño de jardín']},
- {id:'limpieza',i:'🧽',n:'Limpieza',d:'Casas, oficinas, fin de obra',k:'limpieza limpiar casa oficina',o:['Limpieza de casa','Limpieza de fin de obra','Limpieza de oficina','Limpieza de tapizados / alfombras']},
- {id:'fletes',i:'🚚',n:'Fletes y mudanzas',d:'Dentro y fuera de la ciudad',k:'flete mudanza traslado camion',o:['Mudanza completa','Flete de pocas cosas','Traslado de muebles','Retiro de escombros']},
- {id:'herrero',i:'🔩',n:'Herreros',d:'Rejas, portones, estructuras',k:'herreria rejas porton soldadura metal',o:['Rejas','Portón (manual o automático)','Estructura metálica / tinglado','Reparación y soldadura']},
- {id:'carpintero',i:'🪚',n:'Carpinteros',d:'Muebles a medida',k:'carpinteria madera mueble placard puerta',o:['Muebles a medida','Placares','Puertas','Reparación de muebles']},
- {id:'cerrajero',i:'🔑',n:'Cerrajeros',d:'Aperturas y cerraduras',k:'cerrajeria llave cerradura puerta',o:['Me quedé afuera (apertura)','Cambiar cerradura','Copia de llaves','Cerradura de auto']},
- {id:'electro',i:'🧊',n:'Heladeras y lavarropas',d:'Reparación de electrodomésticos',k:'heladera lavarropas electrodomestico freezer microondas',o:['Heladera / freezer','Lavarropas','Cocina / horno','Otro electrodoméstico']},
- {id:'fumigacion',i:'🐜',n:'Fumigación',d:'Control de plagas',k:'fumigacion plagas cucarachas termitas ratas mosquitos',o:['Cucarachas / hormigas','Termitas','Roedores','Mosquitos / dengue']},
- {id:'piscina',i:'🏊',n:'Piscinas',d:'Construcción y mantenimiento',k:'piscina pileta',o:['Construir una piscina','Mantenimiento / limpieza','Reparar pérdidas','Bomba y filtro']},
- {id:'solar',i:'☀️',n:'Paneles solares',d:'Energía solar',k:'panel solar energia fotovoltaica',o:['Instalar paneles solares','Termotanque solar','Mantenimiento','Solo asesoramiento']},
- {id:'aberturas',i:'🪟',n:'Vidriería y aluminio',d:'Ventanas, mamparas',k:'vidrio aluminio ventana mampara blindex aberturas',o:['Ventanas de aluminio','Mampara de baño','Cambiar vidrios','Puertas de blindex']},
- {id:'seguridad',i:'📹',n:'Cámaras y alarmas',d:'Seguridad para tu casa',k:'camaras seguridad alarma cerco electrico',o:['Instalar cámaras','Alarma','Cerco eléctrico','Portero / videoportero']},
- {id:'otro',i:'🛠️',n:'Otro servicio',d:'Contanos qué necesitás',k:'otro varios',o:[]}
-];
 const WHEN=[['🔥','Urgente (hoy o mañana)'],['📅','Esta semana'],['🗓️','Este mes'],['💬','Solo quiero saber precios']];
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -300,7 +161,7 @@ $('#back').onclick=()=>{if(step===0)return closeWiz();step--;if(STEPS[step]==='j
 function err(m){const el=bb.querySelector('.err');el.textContent=m;el.style.display='block'}
 function draw(){
   const k=STEPS[step];$('#prog').style.width=((step+1)/STEPS.length*100)+'%';
-  $('#bt').textContent=st.sid?svc().i+' '+svc().n:'Pedir presupuesto';$('#bf').style.display='';next.textContent='Continuar';next.className='btn btn-pri';
+  $('#bt').textContent=st.sid?svc().i+' '+svc().n:'Pedir presupuesto';$('#bf').style.display='';next.disabled=false;next.onclick=nextClick;next.textContent='Continuar';next.className='btn btn-pri';
   let h='';
   if(k==='srv'){h=`<h3>¿Qué servicio necesitás?</h3><p class="hint">Elegí el que más se parezca.</p><div class="opts g2">${S.map(s=>`<button class="opt${st.sid===s.id?' sel':''}" data-v="${s.id}"><span class="i">${s.i}</span>${s.n}</button>`).join('')}</div>`;$('#bf').style.display='none'}
   if(k==='job'){h=`<h3>¿Qué trabajo es?</h3><p class="hint">Así el profesional ya sabe de qué se trata.</p><div class="opts">${svc().o.concat('Otro').map(o=>`<button class="opt${st.job===o?' sel':''}" data-v="${esc(o)}">${esc(o)}</button>`).join('')}</div>`;$('#bf').style.display='none'}
@@ -308,7 +169,7 @@ function draw(){
   if(k==='city'){h=`<h3>¿Dónde es el trabajo?</h3><label class="l" for="fCity">Ciudad</label><select class="in" id="fCity"><option value="">Elegí tu ciudad</option>${CITIES.concat('Otra ciudad').map(c=>`<option${st.city===c?' selected':''}>${c}</option>`).join('')}</select><label class="l" for="fBarrio">Barrio <span style="font-weight:400;color:var(--muted)">(opcional)</span></label><input class="in" id="fBarrio" value="${esc(st.barrio)}" placeholder="Ej: Villa Morra"><div class="err"></div>`}
   if(k==='when'){h=`<h3>¿Para cuándo lo necesitás?</h3><p class="hint">&nbsp;</p><div class="opts">${WHEN.map(w=>`<button class="opt${st.when===w[1]?' sel':''}" data-v="${w[1]}"><span class="i">${w[0]}</span>${w[1]}</button>`).join('')}</div>`;$('#bf').style.display='none'}
   if(k==='you'){h=`<h3>¿A dónde te mandamos los presupuestos?</h3><p class="hint">Los profesionales te van a escribir a este WhatsApp.</p><label class="l" for="fName">Tu nombre</label><input class="in" id="fName" value="${esc(st.name)}" autocomplete="given-name" placeholder="Ej: María"><label class="l" for="fTel">Tu WhatsApp</label><input class="in" id="fTel" value="${esc(st.tel)}" type="tel" inputmode="tel" autocomplete="tel" placeholder="Ej: 0981 123 456"><label class="ck"><input type="checkbox" id="fOk"${st.ok?' checked':''}><span>Acepto que Tekopora pase mi pedido y mi WhatsApp a los profesionales que van a presupuestar. <a href="../privacidad.html" target="_blank">Privacidad</a></span></label><div class="err"></div>`}
-  if(k==='sum'){h=`<h3>Revisá tu pedido</h3><p class="hint">Al confirmar se abre WhatsApp con tu pedido listo: solo tocá «Enviar».</p><div class="sum"><div><b>Servicio:</b> ${esc(svc().n)}</div>${st.job?`<div><b>Trabajo:</b> ${esc(st.job)}</div>`:''}<div><b>Detalle:</b> ${esc(st.det)}</div><div><b>Lugar:</b> ${esc(st.city)}${st.barrio?', '+esc(st.barrio):''}</div><div><b>Cuándo:</b> ${esc(st.when)}</div><div><b>Contacto:</b> ${esc(st.name)} · ${esc(st.tel)}</div></div>`;next.textContent='Enviar por WhatsApp';next.className='btn btn-wa'}
+  if(k==='sum'){h=`<h3>Revisá tu pedido</h3><p class="hint">${API?'Al confirmar, se lo avisamos a los profesionales de tu zona.':'Al confirmar se abre WhatsApp con tu pedido listo: solo tocá «Enviar».'}</p><div class="sum"><div><b>Servicio:</b> ${esc(svc().n)}</div>${st.job?`<div><b>Trabajo:</b> ${esc(st.job)}</div>`:''}<div><b>Detalle:</b> ${esc(st.det)}</div><div><b>Lugar:</b> ${esc(st.city)}${st.barrio?', '+esc(st.barrio):''}</div><div><b>Cuándo:</b> ${esc(st.when)}</div><div><b>Contacto:</b> ${esc(st.name)} · ${esc(st.tel)}</div></div>`;next.textContent=API?'Enviar pedido':'Enviar por WhatsApp';next.className=API?'btn btn-acc':'btn btn-wa'}
   bb.innerHTML=h;bb.scrollTop=0;$('#back').style.visibility=step===0||(step===1&&false)?'hidden':'visible';
   bb.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const v=b.dataset.v;
     if(k==='srv'){st.sid=v;st.job='';step=svc().o.length?1:2}
@@ -317,7 +178,7 @@ function draw(){
     draw()});
   const f=bb.querySelector('.in');if(f&&matchMedia('(min-width:700px)').matches)f.focus();
 }
-next.onclick=()=>{const k=STEPS[step];
+const nextClick=()=>{const k=STEPS[step];
   if(k==='det'){st.det=$('#fDet').value.trim();if(st.det.length<10)return err('Escribí al menos una frase corta (10 letras).')}
   if(k==='city'){st.city=$('#fCity').value;st.barrio=$('#fBarrio').value.trim();if(!st.city)return err('Elegí tu ciudad.')}
   if(k==='you'){st.name=$('#fName').value.trim();st.tel=$('#fTel').value.trim();st.ok=$('#fOk').checked;
@@ -326,14 +187,22 @@ next.onclick=()=>{const k=STEPS[step];
     if(!st.ok)return err('Tenés que aceptar para que te puedan mandar presupuestos.')}
   if(k==='sum')return send();
   step++;draw()};
-function send(){
-  const id='TK-'+Date.now().toString(36).slice(-5).toUpperCase();const s=svc();
-  const t=`Hola Tekopora, quiero presupuesto\n\n*Pedido:* ${id}\n*Servicio:* ${s.n}${st.job?'\n*Trabajo:* '+st.job:''}\n*Detalle:* ${st.det}\n*Lugar:* ${st.city}${st.barrio?', '+st.barrio:''}\n*Cuándo:* ${st.when}\n*Nombre:* ${st.name}\n*WhatsApp:* ${st.tel}`;
-  const list=mine();list.unshift({id,s:s.id,job:st.job,city:st.city,when:st.when,at:Date.now()});localStorage.setItem('tk_req',JSON.stringify(list.slice(0,20)));
-  const url=waLink(t);window.open(url,'_blank');
+next.onclick=nextClick;
+function payload(){const s=svc();return{servicio:s.n,trabajo:st.job,detalle:st.det,ciudad:st.city,barrio:st.barrio,cuando:st.when,nombre:st.name,whatsapp:st.tel}}
+function waText(id){const p=payload();return `Hola Tekopora, quiero presupuesto\n\n${id?'*Pedido:* '+id+'\n':''}*Servicio:* ${p.servicio}${p.trabajo?'\n*Trabajo:* '+p.trabajo:''}\n*Detalle:* ${p.detalle}\n*Lugar:* ${p.ciudad}${p.barrio?', '+p.barrio:''}\n*Cuándo:* ${p.cuando}\n*Nombre:* ${p.nombre}\n*WhatsApp:* ${p.whatsapp}`}
+function save(id){const list=mine();list.unshift({id,s:st.sid,job:st.job,city:st.city,when:st.when,at:Date.now()});localStorage.setItem('tk_req',JSON.stringify(list.slice(0,20)));drawMine()}
+function done(id,viaWa){const url=waLink(waText(id));
   $('#prog').style.width='100%';$('#bf').style.display='none';$('#back').style.visibility='hidden';
-  bb.innerHTML=`<div class="ok"><div class="big">✅</div><h3>¡Pedido listo!</h3><p class="hint" style="margin-top:8px">Si se abrió WhatsApp, tocá <b>Enviar</b>. Apenas lo recibimos, se lo pasamos a profesionales de ${esc(st.city)} y te escriben con sus presupuestos.</p><p style="margin:14px 0"><a class="btn btn-wa" href="${url}" target="_blank" rel="noopener">Abrir WhatsApp de nuevo</a></p><p class="hint">Tu número de pedido: <b>${id}</b></p><button class="btn btn-out" id="done">Listo</button></div>`;
-  $('#done').onclick=closeWiz;drawMine()}
+  bb.innerHTML=`<div class="ok"><div class="big">✅</div><h3>¡Pedido ${viaWa?'listo':'enviado'}!</h3><p class="hint" style="margin-top:8px">${viaWa?`Si se abrió WhatsApp, tocá <b>Enviar</b>. Apenas lo recibimos, se lo pasamos a profesionales de ${esc(st.city)}.`:`Ya se lo avisamos a los profesionales de ${esc(st.city)}. Hasta 3 te van a escribir a tu WhatsApp <b>${esc(st.tel)}</b> con su presupuesto.`}</p>${viaWa?`<p style="margin:14px 0"><a class="btn btn-wa" href="${url}" target="_blank" rel="noopener">Abrir WhatsApp de nuevo</a></p>`:''}<p class="hint" style="margin-top:14px">Tu número de pedido: <b>${esc(id)}</b></p><button class="btn btn-out" id="done">Listo</button></div>`;
+  $('#done').onclick=closeWiz;save(id)}
+async function send(){
+  if(!API){const id='TK-'+Date.now().toString(36).slice(-5).toUpperCase();window.open(waLink(waText(id)),'_blank');return done(id,true)}
+  next.disabled=true;next.textContent='Enviando…';
+  try{const r=await api('pedido',Object.assign(payload(),{web:bb.querySelector('#hp')?.value||''}));if(!r.ok)throw r;done(r.id,false)}
+  catch(e){next.disabled=false;next.textContent='Enviar por WhatsApp';next.className='btn btn-wa';
+    bb.insertAdjacentHTML('beforeend','<p class="err" style="display:block">No se pudo enviar. Tocá el botón verde para mandarlo por WhatsApp.</p>');
+    next.onclick=()=>{const id='TK-'+Date.now().toString(36).slice(-5).toUpperCase();window.open(waLink(waText(id)),'_blank');next.onclick=nextClick;next.disabled=false;done(id,true)}}
+}
 function mine(){try{return JSON.parse(localStorage.getItem('tk_req'))||[]}catch(e){return[]}}
 function drawMine(){const l=mine();$('#mis').hidden=$('#navMis').hidden=!l.length;
   $('#misList').innerHTML=l.map(r=>{const s=S.find(x=>x.id===r.s)||S[S.length-1];return `<div class="req"><div><b>${s.i} ${esc(s.n)}</b>${r.job?' · '+esc(r.job):''}<br><small>${esc(r.city)} · ${new Date(r.at).toLocaleDateString('es-PY')} · ${esc(r.id)}</small></div><span class="tag">Enviado</span></div>`}).join('')}

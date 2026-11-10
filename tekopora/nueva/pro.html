@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es-PY">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Zona profesionales | Tekopora</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0E5C56">
+<link rel="icon" href="/-yjv-electricidad/tekopora/favicon-48.png" type="image/png" sizes="48x48">
+<link rel="apple-touch-icon" href="/-yjv-electricidad/tekopora/apple-touch-icon.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Work+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="estilos.css">
+<style>
+body{padding-bottom:0}
+.pane{max-width:620px;margin:0 auto;padding:30px 18px 60px}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px 20px;margin-bottom:14px}
+.tabs{display:flex;background:var(--soft);border-radius:999px;padding:4px;margin-bottom:18px}
+.tabs button{flex:1;border:0;background:none;padding:10px;border-radius:999px;font-weight:600;color:var(--muted)}
+.tabs button.on{background:#fff;color:var(--pri);box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips label{border:1.5px solid var(--line);border-radius:999px;padding:8px 13px;font-size:.9rem;cursor:pointer;background:#fff;user-select:none}
+.chips input{display:none}
+.chips label:has(input:checked){border-color:var(--pri);background:#e7f1ef;color:var(--pri);font-weight:600}
+.msg{border-radius:14px;padding:14px 16px;margin-top:14px;font-size:.95rem;display:none}
+.msg.ok{display:block;background:#e7f1ef;color:#0b4a45}
+.msg.bad{display:block;background:#fdecea;color:#8c1d18}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.ped{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:12px}
+.ped h3{font-size:1.15rem}
+.ped .meta{color:var(--muted);font-size:.88rem;margin:4px 0 10px}
+.ped .det{background:var(--bg);border-radius:12px;padding:10px 12px;font-size:.95rem;margin-bottom:12px;white-space:pre-wrap}
+.cupo{display:flex;gap:4px;align-items:center;font-size:.85rem;color:var(--muted);margin-bottom:12px}
+.cupo i{width:22px;height:8px;border-radius:4px;background:var(--soft)}
+.cupo i.f{background:var(--acc)}
+.cli{background:#e7f1ef;border-radius:14px;padding:14px;margin-top:4px}
+.cli b{font-size:1.05rem}
+.ped .btn{width:100%}
+.empty{text-align:center;color:var(--muted);padding:30px 10px}
+h2.t{font-size:1.25rem;margin:22px 0 10px}
+</style>
+</head>
+<body>
+<header><div class="wrap hd">
+  <a class="brand" href="./"><img src="../logo-emblema.png" alt="">Tekopora</a>
+  <nav class="nav"><span class="hide-m" style="color:var(--muted)">Zona profesionales</span><a class="btn btn-out btn-sm" href="./" style="color:var(--pri)">Soy cliente</a></nav>
+</div></header>
+
+<div class="pane" id="vAuth" hidden>
+  <h1 style="font-size:clamp(1.7rem,5vw,2.3rem)">Zona profesionales</h1>
+  <p style="color:var(--muted);margin:6px 0 20px">Mirá los pedidos de tu rubro y tu ciudad, y contactá al cliente antes que nadie.</p>
+  <div class="tabs"><button id="tLogin" class="on">Entrar</button><button id="tReg">Registrarme gratis</button></div>
+
+  <form class="card" id="fLogin">
+    <label class="l" for="lEmail" style="margin-top:0">Tu correo</label>
+    <input class="in" id="lEmail" type="email" autocomplete="email" placeholder="tucorreo@gmail.com" required>
+    <button class="btn btn-pri" style="width:100%;margin-top:16px">Enviarme el enlace de acceso</button>
+    <p class="hint" style="margin-top:10px;font-size:.88rem;color:var(--muted)">Te mandamos a tu correo un enlace para entrar, sin contraseña.</p>
+    <div class="msg" id="mLogin"></div>
+  </form>
+
+  <form class="card" id="fReg" hidden>
+    <label class="l" for="rName" style="margin-top:0">Nombre y apellido</label>
+    <input class="in" id="rName" autocomplete="name" required placeholder="Ej: Juan Benítez">
+    <label class="l" for="rTel">WhatsApp</label>
+    <input class="in" id="rTel" type="tel" inputmode="tel" autocomplete="tel" required placeholder="Ej: 0981 123 456">
+    <label class="l" for="rEmail">Correo (ahí te avisamos los pedidos)</label>
+    <input class="in" id="rEmail" type="email" autocomplete="email" required placeholder="tucorreo@gmail.com">
+    <label class="l">¿Qué trabajos hacés?</label>
+    <div class="chips" id="rRub"></div>
+    <label class="l">¿En qué ciudades trabajás?</label>
+    <div class="chips" id="rCit"></div>
+    <input type="text" id="hp" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+    <label class="ck"><input type="checkbox" id="rOk"><span>Acepto que Tekopora guarde mis datos para pasarme pedidos de clientes. <a href="../privacidad.html" target="_blank">Privacidad</a></span></label>
+    <button class="btn btn-acc" style="width:100%;margin-top:16px">Registrarme</button>
+    <div class="msg" id="mReg"></div>
+  </form>
+</div>
+
+<div class="pane" id="vList" hidden>
+  <div class="top"><div><h1 style="font-size:1.6rem" id="hola">Hola</h1><p style="color:var(--muted);font-size:.9rem" id="zona"></p></div>
+    <button class="btn btn-out btn-sm" id="salir">Salir</button></div>
+  <button class="btn btn-pri btn-sm" id="refresh" style="margin-top:8px">↻ Actualizar</button>
+  <div class="msg" id="mList"></div>
+  <h2 class="t">Mis clientes</h2><div id="lMios"></div>
+  <h2 class="t">Pedidos disponibles</h2><div id="lDisp"></div>
+</div>
+
+<div class="pane" id="vOff" hidden>
+  <div class="card"><h2>Muy pronto</h2><p style="color:var(--muted);margin:8px 0 16px">La zona de profesionales se está activando. Mientras tanto, anotate y te avisamos:</p>
+  <a class="btn btn-acc" target="_blank" rel="noopener" href="https://docs.google.com/forms/d/e/1FAIpQLSfotUOdbOKou3IuhGWA_kVDyXGlGkSmbJsG9AfHAGJqgq3vIQ/viewform">Anotarme</a></div>
+</div>
+
+<script src="datos.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const icon=n=>(S.find(s=>s.n===n)||{i:'🛠️'}).i;
+function msg(el,txt,ok){el.className='msg '+(ok?'ok':'bad');el.innerHTML=txt}
+function ago(t){const d=Math.floor((Date.now()-t)/864e5);if(d<1){const h=Math.floor((Date.now()-t)/36e5);return h<1?'hace un rato':'hace '+h+' h'}return d===1?'ayer':'hace '+d+' días'}
+
+let tok=localStorage.getItem('tk_t')||'';
+function readHash(){const hm=location.hash.match(/t=([A-Za-z0-9]+)/);if(hm){tok=hm[1];localStorage.setItem('tk_t',tok);history.replaceState(null,'',location.pathname);return true}}
+readHash();
+addEventListener('hashchange',()=>{if(readHash()&&API)load();else if(location.hash==='#registro'&&!tok){show('vAuth');tab(true)}});
+
+$('#rRub').innerHTML=S.filter(s=>s.id!=='otro').map(s=>`<label><input type="checkbox" value="${esc(s.n)}">${s.i} ${esc(s.n)}</label>`).join('');
+$('#rCit').innerHTML=CITIES.concat('Otra ciudad').map(c=>`<label><input type="checkbox" value="${esc(c)}">${esc(c)}</label>`).join('');
+function tab(reg){$('#fReg').hidden=!reg;$('#fLogin').hidden=reg;$('#tReg').classList.toggle('on',reg);$('#tLogin').classList.toggle('on',!reg)}
+$('#tLogin').onclick=()=>tab(false);$('#tReg').onclick=()=>tab(true);
+
+function show(v){['vAuth','vList','vOff'].forEach(x=>$('#'+x).hidden=x!==v)}
+if(!API)show('vOff');else if(tok)load();else{show('vAuth');tab(location.hash==='#registro')}
+
+$('#fLogin').onsubmit=async e=>{e.preventDefault();const b=e.target.querySelector('button');b.disabled=true;
+  try{const r=await api('login',{email:$('#lEmail').value.trim()});
+    if(r.ok)msg($('#mLogin'),'📩 Listo. Revisá tu correo (y la carpeta de spam) y tocá el enlace para entrar.',1);
+    else if(r.error==='pendiente')msg($('#mLogin'),'Tu registro está pendiente de aprobación. Te avisamos por correo apenas esté listo.');
+    else if(r.error==='rechazado')msg($('#mLogin'),'Tu registro no fue aprobado. Escribinos por WhatsApp si creés que es un error.');
+    else msg($('#mLogin'),'No encontramos ese correo. ¿Te registraste? Tocá «Registrarme gratis».');
+  }catch(_){msg($('#mLogin'),'No hay conexión. Probá de nuevo en un momento.')}b.disabled=false};
+
+$('#fReg').onsubmit=async e=>{e.preventDefault();const m=$('#mReg');
+  const rub=[...document.querySelectorAll('#rRub input:checked')].map(i=>i.value),cit=[...document.querySelectorAll('#rCit input:checked')].map(i=>i.value);
+  const tel=$('#rTel').value.trim(),d=tel.replace(/\D/g,'');
+  if(!/^(0?9\d{8}|5959\d{8})$/.test(d))return msg(m,'Revisá el WhatsApp: tiene que ser un celular de Paraguay, ej. 0981 123 456.');
+  if(!rub.length)return msg(m,'Elegí al menos un trabajo.');if(!cit.length)return msg(m,'Elegí al menos una ciudad.');
+  if(!$('#rOk').checked)return msg(m,'Tenés que aceptar para registrarte.');
+  const b=e.target.querySelector('button');b.disabled=true;b.textContent='Enviando…';
+  try{const r=await api('registro',{nombre:$('#rName').value.trim(),whatsapp:tel,email:$('#rEmail').value.trim(),rubros:rub,ciudades:cit,web:$('#hp').value});
+    if(!r.ok)throw r;
+    if(r.estado==='aprobado')msg(m,'Ya estás registrado. Tocá «Entrar» y te mandamos el enlace.',1);
+    else{msg(m,'✅ ¡Gracias! Revisamos tu registro y te avisamos por correo cuando esté aprobado.',1);e.target.reset()}
+  }catch(_){msg(m,'No se pudo enviar. Revisá los datos y probá de nuevo.')}b.disabled=false;b.textContent='Registrarme'};
+
+$('#salir').onclick=()=>{localStorage.removeItem('tk_t');tok='';show('vAuth');tab(false)};
+$('#refresh').onclick=()=>load();
+
+let ME={};
+async function load(){show('vList');$('#lDisp').innerHTML='<p class="empty">Cargando pedidos…</p>';$('#lMios').innerHTML='';
+  try{const r=await api('pedidos',{t:tok});
+    if(!r.ok){if(r.error==='token'){localStorage.removeItem('tk_t');tok='';show('vAuth');tab(false);msg($('#mLogin'),'Tu enlace ya no sirve. Pedí uno nuevo con tu correo.')}return}
+    ME=r.tecnico;$('#hola').textContent='Hola, '+String(ME.nombre).split(' ')[0];$('#zona').textContent=ME.rubros+' · '+ME.ciudades;
+    $('#mList').className='msg';render(r.pedidos)
+  }catch(_){msg($('#mList'),'No hay conexión. Tocá «Actualizar».');$('#lDisp').innerHTML=''}}
+function card(p){
+  const libres=p.max-p.tomados;
+  const cupo=`<div class="cupo">${Array.from({length:p.max},(_,i)=>`<i class="${i<p.tomados?'f':''}"></i>`).join('')}<span>${p.mio?'Ya lo tomaste':libres>0?'Quedan '+libres+' de '+p.max+' lugares':'Completo'}</span></div>`;
+  let pie;
+  if(p.mio){const txt=`Hola ${p.nombre}, soy ${ME.nombre} de Tekopora. Vi tu pedido de ${p.servicio} en ${p.ciudad} y te puedo pasar presupuesto.`;
+    pie=`<div class="cli"><b>👤 ${esc(p.nombre)}</b><br>📍 ${esc(p.ciudad)}${p.barrio?', '+esc(p.barrio):''}<br>📱 ${esc(p.whatsapp)}<p style="margin-top:12px"><a class="btn btn-wa" target="_blank" rel="noopener" href="https://wa.me/${telWa(p.whatsapp)}?text=${encodeURIComponent(txt)}">Escribirle por WhatsApp</a></p></div>`}
+  else if(libres>0)pie=`<button class="btn btn-acc" data-tomar="${esc(p.id)}">Ver datos del cliente</button>`;
+  else pie=`<p class="hint" style="color:var(--muted);font-size:.9rem">Este pedido ya lo tomaron ${p.max} profesionales.</p>`;
+  return `<div class="ped" id="p-${esc(p.id)}"><h3>${icon(p.servicio)} ${esc(p.servicio)}</h3><div class="meta">📍 ${esc(p.ciudad)} · 🕒 ${esc(p.cuando)} · ${ago(p.fecha)} · ${esc(p.id)}</div>${p.trabajo?`<p style="font-weight:600;margin-bottom:6px">${esc(p.trabajo)}</p>`:''}<div class="det">${esc(p.detalle)}</div>${cupo}${pie}</div>`}
+function render(list){const mios=list.filter(p=>p.mio),disp=list.filter(p=>!p.mio);
+  $('#lMios').innerHTML=mios.length?mios.map(card).join(''):'<p class="empty">Todavía no tomaste ningún pedido.</p>';
+  $('#lDisp').innerHTML=disp.length?disp.map(card).join(''):'<p class="empty">No hay pedidos nuevos en tu zona por ahora. Te avisamos por correo cuando llegue uno.</p>'}
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-tomar]');if(!b)return;
+  if(!confirm('¿Querés tomar este pedido? Vas a ver el WhatsApp del cliente y ocupar uno de los 3 lugares.'))return;
+  b.disabled=true;b.textContent='Abriendo…';
+  try{const r=await api('tomar',{t:tok,id:b.dataset.tomar});
+    if(r.ok){const el=$('#p-'+CSS.escape(r.pedido.id));el.remove();$('#lMios').querySelector('.empty')?.remove();$('#lMios').insertAdjacentHTML('afterbegin',card(r.pedido));document.getElementById('p-'+r.pedido.id).scrollIntoView({behavior:'smooth',block:'center'})}
+    else if(r.error==='lleno'){b.outerHTML='<p class="hint" style="color:var(--muted)">Uy, justo lo tomaron 3 profesionales.</p>'}
+    else throw r}
+  catch(_){b.disabled=false;b.textContent='Ver datos del cliente';alert('No se pudo abrir. Probá de nuevo.')}});
+</script>
+</body>
+</html>
