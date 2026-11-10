@@ -1,6 +1,6 @@
 /* Configuración compartida de Tekopora */
 // Pegar aquí la URL de la aplicación web de Apps Script (termina en /exec). Vacío = los pedidos van por WhatsApp.
-const API='';
+const API='https://script.google.com/macros/s/AKfycbxbvQBETZ7PR4CjExHC4yH6pfhVHbdufgWUAe0v_xfJKYIMQyWrlj8lQyHtQdszbat1/exec';
 const WA='595987642351';
 const CITIES=['Asunción','San Lorenzo','Luque','Fernando de la Mora','Lambaré','Mariano Roque Alonso','Ñemby','Capiatá','Limpio','Villa Elisa','San Antonio','Itauguá'];
 const S=[

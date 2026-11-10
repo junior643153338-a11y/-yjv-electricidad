@@ -29,9 +29,27 @@ function configurar() {
     'Todo listo. Ahora publicá el script: Implementar > Nueva implementación > Aplicación web.');
 }
 
+function asegurar() {
+  var p = PropertiesService.getScriptProperties();
+  if (p.getProperty('LISTO')) return;
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  Object.keys(HOJAS).forEach(function (n) {
+    var sh = ss.getSheetByName(n) || ss.insertSheet(n);
+    if (sh.getLastRow() === 0) {
+      sh.appendRow(HOJAS[n]);
+      sh.getRange(1, 1, 1, HOJAS[n].length).setFontWeight('bold');
+      sh.setFrozenRows(1);
+    }
+  });
+  if (!p.getProperty('ADMIN_KEY')) p.setProperty('ADMIN_KEY', Utilities.getUuid().replace(/-/g, ''));
+  if (!p.getProperty('ADMIN_EMAIL')) p.setProperty('ADMIN_EMAIL', Session.getEffectiveUser().getEmail());
+  p.setProperty('LISTO', '1');
+}
+
 function doPost(e) {
   var r;
   try {
+    asegurar();
     var d = JSON.parse(e.postData.contents);
     if (d.web) return json({ ok: false, error: 'spam' });
     var f = { pedido: nuevoPedido, registro: registro, login: login, pedidos: listar, tomar: tomar }[d.a];
@@ -44,8 +62,9 @@ function doPost(e) {
 
 function doGet(e) {
   var q = e.parameter || {};
+  asegurar();
   if (q.a === 'aprobar' || q.a === 'rechazar') return html(aprobar(q));
-  return json({ ok: true, app: 'tekopora' });
+  return html('✅ Tekopora está funcionando. Ya podés cerrar esta ventana.');
 }
 
 /* ---------- acciones ---------- */
