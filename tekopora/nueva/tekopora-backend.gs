@@ -31,8 +31,9 @@ function configurar() {
 
 function asegurar() {
   var p = PropertiesService.getScriptProperties();
-  if (p.getProperty('LISTO')) return;
+  if (p.getProperty('LISTO') === '2') return;
   var ss = SpreadsheetApp.getActiveSpreadsheet();
+  ss.setSpreadsheetTimeZone(Session.getScriptTimeZone());
   Object.keys(HOJAS).forEach(function (n) {
     var sh = ss.getSheetByName(n) || ss.insertSheet(n);
     if (sh.getLastRow() === 0) {
@@ -43,7 +44,7 @@ function asegurar() {
   });
   if (!p.getProperty('ADMIN_KEY')) p.setProperty('ADMIN_KEY', Utilities.getUuid().replace(/-/g, ''));
   if (!p.getProperty('ADMIN_EMAIL')) p.setProperty('ADMIN_EMAIL', Session.getEffectiveUser().getEmail());
-  p.setProperty('LISTO', '1');
+  p.setProperty('LISTO', '2');
 }
 
 function doPost(e) {
