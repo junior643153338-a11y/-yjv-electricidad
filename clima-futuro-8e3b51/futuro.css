@@ -140,3 +140,5 @@ footer { background: rgba(3, 6, 18, 0.8); }
   .temp-from { font-size: 1.2rem !important; }
   .temp-label { font-size: 0.72rem !important; }
 }
+
+.product-photo { width: 100%; aspect-ratio: 2 / 1; object-fit: cover; border-radius: 10px; margin-bottom: 14px; border: 1px solid var(--line); box-shadow: 0 0 18px rgba(0, 229, 255, 0.18); }
