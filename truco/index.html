@@ -114,6 +114,21 @@ background:linear-gradient(180deg,#ffe58a,#f2c230 50%,#d39a12);box-shadow:0 4px 
 .set{display:flex;align-items:center;justify-content:space-between;padding:14px;border-radius:12px;background:rgba(0,0,0,.3);margin-bottom:10px}
 .seg button{padding:8px 14px;background:#2a160c;color:#f7e6b5;font-weight:800;border:1px solid #7a4d2c}.seg button.on{background:var(--gold);color:#3a1d08}
 input[type=text]{font:inherit;padding:8px 10px;border-radius:8px;border:1px solid #7a4d2c;background:#2a160c;color:#fff;width:150px}
+.tbar{height:6px;border-radius:4px;background:rgba(0,0,0,.4);overflow:hidden;margin:3px auto 0;width:min(70vw,260px);visibility:hidden}
+.tbar.on{visibility:visible}.tbar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#7be38f,#f2c230);transition:width .25s linear}
+.tbar.low i{background:#d52b1e}
+.tsec{font-size:11px;font-weight:800;color:var(--gold);min-width:26px;text-align:center;visibility:hidden}.tsec.on{visibility:visible}.tsec.low{color:#ff6b5b}
+.ptimer{display:flex;align-items:center;justify-content:center;gap:6px;z-index:2}
+.opp .ot{display:flex;flex-direction:column;gap:2px}.opp .tbar{width:110px;margin:0}
+.chatbtn{width:38px;height:38px;border-radius:50%;background:#2a160c;font-size:19px;border:2px solid #7a4d2c;position:relative}
+.chatbtn .dot{position:absolute;top:-2px;right:-2px;width:11px;height:11px;border-radius:50%;background:var(--red);display:none}
+#chat{position:absolute;left:8px;right:8px;top:58px;z-index:12;background:linear-gradient(180deg,#5a3520,#2a160c);border:2px solid var(--gold);border-radius:16px;padding:10px;display:none;box-shadow:0 10px 30px rgba(0,0,0,.6)}
+#chat.on{display:block}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.chip{padding:7px 10px;border-radius:16px;background:#2a160c;color:#f7e6b5;border:1px solid #7a4d2c;font-weight:700;font-size:13px}
+.crow{display:flex;gap:6px}.crow input{flex:1;width:auto}.crow button{padding:8px 12px;border-radius:10px;background:var(--gold);color:#3a1d08;font-weight:900}
+.clog{max-height:84px;overflow-y:auto;font-size:12px;margin-bottom:8px;opacity:.9}.clog div{margin:2px 0}.clog b{color:var(--gold)}
+.bub{white-space:normal;max-width:70vw}
 .card{display:block;width:100%;height:auto;filter:drop-shadow(0 3px 4px rgba(0,0,0,.45));-webkit-user-drag:none}
 </style>
 </head>
@@ -141,7 +156,7 @@ input[type=text]{font:inherit;padding:8px 10px;border-radius:8px;border:1px soli
     <button class="mb dark" onclick="show('rules')"><span class="ic">📖</span><span>Cómo jugar</span></button>
     <button class="mb dark" onclick="show('settings');renderSet()"><span class="ic">⚙️</span><span>Ajustes</span></button>
   </div>
-  <div class="ver">Demo v0.2 · Truco Paraguayo</div>
+  <div class="ver">Demo v0.3 · Truco Paraguayo</div>
 </section>
 
 <!-- GIRA -->
@@ -157,9 +172,9 @@ input[type=text]{font:inherit;padding:8px 10px;border-radius:8px;border:1px soli
   <div class="top">
     <button class="back" onclick="askQuit()">‹</button>
     <div class="score"><div class="sc"><b id="lblP">VOS</b><div class="n" id="scP">0</div><div id="fsP"></div></div><div class="sc"><b id="lblC">PC</b><div class="n" id="scC">0</div><div id="fsC"></div></div></div>
-    <div style="width:38px;text-align:center;font-size:11px;opacity:.8" id="tgt">a 30</div>
+    <button class="chatbtn" onclick="toggleChat()">💬<span class="dot" id="chatDot"></span></button>
   </div>
-  <div class="opp"><div class="av" id="oAv">🧔🏽</div><div class="who" id="oName">Rival<small>—</small></div><div class="bub" id="bubC"></div></div>
+  <div class="opp"><div class="av" id="oAv">🧔🏽</div><div class="ot"><div class="who" id="oName">Rival<small>—</small></div><div style="display:flex;align-items:center;gap:4px"><div class="tbar" id="tbC"><i></i></div><span class="tsec" id="tsC"></span></div></div><div class="bub" id="bubC"></div></div>
   <div class="ohand" id="oHand"></div>
   <div class="table">
     <div class="row" id="rowC"></div>
@@ -168,6 +183,9 @@ input[type=text]{font:inherit;padding:8px 10px;border-radius:8px;border:1px soli
     <div class="bub" id="bubP"></div>
   </div>
   <div class="info" id="info"></div>
+  <div class="ptimer"><div class="tbar" id="tbP"><i></i></div><span class="tsec" id="tsP"></span></div>
+  <div id="chat"><div class="clog" id="clog"></div><div class="chips" id="chips"></div>
+    <div class="crow"><input type="text" id="cIn" maxlength="60" placeholder="Escribí un mensaje…" onkeydown="if(event.key==='Enter')sendTyped()"><button onclick="sendTyped()">Enviar</button></div></div>
   <div class="phand" id="pHand"></div>
   <div class="acts" id="acts"></div>
 </section>
@@ -206,6 +224,7 @@ input[type=text]{font:inherit;padding:8px 10px;border-radius:8px;border:1px soli
     <div class="set"><span>Tu nombre</span><input type="text" id="setName" maxlength="14" oninput="S.name=this.value||'Vos';save()"></div>
     <div class="set"><span>Partida a</span><div class="seg" id="segT"><button data-v="15">15</button><button data-v="30">30</button></div></div>
     <div class="set"><span>Voz del rival</span><div class="seg" id="segV"><button data-v="1">Sí</button><button data-v="0">No</button></div></div>
+    <div class="set"><span>Cronómetro 30 s</span><div class="seg" id="segR"><button data-v="1">Sí</button><button data-v="0">No</button></div></div>
     <div class="set"><span>Sonidos</span><div class="seg" id="segS"><button data-v="1">Sí</button><button data-v="0">No</button></div></div>
   </div>
 </section>
@@ -228,7 +247,7 @@ const RIVALS=[
  {id:6,name:'Carlitos',city:'Ciudad del Este',dep:'Alto Paraná',av:'😎',diff:2,lines:["Esto es negocio","¿Mentís o no mentís?","¡Puro truco!"]},
  {id:7,name:'Don Feliciano',city:'Filadelfia',dep:'Chaco',av:'🤠',diff:2,lines:["En el Chaco se juega en serio","Calor y truco","¡Nde tavy!"]},
 ];
-const S=Object.assign({name:'Vos',target:30,voice:1,sound:1,beaten:[],wins:0,losses:0,pts:0},JSON.parse(localStorage.getItem('trucoPY')||'{}'));
+const S=Object.assign({name:'Vos',target:30,voice:1,sound:1,timer:1,beaten:[],wins:0,losses:0,pts:0},JSON.parse(localStorage.getItem('trucoPY')||'{}'));
 function save(){localStorage.setItem('trucoPY',JSON.stringify(S))}
 
 // ---------- cartas ----------
@@ -266,7 +285,7 @@ const RK_NAMES=[['Ñandutí_88','🧑🏽'],['Lili Asu','👩🏽'],['Cholo CDE'
 let rkT=0;function rkTab(t,b){rkT=t;document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));renderRank()}
 function renderRank(){const mult=rkT?4.1:1;let L=RK_NAMES.map((n,i)=>({n:n[0],av:n[1],p:Math.round((15200-i*1050-(i*i*17))*mult)}));L.push({n:S.name||'Vos',av:'🙂',p:S.pts*(rkT?1:1),me:1});L.sort((a,b)=>b.p-a.p);
  $('rkList').innerHTML=L.map((x,i)=>`<div class="rk ${x.me?'me':''}"><div class="pos">${i+1}</div><div class="av">${x.av}</div><div class="nm">${x.n}${x.me?' (vos)':''}</div><div class="pt">${x.p}</div></div>`).join('')}
-function renderSet(){$('setName').value=S.name;const seg=(id,key)=>{$(id).querySelectorAll('button').forEach(b=>{b.classList.toggle('on',+b.dataset.v===+S[key]);b.onclick=()=>{S[key]=+b.dataset.v;save();renderSet()}})};seg('segT','target');seg('segV','voice');seg('segS','sound')}
+function renderSet(){$('setName').value=S.name;const seg=(id,key)=>{$(id).querySelectorAll('button').forEach(b=>{b.classList.toggle('on',+b.dataset.v===+S[key]);b.onclick=()=>{S[key]=+b.dataset.v;save();renderSet()}})};seg('segT','target');seg('segV','voice');seg('segS','sound');seg('segR','timer')}
 
 // ---------- juego ----------
 let G=null,T=[];
@@ -275,17 +294,17 @@ function later(f,ms){T.push(setTimeout(f,ms))}
 function clearT(){T.forEach(clearTimeout);T=[]}
 function quick(){startGame(Math.random()*RIVALS.length|0,true)}
 function startGame(i,q){clearT();const opp=RIVALS[i];G={opp,quick:!!q,target:S.target,score:{p:0,c:0},mano:Math.random()<.5?'p':'c',over:false};
- $('oAv').textContent=opp.av;$('oName').innerHTML=`${opp.name}<small>${opp.city} · ${'★'.repeat(opp.diff+1)}</small>`;$('lblP').textContent=(S.name||'Vos').toUpperCase();$('lblC').textContent=opp.name.toUpperCase();$('tgt').textContent='a '+G.target;
+ $('oAv').textContent=opp.av;$('oName').innerHTML=`${opp.name}<small>${opp.city} · ${'★'.repeat(opp.diff+1)}</small>`;$('lblP').textContent=(S.name||'Vos').toUpperCase();$('lblC').textContent=opp.name.toUpperCase();$('clog').innerHTML='';closeChat();
  show('game');later(()=>say('c',opp.lines[0]),300);later(newHand,900)}
 function newHand(){const d=shuffle(DECK);G.hand={p:d.slice(0,3).sort((a,b)=>power(b)-power(a)),c:d.slice(3,6)};G.orig={p:G.hand.p.slice(),c:G.hand.c.slice()};
  G.table={p:[],c:[]};G.bz=[];G.truco={level:1,lastBy:null};G.env={done:false};G.pending=null;G.susp=null;G.turn=G.mano;G.handOver=false;G.busy=false;
  toast(G.mano==='p'?'Sos mano':`${G.opp.name} es mano`,1100);beep(660,.05);next()}
 function actor(){return G.pending?other(G.pending.by):G.turn}
-function next(){if(!G||G.handOver||G.over)return;render();if(actor()==='c'){G.busy=true;render();later(()=>{G.busy=false;cpuAct()},850+Math.random()*500)}}
+function next(){if(!G||G.handOver||G.over){stopTimer();return}render();startTimer(actor());if(actor()==='c'){G.busy=true;render();later(()=>{G.busy=false;cpuAct()},850+Math.random()*500)}}
 function hw(r){if(r.length<2)return null;const[a,b,c]=r;
  if(a==='t'){if(b!=='t')return b;if(r.length===3)return c!=='t'?c:G.mano;return null}
  if(b==='t'||a===b)return a;if(r.length===3)return c==='t'?a:c;return null}
-function play(who,idx){const card=G.hand[who].splice(idx,1)[0];G.table[who].push(card);flick();const k=G.bz.length;
+function play(who,idx){stopTimer();const card=G.hand[who].splice(idx,1)[0];G.table[who].push(card);flick();const k=G.bz.length;
  if(G.table.p.length>k&&G.table.c.length>k){const a=power(G.table.p[k]),b=power(G.table.c[k]);const r=a>b?'p':b>a?'c':'t';G.bz.push(r);
   if(r==='t')toast('¡Parda!',900);
   const w=hw(G.bz);if(w){G.handOver=true;render();later(()=>endHand(w,tPts(),'bazas'),1100);return}
@@ -300,7 +319,7 @@ function canTruco(w){if(actor()!==w)return false;if(G.pending)return G.pending.k
 function callEnv(w,type){if(G.pending&&G.pending.kind==='envido'){G.pending.chain.push(type);G.pending.by=w}else{if(G.pending)G.susp=G.pending;G.pending={kind:'envido',chain:[type],by:w}}say(w,ENAME[type]);next()}
 function callTruco(w){const lv=G.pending&&G.pending.kind==='truco'?G.pending.level+1:G.truco.level+1;G.pending={kind:'truco',level:lv,by:w};say(w,TNAME[lv]);next()}
 const EV={envido:2,real:3};
-function respond(w,yes){const P=G.pending;
+function respond(w,yes){stopTimer();const P=G.pending;
  if(P.kind==='truco'){if(yes){G.truco={level:P.level,lastBy:P.by};G.pending=null;say(w,'¡Quiero!');next()}else{say(w,'No quiero');G.pending=null;G.handOver=true;render();later(()=>endHand(P.by,P.level-1,'noquiero'),1000)}return}
  G.env.done=true;const ch=P.chain;G.pending=null;
  if(!yes){say(w,'No quiero');const pts=Math.max(1,ch.slice(0,-1).reduce((s,x)=>s+(EV[x]||0),0));render();later(()=>{addPts(P.by,pts,`${pts} por el envido`);if(!G.over){G.pending=G.susp;G.susp=null;next()}},1000);return}
@@ -310,14 +329,14 @@ function respond(w,yes){const P=G.pending;
  later(()=>say(m,`Tengo ${em}`),900);
  later(()=>say(o,eo>em?`${eo} son mejores`:'Son buenas',eo>em?`tengo ${eo}`:`tenía ${eo}`),2000);
  later(()=>{addPts(win,pts,`${win==='p'?(S.name||'Vos'):G.opp.name} +${pts} por el envido`);if(!G.over){G.pending=G.susp;G.susp=null;next()}},3200)}
-function mazo(){say('p','Me voy al mazo');G.handOver=true;render();later(()=>endHand('c',tPts(),'mazo'),900)}
+function mazo(){stopTimer();say('p','Me voy al mazo');G.handOver=true;render();later(()=>endHand('c',tPts(),'mazo'),900)}
 function addPts(w,n,msg){G.score[w]=Math.min(G.target,G.score[w]+n);if(msg)toast(msg,1500);beep(w==='p'?880:330,.12,'sine',.12);render();if(G.score[w]>=G.target){G.over=true;later(()=>gameOver(w),1600)}}
-function endHand(w,pts,why){const name=w==='p'?(S.name||'Vos'):G.opp.name;addPts(w,pts,`${name} +${pts}${why==='mazo'?' (al mazo)':why==='noquiero'?' (no quiso)':''}`);
+function endHand(w,pts,why){stopTimer();const name=w==='p'?(S.name||'Vos'):G.opp.name;addPts(w,pts,`${name} +${pts}${why==='mazo'?' (al mazo)':why==='noquiero'?' (no quiso)':''}`);
  if(!G.over){if(w==='c'&&Math.random()<.35)later(()=>say('c',G.opp.lines[1+(Math.random()*2|0)]),600);later(()=>{G.mano=other(G.mano);newHand()},2000)}}
-function gameOver(w){const won=w==='p';if(won){S.wins++;S.pts+=100+G.opp.diff*50+(G.score.p-G.score.c)*5;if(!G.quick&&!S.beaten.includes(G.opp.id))S.beaten.push(G.opp.id)}else{S.losses++;S.pts+=10}save();
+function gameOver(w){stopTimer();closeChat();const won=w==='p';if(won){S.wins++;S.pts+=100+G.opp.diff*50+(G.score.p-G.score.c)*5;if(!G.quick&&!S.beaten.includes(G.opp.id))S.beaten.push(G.opp.id)}else{S.losses++;S.pts+=10}save();
  overlay(`<div style="font-size:54px">${won?'🏆':G.opp.av}</div><h3>${won?'¡Ganaste!':'Perdiste'}</h3><p>${S.name||'Vos'} ${G.score.p} — ${G.score.c} ${G.opp.name}<br><small>${won?(G.quick?'¡Bien jugado!':'¡Desbloqueaste el siguiente departamento!'):'"'+G.opp.lines[2]+'"'}</small></p>
  <button class="mb" onclick="closeOv();startGame(${G.opp.id},${G.quick})">Revancha</button><button class="mb dark" onclick="closeOv();show('menu')">Menú</button>`);speak(won?'Ganaste':'Gané yo')}
-function askQuit(){overlay(`<h3>¿Abandonar?</h3><p>Se pierde la partida actual.</p><button class="mb" onclick="closeOv()">Seguir jugando</button><button class="mb dark" onclick="closeOv();clearT();G=null;show('menu')">Salir</button>`)}
+function askQuit(){overlay(`<h3>¿Abandonar?</h3><p>Se pierde la partida actual.</p><button class="mb" onclick="closeOv()">Seguir jugando</button><button class="mb dark" onclick="closeOv();clearT();stopTimer();closeChat();G=null;show('menu')">Salir</button>`)}
 
 // ---------- IA ----------
 function winProb(N=260){const known=new Set([...G.orig.c,...G.table.p].map(cid));const unseen=DECK.filter(c=>!known.has(cid(c)));let w=0;
@@ -347,7 +366,8 @@ function chooseCard(){const h=G.hand.c,k=G.bz.length;const idx=h.map((c,i)=>i).s
  if(k===0)return h.length===3?idx[1]:idx[0];return idx[idx.length-1]}
 
 // ---------- UI ----------
-function say(w,t,sub){const b=$(w==='c'?'bubC':'bubP');b.innerHTML=t+(sub?`<small>${sub}</small>`:'');b.classList.add('on');clearTimeout(b._t);b._t=setTimeout(()=>b.classList.remove('on'),1800);if(w==='c'){speak(t);beep(440,.08)}else beep(620,.06)}
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+function say(w,t,sub,ms=1800){const b=$(w==='c'?'bubC':'bubP');b.innerHTML=esc(t)+(sub?`<small>${esc(sub)}</small>`:'');b.classList.add('on');clearTimeout(b._t);b._t=setTimeout(()=>b.classList.remove('on'),ms);if(w==='c'){speak(t);beep(440,.08)}else beep(620,.06)}
 let toT;function toast(t,ms=1300){const e=$('toast');e.textContent=t;e.classList.add('on');clearTimeout(toT);toT=setTimeout(()=>e.classList.remove('on'),ms)}
 function fosforos(n){const g=Math.ceil(30/5);let s='';const W=6*16;for(let i=0;i<g;i++){const v=Math.max(0,Math.min(5,n-i*5));const x=i*16+2,y=2,L=11;
  const st=(x1,y1,x2,y2)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#e8c48a" stroke-width="1.8" stroke-linecap="round"/><circle cx="${x2}" cy="${y2}" r="1.6" fill="#d52b1e"/>`;
@@ -373,6 +393,30 @@ function render(){if(!G)return;
   if(canTruco('p'))a+=`<button class="ab tr" onclick="callTruco('p')">${{2:'Truco',3:'Retruco',4:'Vale cuatro'}[G.truco.level+1]}</button>`;
   a+=`<button class="ab mz" onclick="mazo()">Mazo</button>`}
  $('acts').innerHTML=a}
+// ---------- cronómetro ----------
+const TURN=30;let TM={who:null,end:0,iv:null,last:-1};
+function stopTimer(){clearInterval(TM.iv);TM.iv=null;TM.who=null;for(const w of ['P','C']){$('tb'+w).classList.remove('on');$('ts'+w).classList.remove('on')}}
+function startTimer(who){if(!S.timer){stopTimer();return}stopTimer();TM.who=who;TM.end=Date.now()+TURN*1000;TM.last=-1;tick();TM.iv=setInterval(tick,250)}
+function tick(){if(!G||G.handOver||G.over||!TM.who){stopTimer();return}
+ const W=TM.who==='p'?'P':'C',O=W==='P'?'C':'P';const left=Math.max(0,(TM.end-Date.now())/1000);const sec=Math.ceil(left);
+ const bar=$('tb'+W),ts=$('ts'+W);bar.classList.add('on');ts.classList.add('on');$('tb'+O).classList.remove('on');$('ts'+O).classList.remove('on');
+ bar.firstChild.style.width=(left/TURN*100)+'%';ts.textContent=sec+'s';const low=sec<=10;bar.classList.toggle('low',low);ts.classList.toggle('low',low);
+ if(TM.who==='p'&&sec!==TM.last&&sec<=5&&sec>0)beep(1000,.04,'square',.05);TM.last=sec;
+ if(left<=0){const who=TM.who;stopTimer();if(who==='p'&&actor()==='p')timeOut()}}
+function timeOut(){toast('¡Se acabó el tiempo!',1400);closeChat();
+ if(G.pending){respond('p',false);return}
+ const h=G.hand.p;let j=0;h.forEach((c,i)=>{if(power(c)<power(h[j]))j=i});play('p',j)}
+
+// ---------- chat ----------
+const QUICK=['👍','😂','🧉','😡',"¡Buena jugada!","¡Jaha!","¡Qué suerte!","Mba'éichapa","Aguyje","¡Apurate, che!","Te voy a ganar","¿Mentís o no?"];
+const REPLIES=['Jajaja','Aguyje, che ra\'a','Ya vas a ver','Tranquilo nomás','🧉','😂','Jugá, jugá','¡Jaha!'];
+function toggleChat(){const c=$('chat');if(c.classList.contains('on'))return closeChat();$('chips').innerHTML=QUICK.map((q,i)=>`<button class="chip" onclick="sendChat(QUICK[${i}])">${esc(q)}</button>`).join('');c.classList.add('on');$('chatDot').style.display='none'}
+function closeChat(){$('chat').classList.remove('on')}
+function logChat(w,t){const l=$('clog');l.insertAdjacentHTML('beforeend',`<div><b>${esc(w==='p'?(S.name||'Vos'):G.opp.name)}:</b> ${esc(t)}</div>`);l.scrollTop=l.scrollHeight}
+function sendTyped(){const i=$('cIn');const t=i.value.trim();if(!t)return;i.value='';sendChat(t)}
+function sendChat(t){if(!G)return;say('p',t,null,2600);logChat('p',t);closeChat();
+ if(Math.random()<.7){const pool=REPLIES.concat(G.opp.lines);const r=pool[Math.random()*pool.length|0];
+  later(()=>{if(!G)return;say('c',r,null,2600);logChat('c',r);if(!$('chat').classList.contains('on'))$('chatDot').style.display='block'},1200+Math.random()*1200)}}
 if(window.speechSynthesis)speechSynthesis.getVoices();
 </script>
 </body>
