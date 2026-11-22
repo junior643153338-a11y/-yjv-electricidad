@@ -68,7 +68,7 @@ background:linear-gradient(180deg,#ffe58a,#f2c230 50%,#d39a12);box-shadow:0 4px 
 .ohand .card:nth-child(1){transform:rotate(-8deg) translateY(4px)}.ohand .card:nth-child(3){transform:rotate(8deg) translateY(4px)}
 .table{flex:1;display:flex;flex-direction:column;justify-content:center;gap:6px;position:relative}
 .row{display:flex;justify-content:center;gap:clamp(8px,4vw,22px)}
-.slot{width:clamp(56px,17vw,80px);aspect-ratio:2/3;border-radius:8px;border:2px dashed rgba(255,255,255,.12);position:relative}
+.slot{width:clamp(56px,17vw,80px);aspect-ratio:208/319;border-radius:8px;border:2px dashed rgba(255,255,255,.12);position:relative}
 .slot .card{position:absolute;inset:0;width:100%;animation:drop .3s ease-out}
 .slot.win .card{box-shadow:0 0 0 3px var(--gold),0 0 18px var(--gold)}
 @keyframes drop{from{transform:translateY(40px) scale(1.2);opacity:0}to{transform:none;opacity:1}}
@@ -114,7 +114,7 @@ background:linear-gradient(180deg,#ffe58a,#f2c230 50%,#d39a12);box-shadow:0 4px 
 .set{display:flex;align-items:center;justify-content:space-between;padding:14px;border-radius:12px;background:rgba(0,0,0,.3);margin-bottom:10px}
 .seg button{padding:8px 14px;background:#2a160c;color:#f7e6b5;font-weight:800;border:1px solid #7a4d2c}.seg button.on{background:var(--gold);color:#3a1d08}
 input[type=text]{font:inherit;padding:8px 10px;border-radius:8px;border:1px solid #7a4d2c;background:#2a160c;color:#fff;width:150px}
-.card{display:block;filter:drop-shadow(0 3px 4px rgba(0,0,0,.45))}
+.card{display:block;width:100%;height:auto;filter:drop-shadow(0 3px 4px rgba(0,0,0,.45));-webkit-user-drag:none}
 </style>
 </head>
 <body>
@@ -141,7 +141,7 @@ input[type=text]{font:inherit;padding:8px 10px;border-radius:8px;border:1px soli
     <button class="mb dark" onclick="show('rules')"><span class="ic">📖</span><span>Cómo jugar</span></button>
     <button class="mb dark" onclick="show('settings');renderSet()"><span class="ic">⚙️</span><span>Ajustes</span></button>
   </div>
-  <div class="ver">Demo v0.1 · Truco Paraguayo</div>
+  <div class="ver">Demo v0.2 · Truco Paraguayo</div>
 </section>
 
 <!-- GIRA -->
@@ -193,6 +193,7 @@ input[type=text]{font:inherit;padding:8px 10px;border-radius:8px;border:1px soli
     <p><b>Truco</b> 2 puntos, <b>Retruco</b> 3, <b>Vale cuatro</b> 4. Si no se quiere, el que cantó suma lo que valía antes. Solo puede subir el que aceptó. "El envido va primero": si te cantan truco en la primera baza todavía podés cantar envido.</p>
     <h3>Pardas (empates)</h3>
     <p>Si se empata la primera, gana la segunda. Si se empata otra baza, gana quien ganó la primera. Si se empatan todas, gana el mano.</p>
+    <p style="opacity:.6;font-size:12px">Cartas: baraja española de Basquetteur y Germarquezm (Wikimedia Commons), licencia CC BY-SA 3.0.</p>
     <p style="opacity:.6;font-size:12px">Demo sin dinero real. Las reglas locales pueden variar; en la versión final se podrán ajustar (flor, a 15 o 30, etc.).</p>
   </div>
 </section>
@@ -233,24 +234,9 @@ function save(){localStorage.setItem('trucoPY',JSON.stringify(S))}
 // ---------- cartas ----------
 const PIPS={1:[[50,75,1]],2:[[50,42],[50,108]],3:[[50,34],[50,75],[50,116]],4:[[31,42],[69,42],[31,108],[69,108]],
 5:[[31,40],[69,40],[50,75],[31,110],[69,110]],6:[[31,36],[69,36],[31,75],[69,75],[31,114],[69,114]],7:[[31,34],[69,34],[50,55],[31,78],[69,78],[31,116],[69,116]]};
-function cardSVG(c){
- const col=SCOL[c.s];let inner='';
- if(c.n<=7){ for(const p of PIPS[c.n]){const sz=p[2]?58:(c.n>=6?26:30);inner+=`<use href="#s-${c.s}" x="${p[0]-sz/2}" y="${p[1]-sz/2}" width="${sz}" height="${sz}"/>`;} }
- else{
-  const robe={10:'#3b7dd8',11:'#d9a520',12:'#c0392b'}[c.n];
-  inner+=`<rect x="20" y="24" width="60" height="102" rx="6" fill="#f3e6c4" stroke="${col}" stroke-width="2"/>`;
-  if(c.n===11) inner+=`<path d="M58 62c10-6 18 2 16 14l-4 30h-8l2-22c-4 2-8 0-10-4z" fill="#8b5a2b" stroke="#4a2a16" stroke-width="1.5"/>`;
-  inner+=`<path d="M36 124l6-50h16l6 50z" fill="${robe}" stroke="#2a160c" stroke-width="1.5"/><circle cx="50" cy="62" r="10" fill="#f5c9a0" stroke="#2a160c" stroke-width="1.5"/>`;
-  if(c.n===12) inner+=`<path d="M40 54l3-10 4 6 3-8 3 8 4-6 3 10z" fill="#f2c230" stroke="#9a6a00" stroke-width="1.2"/>`;
-  else inner+=`<path d="M39 56c2-10 20-10 22 0z" fill="${c.n===10?'#1d6b3c':'#2c4f86'}" stroke="#2a160c" stroke-width="1.2"/>`;
-  inner+=`<use href="#s-${c.s}" x="56" y="82" width="26" height="26"/>`;
- }
- return `<svg class="card" viewBox="0 0 100 150"><rect x="1.5" y="1.5" width="97" height="147" rx="9" fill="#fdf8ec" stroke="#cdbb92" stroke-width="2"/>
- <rect x="6" y="6" width="88" height="138" rx="6" fill="none" stroke="${col}" stroke-width="1.5" stroke-dasharray="14 5"/>
- <text x="9" y="22" font-size="18" font-weight="900" fill="${col}" font-family="Georgia,serif">${c.n}</text>
- <text x="91" y="140" font-size="18" font-weight="900" fill="${col}" font-family="Georgia,serif" text-anchor="end">${c.n}</text>${inner}</svg>`;
-}
-function backSVG(){return `<svg class="card" viewBox="0 0 100 150"><rect x="1.5" y="1.5" width="97" height="147" rx="9" fill="url(#bkp)" stroke="#f2c230" stroke-width="3"/><rect x="8" y="8" width="84" height="134" rx="6" fill="none" stroke="#f2c230" stroke-width="1.5"/><ellipse cx="50" cy="75" rx="26" ry="34" fill="#fdf8ec" stroke="#f2c230" stroke-width="3"/><path d="M28 62h44v9H28z" fill="#d52b1e"/><path d="M28 79h44v9H28z" fill="#0038a8"/><text x="50" y="80" text-anchor="middle" font-size="17" font-weight="900" fill="#2a160c" font-family="Georgia,serif">TP</text></svg>`}
+function cardSVG(c){return `<img class="card" src="cartas/${c.s}-${c.n}.webp" alt="${c.n} de ${c.s}" draggable="false">`}
+function backSVG(){return `<img class="card" src="cartas/reverso.webp" alt="" draggable="false">`}
+(function(){for(const s of SUITS)for(const n of NUMS){new Image().src=`cartas/${s}-${n}.webp`}new Image().src='cartas/reverso.webp'})();
 function power(c){if(c.n===1&&c.s==='espada')return 14;if(c.n===1&&c.s==='basto')return 13;if(c.n===7&&c.s==='espada')return 12;if(c.n===7&&c.s==='oro')return 11;return {3:10,2:9,1:8,12:7,11:6,10:5,7:4,6:3,5:2,4:1}[c.n]}
 function envOf(h){const v=c=>c.n>=10?0:c.n;let b=0;for(let i=0;i<h.length;i++){b=Math.max(b,v(h[i]));for(let j=i+1;j<h.length;j++)if(h[i].s===h[j].s)b=Math.max(b,20+v(h[i])+v(h[j]))}return b}
 const DECK=[];for(const s of SUITS)for(const n of NUMS)DECK.push({n,s});
