@@ -102,6 +102,9 @@ background:linear-gradient(180deg,#ffe58a,#f2c230 50%,#d39a12);box-shadow:0 4px 
 .box h3{margin:0 0 8px;font-size:26px;color:var(--gold)}
 .box p{margin:6px 0 16px;opacity:.9}
 .wal{text-align:center;font-weight:800;color:var(--gold);margin:8px 0 0}.bets{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}.bets button{padding:12px 6px;border-radius:12px;background:#2a160c;color:#f7e6b5;border:2px solid #7a4d2c;font-weight:800;font-size:15px}.bets button.sel{border-color:var(--gold);background:#4a2a14;color:var(--gold)}.bets button:disabled{opacity:.35}.pozo{font-size:11px;font-weight:800;color:var(--gold);text-align:center}
+.card2{background:rgba(0,0,0,.3);border-radius:12px;padding:12px 14px;margin-bottom:10px}.card2 h4{margin:0 0 6px;color:var(--gold);font-size:17px}.card2 .mb{width:100%;justify-content:center;margin-top:6px}
+#onCode{width:100%;box-sizing:border-box;font-size:24px;text-align:center;letter-spacing:6px;padding:10px;border-radius:10px}
+.onst{text-align:center;margin:10px 0 20px;font-weight:700}.onst .code{font-size:42px;font-weight:900;letter-spacing:8px;color:var(--gold);margin:4px 0}a.mb{text-decoration:none;justify-content:center}
 .box .mb{justify-content:center;text-align:center;margin-top:8px;width:100%}
 /* ranking */
 .tabs{display:flex;margin:0 0 10px;border-radius:10px;overflow:hidden;border:1px solid #7a4d2c}
@@ -152,13 +155,25 @@ input[type=text]{font:inherit;padding:8px 10px;border-radius:8px;border:1px soli
     <button class="mb" onclick="quick()"><span class="ic">🃏</span><span>Partida rápida<small>1 vs 1 contra la PC</small></span></button>
     <button class="mb" onclick="show('gira');renderGira()"><span class="ic">🇵🇾</span><span>Gira por Paraguay<small>8 departamentos, 8 rivales</small></span></button>
     <button class="mb dark" onclick="soon('2 vs 2 con señas')"><span class="ic">👥</span><span>2 vs 2 con señas<small>Con tu compañero</small></span><span class="soon">PRONTO</span></button>
-    <button class="mb dark" onclick="soon('Online con amigos')"><span class="ic">🌐</span><span>Online y chat<small>Jugá con todo el país</small></span><span class="soon">PRONTO</span></button>
+    <button class="mb" onclick="show('online');renderOnline()"><span class="ic">🌐</span><span>Online con amigos<small>Jugá con tus hermanos, con chat</small></span></button>
     <button class="mb dark" onclick="show('ranking');renderRank()"><span class="ic">🏆</span><span>Ranking</span></button>
     <button class="mb dark" onclick="show('rules')"><span class="ic">📖</span><span>Cómo jugar</span></button>
     <button class="mb dark" onclick="show('settings');renderSet()"><span class="ic">⚙️</span><span>Ajustes</span></button>
   </div>
   <div class="wal" id="wal"></div>
-  <div class="ver">Demo v0.4 · Truco Paraguayo</div>
+  <div class="ver">Demo v0.5 · Truco Paraguayo</div>
+</section>
+
+<!-- ONLINE -->
+<section id="online" class="screen">
+  <div class="hdr wood"><button class="back" onclick="netLeave();show('menu')">‹</button><h2>Online con amigos</h2></div>
+  <div class="flag"></div>
+  <div class="scroll">
+    <div class="set"><span>Tu nombre</span><input type="text" id="onName" maxlength="14" placeholder="Tu nombre" oninput="S.name=this.value.trim()||'Vos';save()"></div>
+    <div class="card2"><h4>Crear sala</h4><small>Apuesta (fichas en guaraníes)</small><div class="bets" id="onBets"></div><button class="mb" onclick="hostRoom()">Crear sala</button></div>
+    <div class="card2"><h4>Unirme a una sala</h4><input id="onCode" inputmode="numeric" maxlength="6" placeholder="Código"><button class="mb" onclick="joinRoom()">Unirme</button></div>
+    <div id="onSt" class="onst"></div>
+  </div>
 </section>
 
 <!-- GIRA -->
@@ -305,18 +320,18 @@ function bet(i,q){const o=RIVALS[i];if(BET>S.gs)BET=0;
  ${S.gs<5000?'<button class="mb dark" onclick="S.gs+=100000;save();wal();bet('+i+','+!!q+')">Recargar ₲ 100.000 gratis</button>':''}
  <p><small>Si ganás, cobrás el doble. Plata de juego, sin valor real.</small></p>
  <button class="mb" onclick="closeOv();S.gs-=BET;save();wal();startGame(${i},${!!q},BET)">Jugar</button><button class="mb dark" onclick="closeOv()">Cancelar</button>`)}
-function startGame(i,q,b=0){clearT();const opp=RIVALS[i];$('pozo').textContent=b?'En juego: '+gs(b*2):'';G={opp,quick:!!q,bet:b,target:S.target,score:{p:0,c:0},mano:Math.random()<.5?'p':'c',over:false};
- $('oAv').textContent=opp.av;$('oName').innerHTML=`${opp.name}<small>${opp.city} · ${'★'.repeat(opp.diff+1)}</small>`;$('lblP').textContent=(S.name||'Vos').toUpperCase();$('lblC').textContent=opp.name.toUpperCase();$('clog').innerHTML='';closeChat();
- show('game');later(()=>say('c',opp.lines[0]),300);later(newHand,900)}
+function startGame(i,q,b=0,o){clearT();closeOv();const opp=o||RIVALS[i];$('pozo').textContent=b?'En juego: '+gs(b*2):'';G={opp,quick:!!q,bet:b,online:o?o.net:null,target:S.target,score:{p:0,c:0},mano:Math.random()<.5?'p':'c',over:false};
+ $('oAv').textContent=opp.av;$('oName').innerHTML=`${opp.name}<small>${o?'Online':opp.city+' · '+'★'.repeat(opp.diff+1)}</small>`;$('lblP').textContent=(S.name||'Vos').toUpperCase();$('lblC').textContent=opp.name.toUpperCase();$('clog').innerHTML='';closeChat();
+ show('game');if(!o)later(()=>say('c',opp.lines[0]),300);if(!o||o.net==='h')later(newHand,900)}
 function newHand(){const d=shuffle(DECK);G.hand={p:d.slice(0,3).sort((a,b)=>power(b)-power(a)),c:d.slice(3,6)};G.orig={p:G.hand.p.slice(),c:G.hand.c.slice()};
  G.table={p:[],c:[]};G.bz=[];G.truco={level:1,lastBy:null};G.env={done:false};G.pending=null;G.susp=null;G.turn=G.mano;G.handOver=false;G.busy=false;
- toast(G.mano==='p'?'Sos mano':`${G.opp.name} es mano`,1100);beep(660,.05);next()}
+ toast(G.mano==='p'?'Sos mano':`${G.opp.name} es mano`,1100,G.mano==='c'?'Sos mano':`${S.name||'Vos'} es mano`);beep(660,.05);next()}
 function actor(){return G.pending?other(G.pending.by):G.turn}
-function next(){if(!G||G.handOver||G.over){stopTimer();return}render();startTimer(actor());if(actor()==='c'){G.busy=true;render();later(()=>{G.busy=false;cpuAct()},850+Math.random()*500)}}
+function next(){if(!G||G.handOver||G.over){stopTimer();return}if(G.online==='h')NET.seq++;render();startTimer(actor());if(actor()==='c'&&!G.online){G.busy=true;render();later(()=>{G.busy=false;cpuAct()},850+Math.random()*500)}}
 function hw(r){if(r.length<2)return null;const[a,b,c]=r;
  if(a==='t'){if(b!=='t')return b;if(r.length===3)return c!=='t'?c:G.mano;return null}
  if(b==='t'||a===b)return a;if(r.length===3)return c==='t'?a:c;return null}
-function play(who,idx){stopTimer();const card=G.hand[who].splice(idx,1)[0];G.table[who].push(card);flick();const k=G.bz.length;
+function play(who,idx){if(G.online==='g'){if(who==='p')netAct({a:'play',i:idx});return}stopTimer();const card=G.hand[who].splice(idx,1)[0];G.table[who].push(card);flick();const k=G.bz.length;
  if(G.table.p.length>k&&G.table.c.length>k){const a=power(G.table.p[k]),b=power(G.table.c[k]);const r=a>b?'p':b>a?'c':'t';G.bz.push(r);
   if(r==='t')toast('¡Parda!',900);
   const w=hw(G.bz);if(w){G.handOver=true;render();later(()=>endHand(w,tPts(),'bazas'),1100);return}
@@ -328,10 +343,10 @@ const ENAME={envido:'¡Envido!',real:'¡Real envido!',falta:'¡Falta envido!'};
 function canEnv(w){return actor()===w&&!G.env.done&&G.bz.length===0&&G.table[w].length===0&&G.truco.level===1&&(!G.pending||(G.pending.kind==='truco'&&G.pending.level===2))}
 function envRaises(ch){const r=[];const ne=ch.filter(x=>x==='envido').length,re=ch.includes('real'),fa=ch.includes('falta');if(!re&&!fa&&ne<2)r.push('envido');if(!re&&!fa)r.push('real');if(!fa)r.push('falta');return r}
 function canTruco(w){if(actor()!==w)return false;if(G.pending)return G.pending.kind==='truco'&&G.pending.level<4;return G.truco.level<4&&G.truco.lastBy!==w}
-function callEnv(w,type){if(G.pending&&G.pending.kind==='envido'){G.pending.chain.push(type);G.pending.by=w}else{if(G.pending)G.susp=G.pending;G.pending={kind:'envido',chain:[type],by:w}}say(w,ENAME[type]);next()}
-function callTruco(w){const lv=G.pending&&G.pending.kind==='truco'?G.pending.level+1:G.truco.level+1;G.pending={kind:'truco',level:lv,by:w};say(w,TNAME[lv]);next()}
+function callEnv(w,type){if(G.online==='g'){netAct({a:'env',x:type});return}if(G.pending&&G.pending.kind==='envido'){G.pending.chain.push(type);G.pending.by=w}else{if(G.pending)G.susp=G.pending;G.pending={kind:'envido',chain:[type],by:w}}say(w,ENAME[type]);next()}
+function callTruco(w){if(G.online==='g'){netAct({a:'truco'});return}const lv=G.pending&&G.pending.kind==='truco'?G.pending.level+1:G.truco.level+1;G.pending={kind:'truco',level:lv,by:w};say(w,TNAME[lv]);next()}
 const EV={envido:2,real:3};
-function respond(w,yes){stopTimer();const P=G.pending;
+function respond(w,yes){if(G.online==='g'){netAct({a:'resp',yes:!!yes});return}stopTimer();const P=G.pending;
  if(P.kind==='truco'){if(yes){G.truco={level:P.level,lastBy:P.by};G.pending=null;say(w,'¡Quiero!');next()}else{say(w,'No quiero');G.pending=null;G.handOver=true;render();later(()=>endHand(P.by,P.level-1,'noquiero'),1000)}return}
  G.env.done=true;const ch=P.chain;G.pending=null;
  if(!yes){say(w,'No quiero');const pts=Math.max(1,ch.slice(0,-1).reduce((s,x)=>s+(EV[x]||0),0));render();later(()=>{addPts(P.by,pts,`${pts} por el envido`);if(!G.over){G.pending=G.susp;G.susp=null;next()}},1000);return}
@@ -341,14 +356,14 @@ function respond(w,yes){stopTimer();const P=G.pending;
  later(()=>say(m,`Tengo ${em}`),900);
  later(()=>say(o,eo>em?`${eo} son mejores`:'Son buenas',eo>em?`tengo ${eo}`:`tenía ${eo}`),2000);
  later(()=>{addPts(win,pts,`${win==='p'?(S.name||'Vos'):G.opp.name} +${pts} por el envido`);if(!G.over){G.pending=G.susp;G.susp=null;next()}},3200)}
-function mazo(){stopTimer();say('p','Me voy al mazo');G.handOver=true;render();later(()=>endHand('c',tPts(),'mazo'),900)}
-function addPts(w,n,msg){G.score[w]=Math.min(G.target,G.score[w]+n);if(msg)toast(msg,1500);beep(w==='p'?880:330,.12,'sine',.12);render();if(G.score[w]>=G.target){G.over=true;later(()=>gameOver(w),1600)}}
+function mazo(w='p'){if(G.online==='g'){netAct({a:'mazo'});return}stopTimer();say(w,'Me voy al mazo');G.handOver=true;render();later(()=>endHand(other(w),tPts(),'mazo'),900)}
+function addPts(w,n,msg){G.score[w]=Math.min(G.target,G.score[w]+n);if(msg)toast(msg,1500);beep(w==='p'?880:330,.12,'sine',.12);render();if(G.score[w]>=G.target){G.over=true;later(()=>{if(G.online==='h')netSend({t:'over',w:SW(w)});gameOver(w)},1600)}}
 function endHand(w,pts,why){stopTimer();const name=w==='p'?(S.name||'Vos'):G.opp.name;addPts(w,pts,`${name} +${pts}${why==='mazo'?' (al mazo)':why==='noquiero'?' (no quiso)':''}`);
- if(!G.over){if(w==='c'&&Math.random()<.35)later(()=>say('c',G.opp.lines[1+(Math.random()*2|0)]),600);later(()=>{G.mano=other(G.mano);newHand()},2000)}}
-function gameOver(w){stopTimer();closeChat();const won=w==='p';if(won)S.gs+=G.bet*2;if(won){S.wins++;S.pts+=100+G.opp.diff*50+(G.score.p-G.score.c)*5;if(!G.quick&&!S.beaten.includes(G.opp.id))S.beaten.push(G.opp.id)}else{S.losses++;S.pts+=10}save();
+ if(!G.over){if(w==='c'&&!G.online&&Math.random()<.35)later(()=>say('c',G.opp.lines[1+(Math.random()*2|0)]),600);later(()=>{G.mano=other(G.mano);newHand()},2000)}}
+function gameOver(w){stopTimer();closeChat();const won=w==='p';if(won)S.gs+=G.bet*2;if(won){S.wins++;S.pts+=100+G.opp.diff*50+(G.score.p-G.score.c)*5;if(!G.quick&&!G.online&&!S.beaten.includes(G.opp.id))S.beaten.push(G.opp.id)}else{S.losses++;S.pts+=10}save();
  overlay(`<div style="font-size:54px">${won?'🏆':G.opp.av}</div><h3>${won?'¡Ganaste!':'Perdiste'}</h3><p>${S.name||'Vos'} ${G.score.p} — ${G.score.c} ${G.opp.name}<br><small>${won?(G.quick?'¡Bien jugado!':'¡Desbloqueaste el siguiente departamento!'):'"'+G.opp.lines[2]+'"'}</small>${G.bet?'<br><b style="color:var(--gold)">'+(won?'Cobraste '+gs(G.bet*2):'Perdiste '+gs(G.bet))+'</b>':''}<br><small>Saldo: ${gs(S.gs)}</small></p>
- <button class="mb" onclick="closeOv();bet(${G.opp.id},${G.quick})">Revancha</button><button class="mb dark" onclick="closeOv();show('menu')">Menú</button>`);speak(won?'Ganaste':'Gané yo')}
-function askQuit(){overlay(`<h3>¿Abandonar?</h3><p>Se pierde la partida actual${G&&G.bet?' y lo apostado ('+gs(G.bet)+')':''}.</p><button class="mb" onclick="closeOv()">Seguir jugando</button><button class="mb dark" onclick="closeOv();clearT();stopTimer();closeChat();G=null;show('menu')">Salir</button>`)}
+ ${G.online==='h'?'<button class="mb" onclick="hostStart(G.opp.name)">Revancha</button>':G.online==='g'?'<p><small>Esperando que '+esc(G.opp.name)+' dé revancha…</small></p>':`<button class="mb" onclick="closeOv();bet(${G.opp.id},${G.quick})">Revancha</button>`}<button class="mb dark" onclick="closeOv();netLeave();show('menu')">Menú</button>`);speak(won?'Ganaste':'Gané yo')}
+function askQuit(){overlay(`<h3>¿Abandonar?</h3><p>Se pierde la partida actual${G&&G.bet?' y lo apostado ('+gs(G.bet)+')':''}.</p><button class="mb" onclick="closeOv()">Seguir jugando</button><button class="mb dark" onclick="closeOv();clearT();stopTimer();closeChat();netLeave();G=null;show('menu')">Salir</button>`)}
 
 // ---------- IA ----------
 function winProb(N=260){const known=new Set([...G.orig.c,...G.table.p].map(cid));const unseen=DECK.filter(c=>!known.has(cid(c)));let w=0;
@@ -379,8 +394,10 @@ function chooseCard(){const h=G.hand.c,k=G.bz.length;const idx=h.map((c,i)=>i).s
 
 // ---------- UI ----------
 const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
-function say(w,t,sub,ms=1800){const b=$(w==='c'?'bubC':'bubP');b.innerHTML=esc(t)+(sub?`<small>${esc(sub)}</small>`:'');b.classList.add('on');clearTimeout(b._t);b._t=setTimeout(()=>b.classList.remove('on'),ms);if(w==='c'){speak(t);beep(440,.08)}else beep(620,.06)}
-let toT;function toast(t,ms=1300){const e=$('toast');e.textContent=t;e.classList.add('on');clearTimeout(toT);toT=setTimeout(()=>e.classList.remove('on'),ms)}
+function say(w,t,sub,ms){sayL(w,t,sub,ms);if(G&&G.online==='h')netSend({t:'say',w:SW(w),x:t,sub})}
+function sayL(w,t,sub,ms=1800){const b=$(w==='c'?'bubC':'bubP');b.innerHTML=esc(t)+(sub?`<small>${esc(sub)}</small>`:'');b.classList.add('on');clearTimeout(b._t);b._t=setTimeout(()=>b.classList.remove('on'),ms);if(w==='c'){speak(t);beep(440,.08)}else beep(620,.06)}
+function toast(t,ms,alt){toastL(t,ms);if(G&&G.online==='h')netSend({t:'toast',x:alt||t,ms})}
+let toT;function toastL(t,ms=1300){const e=$('toast');e.textContent=t;e.classList.add('on');clearTimeout(toT);toT=setTimeout(()=>e.classList.remove('on'),ms)}
 function fosforos(n){const g=Math.ceil(30/5);let s='';const W=6*16;for(let i=0;i<g;i++){const v=Math.max(0,Math.min(5,n-i*5));const x=i*16+2,y=2,L=11;
  const st=(x1,y1,x2,y2)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#e8c48a" stroke-width="1.8" stroke-linecap="round"/><circle cx="${x2}" cy="${y2}" r="1.6" fill="#d52b1e"/>`;
  const seg=[[x,y+L,x,y],[x,y,x+L,y],[x+L,y,x+L,y+L],[x+L,y+L,x,y+L],[x,y+L,x+L,y]];for(let j=0;j<v;j++)s+=st(...seg[j]);if(i===2)s+=`<line x1="${x+L+2.5}" y1="0" x2="${x+L+2.5}" y2="15" stroke="rgba(255,255,255,.35)" stroke-width="1"/>`}
@@ -404,7 +421,7 @@ function render(){if(!G)return;
  else{if(canEnv('p'))a+=`<button class="ab en" onclick="callEnv('p','envido')">Envido</button><button class="ab en" onclick="callEnv('p','real')">Real env.</button><button class="ab en" onclick="callEnv('p','falta')">Falta env.</button>`;
   if(canTruco('p'))a+=`<button class="ab tr" onclick="callTruco('p')">${{2:'Truco',3:'Retruco',4:'Vale cuatro'}[G.truco.level+1]}</button>`;
   a+=`<button class="ab mz" onclick="mazo()">Mazo</button>`}
- $('acts').innerHTML=a}
+ $('acts').innerHTML=a;if(G.online==='h')netSend({t:'st',s:mirror()})}
 // ---------- cronómetro ----------
 const TURN=30;let TM={who:null,end:0,iv:null,last:-1};
 function stopTimer(){clearInterval(TM.iv);TM.iv=null;TM.who=null;for(const w of ['P','C']){$('tb'+w).classList.remove('on');$('ts'+w).classList.remove('on')}}
@@ -414,10 +431,9 @@ function tick(){if(!G||G.handOver||G.over||!TM.who){stopTimer();return}
  const bar=$('tb'+W),ts=$('ts'+W);bar.classList.add('on');ts.classList.add('on');$('tb'+O).classList.remove('on');$('ts'+O).classList.remove('on');
  bar.firstChild.style.width=(left/TURN*100)+'%';ts.textContent=sec+'s';const low=sec<=10;bar.classList.toggle('low',low);ts.classList.toggle('low',low);
  if(TM.who==='p'&&sec!==TM.last&&sec<=5&&sec>0)beep(1000,.04,'square',.05);TM.last=sec;
- if(left<=0){const who=TM.who;stopTimer();if(who==='p'&&actor()==='p')timeOut()}}
-function timeOut(){toast('¡Se acabó el tiempo!',1400);closeChat();
- if(G.pending){respond('p',false);return}
- const h=G.hand.p;let j=0;h.forEach((c,i)=>{if(power(c)<power(h[j]))j=i});play('p',j)}
+ if(left<=0){const who=TM.who;stopTimer();if(who==='p'&&actor()==='p')timeOut();else if(who==='c'&&G.online==='h'){const q=NET.seq;later(()=>{if(G&&G.online==='h'&&NET.seq===q&&actor()==='c'&&!G.handOver&&!G.over)autoAct('c')},6000)}}}
+function timeOut(){toastL('¡Se acabó el tiempo!',1400);closeChat();autoAct('p')}
+function autoAct(w){if(G.pending){respond(w,false);return}const h=G.hand[w];let j=0;h.forEach((c,i)=>{if(power(c)<power(h[j]))j=i});play(w,j)}
 
 // ---------- chat ----------
 const QUICK=['👍','😂','🧉','😡',"¡Buena jugada!","¡Jaha!","¡Qué suerte!","Mba'éichapa","Aguyje","¡Apurate, che!","Te voy a ganar","¿Mentís o no?"];
@@ -426,9 +442,59 @@ function toggleChat(){const c=$('chat');if(c.classList.contains('on'))return clo
 function closeChat(){$('chat').classList.remove('on')}
 function logChat(w,t){const l=$('clog');l.insertAdjacentHTML('beforeend',`<div><b>${esc(w==='p'?(S.name||'Vos'):G.opp.name)}:</b> ${esc(t)}</div>`);l.scrollTop=l.scrollHeight}
 function sendTyped(){const i=$('cIn');const t=i.value.trim();if(!t)return;i.value='';sendChat(t)}
-function sendChat(t){if(!G)return;say('p',t,null,2600);logChat('p',t);closeChat();
+function sendChat(t){if(!G)return;sayL('p',t,null,2600);logChat('p',t);closeChat();if(G.online){netSend({t:'chat',x:t});return}
  if(Math.random()<.7){const pool=REPLIES.concat(G.opp.lines);const r=pool[Math.random()*pool.length|0];
-  later(()=>{if(!G)return;say('c',r,null,2600);logChat('c',r);if(!$('chat').classList.contains('on'))$('chatDot').style.display='block'},1200+Math.random()*1200)}}
+  later(()=>{if(!G)return;sayL('c',r,null,2600);logChat('c',r);if(!$('chat').classList.contains('on'))$('chatDot').style.display='block'},1200+Math.random()*1200)}}
+// ---------- online ----------
+const NET={mode:null,cli:null,code:null,seen:0,seq:0,bet:0,lost:0};let NBET=0;
+const SW=w=>w==='p'?'c':w==='c'?'p':w;
+function loadMqtt(){return window.mqtt?Promise.resolve():new Promise((ok,ko)=>{const e=document.createElement('script');e.src='https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js';e.onload=ok;e.onerror=ko;document.head.appendChild(e)})}
+function netSend(o){if(NET.cli&&NET.mode)NET.cli.publish(`trucopy/${NET.code}/${NET.mode}`,JSON.stringify(o))}
+function renderOnline(){$('onName').value=S.name==='Vos'?'':S.name;if(NBET>S.gs)NBET=0;
+ $('onBets').innerHTML=BETS.map(b=>`<button class="${b===NBET?'sel':''}" ${b>S.gs?'disabled':''} onclick="NBET=${b};renderOnline()">${b?gs(b):'Sin apuesta'}</button>`).join('');if(!NET.mode)$('onSt').innerHTML=`Tu saldo: ${gs(S.gs)}`}
+function needName(){if(!S.name||S.name==='Vos'){toastL('Primero escribí tu nombre',1600);$('onName').focus();return true}}
+async function netOpen(mode,code){netClose();NET.mode=mode;NET.code=code;$('onSt').textContent='Conectando…';
+ try{await loadMqtt()}catch(e){$('onSt').textContent='No hay internet. Probá de nuevo.';NET.mode=null;return}
+ const c=mqtt.connect('wss://broker.hivemq.com:8884/mqtt',{clientId:'tpy'+Math.random().toString(36).slice(2,10),reconnectPeriod:2000,keepalive:20});NET.cli=c;
+ c.on('connect',()=>{c.subscribe(`trucopy/${code}/${mode==='h'?'g':'h'}`);
+  if(mode==='h'){if(!G||!G.online){const u=location.origin+location.pathname+'?sala='+code;
+    $('onSt').innerHTML=`Código de la sala<div class="code">${code}</div>Pasáselo a tu hermano.<a class="mb" style="margin-top:10px" target="_blank" href="https://wa.me/?text=${encodeURIComponent('¡Vamos a jugar Truco Paraguayo! Entrá acá: '+u)}">📲 Invitar por WhatsApp</a><p><small>Esperando a tu rival…</small></p>`}}
+  else if(!G||!G.online){$('onSt').textContent='Buscando la sala '+code+'…';clearInterval(NET.join);const j=()=>netSend({t:'join',name:S.name});j();NET.join=setInterval(j,1500)}});
+ c.on('message',(tp,m)=>{let o;try{o=JSON.parse(m)}catch(e){return}NET.seen=Date.now();if(NET.lost){NET.lost=0;toastL('Conexión recuperada')}netMsg(o)});
+ c.on('error',()=>{$('onSt').textContent='Error de conexión'});
+ clearInterval(NET.hb);NET.hb=setInterval(()=>{if(G&&G.online&&!G.over){netSend({t:'hb'});if(NET.seen&&Date.now()-NET.seen>15000&&!NET.lost){NET.lost=1;toastL('Se perdió la conexión con '+G.opp.name,3000)}}},4000)}
+function netClose(){clearInterval(NET.hb);clearInterval(NET.join);if(NET.cli){const c=NET.cli;setTimeout(()=>{try{c.end()}catch(e){}},300)}NET.cli=null;NET.mode=null;NET.lost=0;NET.seen=0}
+function netLeave(){if(NET.mode)netSend({t:'bye'});netClose()}
+function hostRoom(){if(needName())return;NET.bet=NBET;netOpen('h',String(100000+Math.random()*900000|0))}
+function joinRoom(){if(needName())return;const c=$('onCode').value.replace(/\D/g,'');if(c.length!==6){toastL('El código tiene 6 números',1600);return}netOpen('g',c)}
+const netOpp=(n,net)=>({id:0,net,name:String(n||'Rival').slice(0,14),av:'🧑🏽',city:'Online',diff:1,lines:['','','¡Otra vez!']});
+function hostStart(name){const b=Math.min(NET.bet,S.gs);S.gs-=b;save();wal();startGame(0,true,b,netOpp(name,'h'));netSend({t:'start',name:S.name,bet:b,target:G.target})}
+function netAct(o){if(!G||G.busy)return;G.busy=true;stopTimer();render();netSend(Object.assign({t:'act'},o))}
+function mirror(){const sw=x=>({p:x.c,c:x.p});return{score:sw(G.score),hand:{p:G.hand.c,c:G.hand.p.map(()=>0)},orig:{p:G.orig.c,c:[]},table:sw(G.table),bz:G.bz.map(SW),truco:{level:G.truco.level,lastBy:SW(G.truco.lastBy)},env:G.env,
+ pending:G.pending&&Object.assign({},G.pending,{by:SW(G.pending.by)}),turn:SW(G.turn),mano:SW(G.mano),handOver:G.handOver,over:G.over,seq:NET.seq}}
+function netMsg(o){
+ if(o.t==='chat'&&G&&G.online){sayL('c',o.x,null,2600);logChat('c',o.x);if(!$('chat').classList.contains('on'))$('chatDot').style.display='block';return}
+ if(o.t==='bye'&&G&&G.online&&!G.over){clearT();stopTimer();G.over=true;S.gs+=G.bet;save();wal();
+  overlay(`<h3>${esc(G.opp.name)} salió</h3><p>La partida terminó.${G.bet?'<br>Te devolvimos '+gs(G.bet)+'.':''}</p><button class="mb" onclick="closeOv();netClose();G=null;show('menu')">Menú</button>`);return}
+ if(NET.mode==='h'){
+  if(o.t==='join'){if(!G||!G.online)hostStart(o.name);return}
+  if(o.t!=='act'||!G||G.online!=='h'||G.handOver||G.over||actor()!=='c'){if(o.t==='act'&&G&&G.online==='h')render();return}
+  const P=G.pending;
+  if(o.a==='play'&&!P&&G.hand.c[o.i])play('c',o.i);
+  else if(o.a==='resp'&&P)respond('c',o.yes);
+  else if(o.a==='env'&&canEnv('c')&&(P&&P.kind==='envido'?envRaises(P.chain):['envido','real','falta']).includes(o.x))callEnv('c',o.x);
+  else if(o.a==='truco'&&canTruco('c'))callTruco('c');
+  else if(o.a==='mazo'&&!P)mazo('c');
+  else render();return}
+ if(NET.mode==='g'){
+  if(o.t==='start'){clearInterval(NET.join);let b=o.bet||0;if(S.gs<b){S.gs+=100000;toastL('Te recargamos ₲ 100.000',2000)}S.gs-=b;save();wal();
+   startGame(0,true,b,netOpp(o.name,'g'));G.target=o.target||15;return}
+  if(!G||G.online!=='g')return;
+  if(o.t==='st'){const prev=G.seq;Object.assign(G,o.s);G.busy=false;render();if(o.s.seq!==prev){if(!G.handOver&&!G.over)startTimer(actor());else stopTimer()}}
+  else if(o.t==='say')sayL(o.w,o.x,o.sub);
+  else if(o.t==='toast')toastL(o.x,o.ms);
+  else if(o.t==='over'){G.over=true;stopTimer();gameOver(o.w)}}}
+{const q=new URLSearchParams(location.search).get('sala');if(q&&/^\d{6}$/.test(q))setTimeout(()=>{show('online');renderOnline();$('onCode').value=q},0)}
 if(window.speechSynthesis)speechSynthesis.getVoices();
 </script>
 </body>
