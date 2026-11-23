@@ -161,7 +161,7 @@ input[type=text]{font:inherit;padding:8px 10px;border-radius:8px;border:1px soli
     <button class="mb dark" onclick="show('settings');renderSet()"><span class="ic">⚙️</span><span>Ajustes</span></button>
   </div>
   <div class="wal" id="wal"></div>
-  <div class="ver">Demo v0.5 · Truco Paraguayo</div>
+  <div class="ver">Demo v0.6 · Truco Paraguayo</div>
 </section>
 
 <!-- ONLINE -->
@@ -357,10 +357,10 @@ function respond(w,yes){if(G.online==='g'){netAct({a:'resp',yes:!!yes});return}s
  later(()=>say(o,eo>em?`${eo} son mejores`:'Son buenas',eo>em?`tengo ${eo}`:`tenía ${eo}`),2000);
  later(()=>{addPts(win,pts,`${win==='p'?(S.name||'Vos'):G.opp.name} +${pts} por el envido`);if(!G.over){G.pending=G.susp;G.susp=null;next()}},3200)}
 function mazo(w='p'){if(G.online==='g'){netAct({a:'mazo'});return}stopTimer();say(w,'Me voy al mazo');G.handOver=true;render();later(()=>endHand(other(w),tPts(),'mazo'),900)}
-function addPts(w,n,msg){G.score[w]=Math.min(G.target,G.score[w]+n);if(msg)toast(msg,1500);beep(w==='p'?880:330,.12,'sine',.12);render();if(G.score[w]>=G.target){G.over=true;later(()=>{if(G.online==='h')netSend({t:'over',w:SW(w)});gameOver(w)},1600)}}
+function addPts(w,n,msg){G.score[w]=Math.min(G.target,G.score[w]+n);if(msg)toast(msg,1500);beep(w==='p'?880:330,.12,'sine',.12);render();if(G.score[w]>=G.target){G.over=true;G.win=w;later(()=>{if(G.online==='h')netSend({t:'over',w:SW(w),gid:NET.gid});gameOver(w)},1600)}}
 function endHand(w,pts,why){stopTimer();const name=w==='p'?(S.name||'Vos'):G.opp.name;addPts(w,pts,`${name} +${pts}${why==='mazo'?' (al mazo)':why==='noquiero'?' (no quiso)':''}`);
  if(!G.over){if(w==='c'&&!G.online&&Math.random()<.35)later(()=>say('c',G.opp.lines[1+(Math.random()*2|0)]),600);later(()=>{G.mano=other(G.mano);newHand()},2000)}}
-function gameOver(w){stopTimer();closeChat();const won=w==='p';if(won)S.gs+=G.bet*2;if(won){S.wins++;S.pts+=100+G.opp.diff*50+(G.score.p-G.score.c)*5;if(!G.quick&&!G.online&&!S.beaten.includes(G.opp.id))S.beaten.push(G.opp.id)}else{S.losses++;S.pts+=10}save();
+function gameOver(w){if(G.shown)return;G.shown=true;stopTimer();closeChat();const won=w==='p';if(won)S.gs+=G.bet*2;if(won){S.wins++;S.pts+=100+G.opp.diff*50+(G.score.p-G.score.c)*5;if(!G.quick&&!G.online&&!S.beaten.includes(G.opp.id))S.beaten.push(G.opp.id)}else{S.losses++;S.pts+=10}save();
  overlay(`<div style="font-size:54px">${won?'🏆':G.opp.av}</div><h3>${won?'¡Ganaste!':'Perdiste'}</h3><p>${S.name||'Vos'} ${G.score.p} — ${G.score.c} ${G.opp.name}<br><small>${won?(G.quick?'¡Bien jugado!':'¡Desbloqueaste el siguiente departamento!'):'"'+G.opp.lines[2]+'"'}</small>${G.bet?'<br><b style="color:var(--gold)">'+(won?'Cobraste '+gs(G.bet*2):'Perdiste '+gs(G.bet))+'</b>':''}<br><small>Saldo: ${gs(S.gs)}</small></p>
  ${G.online==='h'?'<button class="mb" onclick="hostStart(G.opp.name)">Revancha</button>':G.online==='g'?'<p><small>Esperando que '+esc(G.opp.name)+' dé revancha…</small></p>':`<button class="mb" onclick="closeOv();bet(${G.opp.id},${G.quick})">Revancha</button>`}<button class="mb dark" onclick="closeOv();netLeave();show('menu')">Menú</button>`);speak(won?'Ganaste':'Gané yo')}
 function askQuit(){overlay(`<h3>¿Abandonar?</h3><p>Se pierde la partida actual${G&&G.bet?' y lo apostado ('+gs(G.bet)+')':''}.</p><button class="mb" onclick="closeOv()">Seguir jugando</button><button class="mb dark" onclick="closeOv();clearT();stopTimer();closeChat();netLeave();G=null;show('menu')">Salir</button>`)}
@@ -421,7 +421,7 @@ function render(){if(!G)return;
  else{if(canEnv('p'))a+=`<button class="ab en" onclick="callEnv('p','envido')">Envido</button><button class="ab en" onclick="callEnv('p','real')">Real env.</button><button class="ab en" onclick="callEnv('p','falta')">Falta env.</button>`;
   if(canTruco('p'))a+=`<button class="ab tr" onclick="callTruco('p')">${{2:'Truco',3:'Retruco',4:'Vale cuatro'}[G.truco.level+1]}</button>`;
   a+=`<button class="ab mz" onclick="mazo()">Mazo</button>`}
- $('acts').innerHTML=a;if(G.online==='h')netSend({t:'st',s:mirror()})}
+ $('acts').innerHTML=a;if(G.online==='h')netSend({t:'st',s:mirror(),v:++NET.ver})}
 // ---------- cronómetro ----------
 const TURN=30;let TM={who:null,end:0,iv:null,last:-1};
 function stopTimer(){clearInterval(TM.iv);TM.iv=null;TM.who=null;for(const w of ['P','C']){$('tb'+w).classList.remove('on');$('ts'+w).classList.remove('on')}}
@@ -446,39 +446,53 @@ function sendChat(t){if(!G)return;sayL('p',t,null,2600);logChat('p',t);closeChat
  if(Math.random()<.7){const pool=REPLIES.concat(G.opp.lines);const r=pool[Math.random()*pool.length|0];
   later(()=>{if(!G)return;sayL('c',r,null,2600);logChat('c',r);if(!$('chat').classList.contains('on'))$('chatDot').style.display='block'},1200+Math.random()*1200)}}
 // ---------- online ----------
-const NET={mode:null,cli:null,code:null,seen:0,seq:0,bet:0,lost:0};let NBET=0;
+const NET={mode:null,clis:[],code:null,seen:0,seq:0,bet:0,lost:0,sid:Math.random().toString(36).slice(2,10),out:0,ver:0,got:new Set(),gid:0,last:null};let NBET=0;
+const BROKERS=['wss://broker.hivemq.com:8884/mqtt','wss://broker.emqx.io:8084/mqtt','wss://test.mosquitto.org:8081/mqtt'];
 const SW=w=>w==='p'?'c':w==='c'?'p':w;
-function loadMqtt(){return window.mqtt?Promise.resolve():new Promise((ok,ko)=>{const e=document.createElement('script');e.src='https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js';e.onload=ok;e.onerror=ko;document.head.appendChild(e)})}
-function netSend(o){if(NET.cli&&NET.mode)NET.cli.publish(`trucopy/${NET.code}/${NET.mode}`,JSON.stringify(o))}
+function loadMqtt(){return window.mqtt?Promise.resolve():new Promise((ok,ko)=>{const e=document.createElement('script');e.src='mqtt.min.js';e.onload=ok;e.onerror=ko;document.head.appendChild(e)})}
+const netOn=()=>NET.clis.some(c=>c.connected);
+function netSend(o){if(!NET.mode)return;o.sid=NET.sid;o.k=++NET.out;const m=JSON.stringify(o),tp=`trucopy/${NET.code}/${NET.mode}`;NET.clis.forEach(c=>{if(c.connected)c.publish(tp,m)})}
 function renderOnline(){$('onName').value=S.name==='Vos'?'':S.name;if(NBET>S.gs)NBET=0;
  $('onBets').innerHTML=BETS.map(b=>`<button class="${b===NBET?'sel':''}" ${b>S.gs?'disabled':''} onclick="NBET=${b};renderOnline()">${b?gs(b):'Sin apuesta'}</button>`).join('');if(!NET.mode)$('onSt').innerHTML=`Tu saldo: ${gs(S.gs)}`}
 function needName(){if(!S.name||S.name==='Vos'){toastL('Primero escribí tu nombre',1600);$('onName').focus();return true}}
-async function netOpen(mode,code){netClose();NET.mode=mode;NET.code=code;$('onSt').textContent='Conectando…';
+function lobby(){if(G&&G.online)return;const code=NET.code;
+ if(NET.mode==='h'){const u=location.origin+location.pathname+'?sala='+code;
+  $('onSt').innerHTML=`Código de la sala<div class="code">${code}</div>Pasáselo a tu hermano.<a class="mb" style="margin-top:10px" target="_blank" href="https://wa.me/?text=${encodeURIComponent('¡Vamos a jugar Truco Paraguayo! Entrá acá: '+u)}">📲 Invitar por WhatsApp</a><p><small>Esperando a tu rival… No cierres esta pantalla.</small></p>`}
+ else if(NET.mode==='g'){$('onSt').innerHTML=`Buscando la sala ${code}…<p><small>Tu hermano tiene que tener abierta la sala.</small></p>`;if(!NET.join){const j=()=>netSend({t:'join',name:S.name});j();NET.join=setInterval(j,1500)}}}
+async function netOpen(mode,code){netClose();NET.mode=mode;NET.code=code;NET.got.clear();$('onSt').textContent='Conectando…';
  try{await loadMqtt()}catch(e){$('onSt').textContent='No hay internet. Probá de nuevo.';NET.mode=null;return}
- const c=mqtt.connect('wss://broker.hivemq.com:8884/mqtt',{clientId:'tpy'+Math.random().toString(36).slice(2,10),reconnectPeriod:2000,keepalive:20});NET.cli=c;
- c.on('connect',()=>{c.subscribe(`trucopy/${code}/${mode==='h'?'g':'h'}`);
-  if(mode==='h'){if(!G||!G.online){const u=location.origin+location.pathname+'?sala='+code;
-    $('onSt').innerHTML=`Código de la sala<div class="code">${code}</div>Pasáselo a tu hermano.<a class="mb" style="margin-top:10px" target="_blank" href="https://wa.me/?text=${encodeURIComponent('¡Vamos a jugar Truco Paraguayo! Entrá acá: '+u)}">📲 Invitar por WhatsApp</a><p><small>Esperando a tu rival…</small></p>`}}
-  else if(!G||!G.online){$('onSt').textContent='Buscando la sala '+code+'…';clearInterval(NET.join);const j=()=>netSend({t:'join',name:S.name});j();NET.join=setInterval(j,1500)}});
- c.on('message',(tp,m)=>{let o;try{o=JSON.parse(m)}catch(e){return}NET.seen=Date.now();if(NET.lost){NET.lost=0;toastL('Conexión recuperada')}netMsg(o)});
- c.on('error',()=>{$('onSt').textContent='Error de conexión'});
- clearInterval(NET.hb);NET.hb=setInterval(()=>{if(G&&G.online&&!G.over){netSend({t:'hb'});if(NET.seen&&Date.now()-NET.seen>15000&&!NET.lost){NET.lost=1;toastL('Se perdió la conexión con '+G.opp.name,3000)}}},4000)}
-function netClose(){clearInterval(NET.hb);clearInterval(NET.join);if(NET.cli){const c=NET.cli;setTimeout(()=>{try{c.end()}catch(e){}},300)}NET.cli=null;NET.mode=null;NET.lost=0;NET.seen=0}
+ if(NET.mode!==mode||NET.code!==code)return;
+ const tp=`trucopy/${code}/${mode==='h'?'g':'h'}`;
+ NET.clis=BROKERS.map(u=>{const c=mqtt.connect(u,{clientId:'tpy'+Math.random().toString(36).slice(2,10),reconnectPeriod:1500,keepalive:15,connectTimeout:8000,resubscribe:true});
+  c.on('connect',()=>{c.subscribe(tp);lobby();if(mode==='g'&&G&&G.online==='g')netSend({t:'sync'})});
+  c.on('message',(t,m)=>{let o;try{o=JSON.parse(m)}catch(e){return}const key=o.sid+':'+o.k;if(NET.got.has(key))return;NET.got.add(key);if(NET.got.size>3000)NET.got=new Set([...NET.got].slice(-1500));
+   NET.seen=Date.now();if(NET.lost){NET.lost=0;toastL('Conexión recuperada')}netMsg(o)});
+  c.on('error',()=>{});return c});
+ setTimeout(()=>{if(NET.mode===mode&&!netOn())$('onSt').textContent='No se pudo conectar. Revisá tu internet.'},12000);
+ clearInterval(NET.hb);NET.hb=setInterval(netBeat,3000)}
+function netBeat(){if(!G||!G.online||G.over)return;
+ if(G.online==='h'&&G.hand)netSend({t:'st',s:mirror(),v:++NET.ver});else netSend({t:'hb'});
+ if(G.online==='g'&&G.busy&&NET.last&&Date.now()-G.busyAt>2500){G.busyAt=Date.now();netSend(Object.assign({},NET.last))}
+ if(NET.seen&&Date.now()-NET.seen>12000&&!NET.lost){NET.lost=1;toastL('Se cortó la conexión con '+G.opp.name+'. Reconectando…',3000)}}
+function netClose(){clearInterval(NET.hb);clearInterval(NET.join);NET.join=null;const cs=NET.clis;setTimeout(()=>cs.forEach(c=>{try{c.end()}catch(e){}}),400);NET.clis=[];NET.mode=null;NET.lost=0;NET.seen=0;NET.last=null}
 function netLeave(){if(NET.mode)netSend({t:'bye'});netClose()}
 function hostRoom(){if(needName())return;NET.bet=NBET;netOpen('h',String(100000+Math.random()*900000|0))}
 function joinRoom(){if(needName())return;const c=$('onCode').value.replace(/\D/g,'');if(c.length!==6){toastL('El código tiene 6 números',1600);return}netOpen('g',c)}
 const netOpp=(n,net)=>({id:0,net,name:String(n||'Rival').slice(0,14),av:'🧑🏽',city:'Online',diff:1,lines:['','','¡Otra vez!']});
-function hostStart(name){const b=Math.min(NET.bet,S.gs);S.gs-=b;save();wal();startGame(0,true,b,netOpp(name,'h'));netSend({t:'start',name:S.name,bet:b,target:G.target})}
-function netAct(o){if(!G||G.busy)return;G.busy=true;stopTimer();render();netSend(Object.assign({t:'act'},o))}
+function sendStart(){netSend({t:'start',name:S.name,bet:G.bet,target:G.target,gid:NET.gid})}
+function hostStart(name){const b=Math.min(NET.bet,S.gs);S.gs-=b;save();wal();NET.gid=Date.now();NET.seq=0;startGame(0,true,b,netOpp(name,'h'));sendStart()}
+function netAct(o){if(!G||G.busy)return;G.busy=true;G.busyAt=Date.now();stopTimer();render();NET.last=Object.assign({t:'act',q:G.seq},o);netSend(Object.assign({},NET.last))}
 function mirror(){const sw=x=>({p:x.c,c:x.p});return{score:sw(G.score),hand:{p:G.hand.c,c:G.hand.p.map(()=>0)},orig:{p:G.orig.c,c:[]},table:sw(G.table),bz:G.bz.map(SW),truco:{level:G.truco.level,lastBy:SW(G.truco.lastBy)},env:G.env,
- pending:G.pending&&Object.assign({},G.pending,{by:SW(G.pending.by)}),turn:SW(G.turn),mano:SW(G.mano),handOver:G.handOver,over:G.over,seq:NET.seq}}
+ pending:G.pending&&Object.assign({},G.pending,{by:SW(G.pending.by)}),turn:SW(G.turn),mano:SW(G.mano),handOver:G.handOver,over:G.over,win:G.win?SW(G.win):null,seq:NET.seq,gid:NET.gid}}
 function netMsg(o){
  if(o.t==='chat'&&G&&G.online){sayL('c',o.x,null,2600);logChat('c',o.x);if(!$('chat').classList.contains('on'))$('chatDot').style.display='block';return}
- if(o.t==='bye'&&G&&G.online&&!G.over){clearT();stopTimer();G.over=true;S.gs+=G.bet;save();wal();
+ if(o.t==='bye'&&G&&G.online&&!G.over){clearT();stopTimer();G.over=true;G.shown=true;S.gs+=G.bet;save();wal();
   overlay(`<h3>${esc(G.opp.name)} salió</h3><p>La partida terminó.${G.bet?'<br>Te devolvimos '+gs(G.bet)+'.':''}</p><button class="mb" onclick="closeOv();netClose();G=null;show('menu')">Menú</button>`);return}
  if(NET.mode==='h'){
-  if(o.t==='join'){if(!G||!G.online)hostStart(o.name);return}
-  if(o.t!=='act'||!G||G.online!=='h'||G.handOver||G.over||actor()!=='c'){if(o.t==='act'&&G&&G.online==='h')render();return}
+  if(o.t==='join'){if(!G||!G.online)hostStart(o.name);else if(G.online==='h'&&o.name===G.opp.name)sendStart();return}
+  if(o.t==='sync'){if(G&&G.online==='h'&&G.hand)render();return}
+  if(o.t!=='act'||!G||G.online!=='h'||!G.hand)return;
+  if(G.handOver||G.over||actor()!=='c'||o.q!==NET.seq){render();return}
   const P=G.pending;
   if(o.a==='play'&&!P&&G.hand.c[o.i])play('c',o.i);
   else if(o.a==='resp'&&P)respond('c',o.yes);
@@ -487,13 +501,16 @@ function netMsg(o){
   else if(o.a==='mazo'&&!P)mazo('c');
   else render();return}
  if(NET.mode==='g'){
-  if(o.t==='start'){clearInterval(NET.join);let b=o.bet||0;if(S.gs<b){S.gs+=100000;toastL('Te recargamos ₲ 100.000',2000)}S.gs-=b;save();wal();
-   startGame(0,true,b,netOpp(o.name,'g'));G.target=o.target||15;return}
+  if(o.t==='start'){if(G&&G.online==='g'&&G.gid===o.gid)return;clearInterval(NET.join);NET.join=null;let b=o.bet||0;if(S.gs<b){S.gs+=100000;toastL('Te recargamos ₲ 100.000',2000)}S.gs-=b;save();wal();
+   startGame(0,true,b,netOpp(o.name,'g'));Object.assign(G,{target:o.target||15,gid:o.gid,v:0});return}
   if(!G||G.online!=='g')return;
-  if(o.t==='st'){const prev=G.seq;Object.assign(G,o.s);G.busy=false;render();if(o.s.seq!==prev){if(!G.handOver&&!G.over)startTimer(actor());else stopTimer()}}
+  if(o.t==='st'){if(o.s.gid!==G.gid||o.v<G.v)return;G.v=o.v;const prev=G.seq;Object.assign(G,o.s);G.busy=false;NET.last=null;render();
+   if(o.s.seq!==prev){if(!G.handOver&&!G.over)startTimer(actor());else stopTimer()}
+   if(G.over&&G.win&&!G.shown)later(()=>{if(G&&!G.shown)gameOver(G.win)},1700)}
   else if(o.t==='say')sayL(o.w,o.x,o.sub);
   else if(o.t==='toast')toastL(o.x,o.ms);
-  else if(o.t==='over'){G.over=true;stopTimer();gameOver(o.w)}}}
+  else if(o.t==='over'&&o.gid===G.gid&&!G.shown){G.over=true;stopTimer();gameOver(o.w)}}}
+document.addEventListener('visibilitychange',()=>{if(document.hidden||!NET.mode)return;NET.clis.forEach(c=>{if(!c.connected)try{c.reconnect()}catch(e){}});if(G&&G.online==='g')netSend({t:'sync'})});
 {const q=new URLSearchParams(location.search).get('sala');if(q&&/^\d{6}$/.test(q))setTimeout(()=>{show('online');renderOnline();$('onCode').value=q},0)}
 if(window.speechSynthesis)speechSynthesis.getVoices();
 </script>
