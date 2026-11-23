@@ -105,6 +105,7 @@ background:linear-gradient(180deg,#ffe58a,#f2c230 50%,#d39a12);box-shadow:0 4px 
 .card2{background:rgba(0,0,0,.3);border-radius:12px;padding:12px 14px;margin-bottom:10px}.card2 h4{margin:0 0 6px;color:var(--gold);font-size:17px}.card2 .mb{width:100%;justify-content:center;margin-top:6px}
 #onCode{width:100%;box-sizing:border-box;font-size:24px;text-align:center;letter-spacing:6px;padding:10px;border-radius:10px}
 .onst{text-align:center;margin:10px 0 20px;font-weight:700}.onst .code{font-size:42px;font-weight:900;letter-spacing:8px;color:var(--gold);margin:4px 0}a.mb{text-decoration:none;justify-content:center}
+.callbar{position:absolute;left:8px;right:8px;top:56px;z-index:11;display:none;align-items:center;justify-content:center;gap:6px;padding:6px 8px;border-radius:12px;background:rgba(0,0,0,.6);border:1px solid var(--gold);font-size:13px;font-weight:700}.callbar.on{display:flex}.callbar button{padding:6px 10px;border-radius:10px;font-weight:800;font-size:12px;background:#2a160c;color:#f7e6b5;border:1px solid #7a4d2c}.callbar .ok{background:#2e9e4f;color:#fff}.callbar .no{background:var(--red);color:#fff}
 .box .mb{justify-content:center;text-align:center;margin-top:8px;width:100%}
 /* ranking */
 .tabs{display:flex;margin:0 0 10px;border-radius:10px;overflow:hidden;border:1px solid #7a4d2c}
@@ -161,7 +162,7 @@ input[type=text]{font:inherit;padding:8px 10px;border-radius:8px;border:1px soli
     <button class="mb dark" onclick="show('settings');renderSet()"><span class="ic">⚙️</span><span>Ajustes</span></button>
   </div>
   <div class="wal" id="wal"></div>
-  <div class="ver">Demo v0.6 · Truco Paraguayo</div>
+  <div class="ver">Demo v0.7 · Truco Paraguayo</div>
 </section>
 
 <!-- ONLINE -->
@@ -189,8 +190,9 @@ input[type=text]{font:inherit;padding:8px 10px;border-radius:8px;border:1px soli
   <div class="top">
     <button class="back" onclick="askQuit()">‹</button>
     <div class="score"><div class="sc"><b id="lblP">VOS</b><div class="n" id="scP">0</div><div id="fsP"></div></div><div class="sc"><b id="lblC">PC</b><div class="n" id="scC">0</div><div id="fsC"></div></div></div>
-    <button class="chatbtn" onclick="toggleChat()">💬<span class="dot" id="chatDot"></span></button>
+    <button class="chatbtn" id="callBtn" onclick="callBtn()" style="display:none">📞</button><button class="chatbtn" onclick="toggleChat()">💬<span class="dot" id="chatDot"></span></button>
   </div>
+  <div class="callbar" id="callBar"><span id="callTxt"></span><button class="ok" id="callAns" onclick="callAnswer()">Atender</button><button id="muteB" onclick="callMute()">🔇 Silenciar</button><button class="no" id="hangB" onclick="callEnd(true)">Colgar</button></div><audio id="rAudio" autoplay playsinline></audio>
   <div class="opp"><div class="av" id="oAv">🧔🏽</div><div class="ot"><div class="who" id="oName">Rival<small>—</small></div><div style="display:flex;align-items:center;gap:4px"><div class="tbar" id="tbC"><i></i></div><span class="tsec" id="tsC"></span></div><div class="pozo" id="pozo"></div></div><div class="bub" id="bubC"></div></div>
   <div class="ohand" id="oHand"></div>
   <div class="table">
@@ -322,7 +324,7 @@ function bet(i,q){const o=RIVALS[i];if(BET>S.gs)BET=0;
  <button class="mb" onclick="closeOv();S.gs-=BET;save();wal();startGame(${i},${!!q},BET)">Jugar</button><button class="mb dark" onclick="closeOv()">Cancelar</button>`)}
 function startGame(i,q,b=0,o){clearT();closeOv();const opp=o||RIVALS[i];$('pozo').textContent=b?'En juego: '+gs(b*2):'';G={opp,quick:!!q,bet:b,online:o?o.net:null,target:S.target,score:{p:0,c:0},mano:Math.random()<.5?'p':'c',over:false};
  $('oAv').textContent=opp.av;$('oName').innerHTML=`${opp.name}<small>${o?'Online':opp.city+' · '+'★'.repeat(opp.diff+1)}</small>`;$('lblP').textContent=(S.name||'Vos').toUpperCase();$('lblC').textContent=opp.name.toUpperCase();$('clog').innerHTML='';closeChat();
- show('game');if(!o)later(()=>say('c',opp.lines[0]),300);if(!o||o.net==='h')later(newHand,900)}
+ show('game');callUI();if(!o)later(()=>say('c',opp.lines[0]),300);if(!o||o.net==='h')later(newHand,900)}
 function newHand(){const d=shuffle(DECK);G.hand={p:d.slice(0,3).sort((a,b)=>power(b)-power(a)),c:d.slice(3,6)};G.orig={p:G.hand.p.slice(),c:G.hand.c.slice()};
  G.table={p:[],c:[]};G.bz=[];G.truco={level:1,lastBy:null};G.env={done:false};G.pending=null;G.susp=null;G.turn=G.mano;G.handOver=false;G.busy=false;
  toast(G.mano==='p'?'Sos mano':`${G.opp.name} es mano`,1100,G.mano==='c'?'Sos mano':`${S.name||'Vos'} es mano`);beep(660,.05);next()}
@@ -474,7 +476,7 @@ function netBeat(){if(!G||!G.online||G.over)return;
  if(G.online==='h'&&G.hand)netSend({t:'st',s:mirror(),v:++NET.ver});else netSend({t:'hb'});
  if(G.online==='g'&&G.busy&&NET.last&&Date.now()-G.busyAt>2500){G.busyAt=Date.now();netSend(Object.assign({},NET.last))}
  if(NET.seen&&Date.now()-NET.seen>12000&&!NET.lost){NET.lost=1;toastL('Se cortó la conexión con '+G.opp.name+'. Reconectando…',3000)}}
-function netClose(){clearInterval(NET.hb);clearInterval(NET.join);NET.join=null;const cs=NET.clis;setTimeout(()=>cs.forEach(c=>{try{c.end()}catch(e){}}),400);NET.clis=[];NET.mode=null;NET.lost=0;NET.seen=0;NET.last=null}
+function netClose(){if(CALL.st!=='idle')callEnd(false);clearInterval(NET.hb);clearInterval(NET.join);NET.join=null;const cs=NET.clis;setTimeout(()=>cs.forEach(c=>{try{c.end()}catch(e){}}),400);NET.clis=[];NET.mode=null;NET.lost=0;NET.seen=0;NET.last=null}
 function netLeave(){if(NET.mode)netSend({t:'bye'});netClose()}
 function hostRoom(){if(needName())return;NET.bet=NBET;netOpen('h',String(100000+Math.random()*900000|0))}
 function joinRoom(){if(needName())return;const c=$('onCode').value.replace(/\D/g,'');if(c.length!==6){toastL('El código tiene 6 números',1600);return}netOpen('g',c)}
@@ -485,7 +487,9 @@ function netAct(o){if(!G||G.busy)return;G.busy=true;G.busyAt=Date.now();stopTime
 function mirror(){const sw=x=>({p:x.c,c:x.p});return{score:sw(G.score),hand:{p:G.hand.c,c:G.hand.p.map(()=>0)},orig:{p:G.orig.c,c:[]},table:sw(G.table),bz:G.bz.map(SW),truco:{level:G.truco.level,lastBy:SW(G.truco.lastBy)},env:G.env,
  pending:G.pending&&Object.assign({},G.pending,{by:SW(G.pending.by)}),turn:SW(G.turn),mano:SW(G.mano),handOver:G.handOver,over:G.over,win:G.win?SW(G.win):null,seq:NET.seq,gid:NET.gid}}
 function netMsg(o){
+ if(o.t==='rtc'&&G&&G.online){rtcMsg(o);return}
  if(o.t==='chat'&&G&&G.online){sayL('c',o.x,null,2600);logChat('c',o.x);if(!$('chat').classList.contains('on'))$('chatDot').style.display='block';return}
+ if(o.t==='bye'&&G&&G.online)callEnd(false);
  if(o.t==='bye'&&G&&G.online&&!G.over){clearT();stopTimer();G.over=true;G.shown=true;S.gs+=G.bet;save();wal();
   overlay(`<h3>${esc(G.opp.name)} salió</h3><p>La partida terminó.${G.bet?'<br>Te devolvimos '+gs(G.bet)+'.':''}</p><button class="mb" onclick="closeOv();netClose();G=null;show('menu')">Menú</button>`);return}
  if(NET.mode==='h'){
@@ -512,6 +516,41 @@ function netMsg(o){
   else if(o.t==='over'&&o.gid===G.gid&&!G.shown){G.over=true;stopTimer();gameOver(o.w)}}}
 document.addEventListener('visibilitychange',()=>{if(document.hidden||!NET.mode)return;NET.clis.forEach(c=>{if(!c.connected)try{c.reconnect()}catch(e){}});if(G&&G.online==='g')netSend({t:'sync'})});
 {const q=new URLSearchParams(location.search).get('sala');if(q&&/^\d{6}$/.test(q))setTimeout(()=>{show('online');renderOnline();$('onCode').value=q},0)}
+// ---------- llamada ----------
+const ICE=[{urls:['stun:stun.l.google.com:19302','stun:stun.cloudflare.com:3478']}];
+const CALL={st:'idle',pc:null,ms:null,offer:null,ice:[],early:[],id:0,muted:false};
+function callUI(){const on=!!(G&&G.online),st=CALL.st;$('callBtn').style.display=on?'':'none';$('callBtn').textContent=st==='idle'?'📞':'📵';$('callBar').classList.toggle('on',on&&st!=='idle');if(!on)return;
+ $('callTxt').textContent=st==='calling'?'Llamando a '+G.opp.name+'…':st==='ringing'?'📞 '+G.opp.name+' te llama':st==='connecting'?'Conectando…':'🎙️ En llamada';
+ $('callAns').style.display=st==='ringing'?'':'none';$('muteB').style.display=st==='live'?'':'none';$('muteB').textContent=CALL.muted?'🎙️ Activar':'🔇 Silenciar';$('hangB').textContent=st==='ringing'?'Rechazar':'Colgar'}
+function callBtn(){if(!G||!G.online)return;if(CALL.st==='idle')callStart();else callEnd(true)}
+function mic(){return navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}})}
+function ring(){stopRing();const f=()=>{beep(780,.18,'sine',.15);setTimeout(()=>beep(780,.18,'sine',.15),280)};f();CALL.rg=setInterval(f,1800)}
+function stopRing(){clearInterval(CALL.rg)}
+function mkPC(){const pc=new RTCPeerConnection({iceServers:ICE});CALL.pc=pc;
+ pc.onicecandidate=e=>{if(e.candidate)netSend({t:'rtc',id:CALL.id,ice:e.candidate.toJSON()})};
+ pc.ontrack=e=>{const a=$('rAudio');a.srcObject=e.streams[0];a.play().catch(()=>{})};
+ pc.onconnectionstatechange=()=>{if(CALL.pc!==pc)return;const s=pc.connectionState;if(s==='connected'){CALL.st='live';callUI();toastL('Llamada conectada')}else if(s==='failed'){toastL('No se pudo conectar la llamada',2500);callEnd(true)}};
+ CALL.ms.getTracks().forEach(t=>pc.addTrack(t,CALL.ms));return pc}
+async function flushIce(){const pc=CALL.pc;for(const c of CALL.ice.splice(0))try{await pc.addIceCandidate(c)}catch(e){}}
+async function callStart(){try{CALL.ms=await mic()}catch(e){toastL('Permití el micrófono para llamar',2500);return}
+ if(CALL.st!=='idle'){CALL.ms.getTracks().forEach(t=>t.stop());CALL.ms=null;return}
+ CALL.id=Date.now();CALL.st='calling';CALL.ice=[];callUI();const pc=mkPC();await pc.setLocalDescription(await pc.createOffer());netSend({t:'rtc',id:CALL.id,sdp:pc.localDescription.toJSON()});
+ clearTimeout(CALL.tmo);CALL.tmo=setTimeout(()=>{if(CALL.st==='calling'){toastL(G.opp.name+' no atendió',2000);callEnd(true)}},30000)}
+async function callAnswer(){if(CALL.st!=='ringing')return;stopRing();$('rAudio').play().catch(()=>{});
+ try{CALL.ms=await mic()}catch(e){toastL('Permití el micrófono para hablar',2500);callEnd(true);return}
+ CALL.st='connecting';callUI();const pc=mkPC();await pc.setRemoteDescription(CALL.offer);await flushIce();
+ await pc.setLocalDescription(await pc.createAnswer());netSend({t:'rtc',id:CALL.id,sdp:pc.localDescription.toJSON()})}
+function callEnd(send){if(send&&CALL.st!=='idle')netSend({t:'rtc',id:CALL.id,x:'end'});clearTimeout(CALL.tmo);stopRing();const pc=CALL.pc;CALL.pc=null;if(pc)try{pc.close()}catch(e){}
+ if(CALL.ms)CALL.ms.getTracks().forEach(t=>t.stop());Object.assign(CALL,{st:'idle',ms:null,offer:null,ice:[],muted:false});$('rAudio').srcObject=null;callUI()}
+function callMute(){if(!CALL.ms)return;CALL.muted=!CALL.muted;CALL.ms.getAudioTracks().forEach(t=>t.enabled=!CALL.muted);callUI()}
+async function rtcMsg(o){
+ if(o.x==='end'){if(o.id===CALL.id&&CALL.st!=='idle'){toastL(CALL.st==='calling'?G.opp.name+' no puede atender':CALL.st==='ringing'?'Llamada perdida':'Llamada terminada',2000);callEnd(false)}return}
+ if(o.sdp&&o.sdp.type==='offer'){let auto=false;
+  if(CALL.st!=='idle'){if(CALL.st==='calling'&&o.id<CALL.id){callEnd(false);auto=true}else return}
+  CALL.id=o.id;CALL.offer=o.sdp;CALL.ice=CALL.early.filter(e=>e.id===o.id).map(e=>e.ice);CALL.early=[];CALL.st='ringing';callUI();if(auto)callAnswer();else ring();return}
+ if(o.id!==CALL.id){if(o.ice){CALL.early.push({id:o.id,ice:o.ice});if(CALL.early.length>60)CALL.early.shift()}return}
+ if(o.sdp&&o.sdp.type==='answer'&&CALL.pc&&CALL.st==='calling'){clearTimeout(CALL.tmo);CALL.st='connecting';callUI();await CALL.pc.setRemoteDescription(o.sdp);await flushIce();return}
+ if(o.ice){if(CALL.pc&&CALL.pc.remoteDescription)try{await CALL.pc.addIceCandidate(o.ice)}catch(e){}else CALL.ice.push(o.ice)}}
 if(window.speechSynthesis)speechSynthesis.getVoices();
 </script>
 </body>
