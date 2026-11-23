@@ -101,6 +101,7 @@ background:linear-gradient(180deg,#ffe58a,#f2c230 50%,#d39a12);box-shadow:0 4px 
 .box{width:min(88vw,360px);background:linear-gradient(180deg,#5a3520,#2a160c);border:2px solid var(--gold);border-radius:18px;padding:22px;text-align:center}
 .box h3{margin:0 0 8px;font-size:26px;color:var(--gold)}
 .box p{margin:6px 0 16px;opacity:.9}
+.wal{text-align:center;font-weight:800;color:var(--gold);margin:8px 0 0}.bets{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}.bets button{padding:12px 6px;border-radius:12px;background:#2a160c;color:#f7e6b5;border:2px solid #7a4d2c;font-weight:800;font-size:15px}.bets button.sel{border-color:var(--gold);background:#4a2a14;color:var(--gold)}.bets button:disabled{opacity:.35}.pozo{font-size:11px;font-weight:800;color:var(--gold);text-align:center}
 .box .mb{justify-content:center;text-align:center;margin-top:8px;width:100%}
 /* ranking */
 .tabs{display:flex;margin:0 0 10px;border-radius:10px;overflow:hidden;border:1px solid #7a4d2c}
@@ -156,7 +157,8 @@ input[type=text]{font:inherit;padding:8px 10px;border-radius:8px;border:1px soli
     <button class="mb dark" onclick="show('rules')"><span class="ic">📖</span><span>Cómo jugar</span></button>
     <button class="mb dark" onclick="show('settings');renderSet()"><span class="ic">⚙️</span><span>Ajustes</span></button>
   </div>
-  <div class="ver">Demo v0.3 · Truco Paraguayo</div>
+  <div class="wal" id="wal"></div>
+  <div class="ver">Demo v0.4 · Truco Paraguayo</div>
 </section>
 
 <!-- GIRA -->
@@ -174,7 +176,7 @@ input[type=text]{font:inherit;padding:8px 10px;border-radius:8px;border:1px soli
     <div class="score"><div class="sc"><b id="lblP">VOS</b><div class="n" id="scP">0</div><div id="fsP"></div></div><div class="sc"><b id="lblC">PC</b><div class="n" id="scC">0</div><div id="fsC"></div></div></div>
     <button class="chatbtn" onclick="toggleChat()">💬<span class="dot" id="chatDot"></span></button>
   </div>
-  <div class="opp"><div class="av" id="oAv">🧔🏽</div><div class="ot"><div class="who" id="oName">Rival<small>—</small></div><div style="display:flex;align-items:center;gap:4px"><div class="tbar" id="tbC"><i></i></div><span class="tsec" id="tsC"></span></div></div><div class="bub" id="bubC"></div></div>
+  <div class="opp"><div class="av" id="oAv">🧔🏽</div><div class="ot"><div class="who" id="oName">Rival<small>—</small></div><div style="display:flex;align-items:center;gap:4px"><div class="tbar" id="tbC"><i></i></div><span class="tsec" id="tsC"></span></div><div class="pozo" id="pozo"></div></div><div class="bub" id="bubC"></div></div>
   <div class="ohand" id="oHand"></div>
   <div class="table">
     <div class="row" id="rowC"></div>
@@ -247,7 +249,7 @@ const RIVALS=[
  {id:6,name:'Carlitos',city:'Ciudad del Este',dep:'Alto Paraná',av:'😎',diff:2,lines:["Esto es negocio","¿Mentís o no mentís?","¡Puro truco!"]},
  {id:7,name:'Don Feliciano',city:'Filadelfia',dep:'Chaco',av:'🤠',diff:2,lines:["En el Chaco se juega en serio","Calor y truco","¡Nde tavy!"]},
 ];
-const S=Object.assign({name:'Vos',target:30,voice:1,sound:1,timer:1,beaten:[],wins:0,losses:0,pts:0},JSON.parse(localStorage.getItem('trucoPY')||'{}'));
+const S=Object.assign({name:'Vos',target:30,voice:1,sound:1,timer:1,gs:100000,beaten:[],wins:0,losses:0,pts:0},JSON.parse(localStorage.getItem('trucoPY')||'{}'));
 function save(){localStorage.setItem('trucoPY',JSON.stringify(S))}
 
 // ---------- cartas ----------
@@ -273,12 +275,13 @@ function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.to
 function overlay(html){$('ovBox').innerHTML=html;$('ov').classList.add('on')}
 function closeOv(){$('ov').classList.remove('on')}
 function soon(t){overlay(`<h3>Próximamente</h3><p><b>${t}</b> estará en la versión de la App Store.</p><button class="mb" onclick="closeOv()">Entendido</button>`)}
+setTimeout(wal);
 (function fan(){const cs=[{n:1,s:'espada'},{n:1,s:'basto'},{n:7,s:'espada'},{n:7,s:'oro'},{n:3,s:'copa'}];$('fan').innerHTML=cs.map((c,i)=>`<div style="position:absolute;left:92px;top:8px;width:76px;transform-origin:50% 130%;transform:rotate(${(i-2)*14}deg)">${cardSVG(c)}</div>`).join('')})();
 
 function renderGira(){
  $('giraList').innerHTML=RIVALS.map((r,i)=>{const lock=i>0&&!S.beaten.includes(i-1);const done=S.beaten.includes(i);
  return `<div class="region ${lock?'lock':''}"><div class="av">${r.av}</div><div><div class="nm">${r.dep} ${done?'✅':''}</div><div class="ct">${r.name} · ${r.city}</div><div class="st">${'★'.repeat(r.diff+1)}${'☆'.repeat(2-r.diff)}</div></div>
- ${lock?'<span style="margin-left:auto;font-size:22px">🔒</span>':`<button class="go" onclick="startGame(${i})">Jugar</button>`}</div>`}).join('')+
+ ${lock?'<span style="margin-left:auto;font-size:22px">🔒</span>':`<button class="go" onclick="bet(${i})">Jugar</button>`}</div>`}).join('')+
  `<p style="font-size:12px;opacity:.7;text-align:center">Ganale a cada rival para desbloquear el siguiente departamento.</p>`;
 }
 const RK_NAMES=[['Ñandutí_88','🧑🏽'],['Lili Asu','👩🏽'],['Cholo CDE','😎'],['Kuña Guapa','👩🏽‍🦱'],['Fede Luque','🧔🏽'],['Rocío PJC','👱🏽‍♀️'],['Toto Itauguá','👨🏽'],['Vane E.','👩🏽'],['Pancho Caacupé','🤠'],['Mati 2025','🧑🏽‍🦱'],['Lore V.','👩🏽‍🦰'],['Juanchi','👦🏽']];
@@ -292,8 +295,17 @@ let G=null,T=[];
 const other=w=>w==='p'?'c':'p';
 function later(f,ms){T.push(setTimeout(f,ms))}
 function clearT(){T.forEach(clearTimeout);T=[]}
-function quick(){startGame(Math.random()*RIVALS.length|0,true)}
-function startGame(i,q){clearT();const opp=RIVALS[i];G={opp,quick:!!q,target:S.target,score:{p:0,c:0},mano:Math.random()<.5?'p':'c',over:false};
+function quick(){bet(Math.random()*RIVALS.length|0,true)}
+const gs=n=>'₲ '+String(n).replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+const BETS=[0,5000,10000,20000,50000,100000];let BET=0;
+function wal(){$('wal').textContent='Tu saldo: '+gs(S.gs)}
+function bet(i,q){const o=RIVALS[i];if(BET>S.gs)BET=0;
+ overlay(`<div style="font-size:44px">${o.av}</div><h3>¿Cuánto apostás?</h3><p>Contra ${esc(o.name)}<br>Tu saldo: <b>${gs(S.gs)}</b></p>
+ <div class="bets">${BETS.map(b=>`<button class="${b===BET?'sel':''}" ${b>S.gs?'disabled':''} onclick="BET=${b};bet(${i},${!!q})">${b?gs(b):'Sin apuesta'}</button>`).join('')}</div>
+ ${S.gs<5000?'<button class="mb dark" onclick="S.gs+=100000;save();wal();bet('+i+','+!!q+')">Recargar ₲ 100.000 gratis</button>':''}
+ <p><small>Si ganás, cobrás el doble. Plata de juego, sin valor real.</small></p>
+ <button class="mb" onclick="closeOv();S.gs-=BET;save();wal();startGame(${i},${!!q},BET)">Jugar</button><button class="mb dark" onclick="closeOv()">Cancelar</button>`)}
+function startGame(i,q,b=0){clearT();const opp=RIVALS[i];$('pozo').textContent=b?'En juego: '+gs(b*2):'';G={opp,quick:!!q,bet:b,target:S.target,score:{p:0,c:0},mano:Math.random()<.5?'p':'c',over:false};
  $('oAv').textContent=opp.av;$('oName').innerHTML=`${opp.name}<small>${opp.city} · ${'★'.repeat(opp.diff+1)}</small>`;$('lblP').textContent=(S.name||'Vos').toUpperCase();$('lblC').textContent=opp.name.toUpperCase();$('clog').innerHTML='';closeChat();
  show('game');later(()=>say('c',opp.lines[0]),300);later(newHand,900)}
 function newHand(){const d=shuffle(DECK);G.hand={p:d.slice(0,3).sort((a,b)=>power(b)-power(a)),c:d.slice(3,6)};G.orig={p:G.hand.p.slice(),c:G.hand.c.slice()};
@@ -333,10 +345,10 @@ function mazo(){stopTimer();say('p','Me voy al mazo');G.handOver=true;render();l
 function addPts(w,n,msg){G.score[w]=Math.min(G.target,G.score[w]+n);if(msg)toast(msg,1500);beep(w==='p'?880:330,.12,'sine',.12);render();if(G.score[w]>=G.target){G.over=true;later(()=>gameOver(w),1600)}}
 function endHand(w,pts,why){stopTimer();const name=w==='p'?(S.name||'Vos'):G.opp.name;addPts(w,pts,`${name} +${pts}${why==='mazo'?' (al mazo)':why==='noquiero'?' (no quiso)':''}`);
  if(!G.over){if(w==='c'&&Math.random()<.35)later(()=>say('c',G.opp.lines[1+(Math.random()*2|0)]),600);later(()=>{G.mano=other(G.mano);newHand()},2000)}}
-function gameOver(w){stopTimer();closeChat();const won=w==='p';if(won){S.wins++;S.pts+=100+G.opp.diff*50+(G.score.p-G.score.c)*5;if(!G.quick&&!S.beaten.includes(G.opp.id))S.beaten.push(G.opp.id)}else{S.losses++;S.pts+=10}save();
- overlay(`<div style="font-size:54px">${won?'🏆':G.opp.av}</div><h3>${won?'¡Ganaste!':'Perdiste'}</h3><p>${S.name||'Vos'} ${G.score.p} — ${G.score.c} ${G.opp.name}<br><small>${won?(G.quick?'¡Bien jugado!':'¡Desbloqueaste el siguiente departamento!'):'"'+G.opp.lines[2]+'"'}</small></p>
- <button class="mb" onclick="closeOv();startGame(${G.opp.id},${G.quick})">Revancha</button><button class="mb dark" onclick="closeOv();show('menu')">Menú</button>`);speak(won?'Ganaste':'Gané yo')}
-function askQuit(){overlay(`<h3>¿Abandonar?</h3><p>Se pierde la partida actual.</p><button class="mb" onclick="closeOv()">Seguir jugando</button><button class="mb dark" onclick="closeOv();clearT();stopTimer();closeChat();G=null;show('menu')">Salir</button>`)}
+function gameOver(w){stopTimer();closeChat();const won=w==='p';if(won)S.gs+=G.bet*2;if(won){S.wins++;S.pts+=100+G.opp.diff*50+(G.score.p-G.score.c)*5;if(!G.quick&&!S.beaten.includes(G.opp.id))S.beaten.push(G.opp.id)}else{S.losses++;S.pts+=10}save();
+ overlay(`<div style="font-size:54px">${won?'🏆':G.opp.av}</div><h3>${won?'¡Ganaste!':'Perdiste'}</h3><p>${S.name||'Vos'} ${G.score.p} — ${G.score.c} ${G.opp.name}<br><small>${won?(G.quick?'¡Bien jugado!':'¡Desbloqueaste el siguiente departamento!'):'"'+G.opp.lines[2]+'"'}</small>${G.bet?'<br><b style="color:var(--gold)">'+(won?'Cobraste '+gs(G.bet*2):'Perdiste '+gs(G.bet))+'</b>':''}<br><small>Saldo: ${gs(S.gs)}</small></p>
+ <button class="mb" onclick="closeOv();bet(${G.opp.id},${G.quick})">Revancha</button><button class="mb dark" onclick="closeOv();show('menu')">Menú</button>`);speak(won?'Ganaste':'Gané yo')}
+function askQuit(){overlay(`<h3>¿Abandonar?</h3><p>Se pierde la partida actual${G&&G.bet?' y lo apostado ('+gs(G.bet)+')':''}.</p><button class="mb" onclick="closeOv()">Seguir jugando</button><button class="mb dark" onclick="closeOv();clearT();stopTimer();closeChat();G=null;show('menu')">Salir</button>`)}
 
 // ---------- IA ----------
 function winProb(N=260){const known=new Set([...G.orig.c,...G.table.p].map(cid));const unseen=DECK.filter(c=>!known.has(cid(c)));let w=0;
